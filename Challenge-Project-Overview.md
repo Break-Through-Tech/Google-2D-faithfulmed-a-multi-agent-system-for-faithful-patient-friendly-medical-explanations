@@ -3,6 +3,7 @@
 **Company / Org:** Google  
 **Challenge Advisor:** Ram Seshadri   
 **Program:** Break Through Tech AI Studio — Fall 2026
+**AI Studio Coach:** Rohil Saraf ([rohil.saraf@breakthroughtech.org](mailto:rohil.saraf@breakthroughtech.org))
 
 ---
 
