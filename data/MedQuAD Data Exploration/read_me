@@ -1,0 +1,12 @@
+This folder contains the MedQuAD Data Exploration, consisting of:
+1) medquad_full.csv - full cleaned dataset
+2) eda_report.txt - summary of data analysis w/counts, percentages, etc.
+3) 01_pairs_per_source.png - chart of question distribution across sources
+4) 02_empty_answer_rate.png - chart of blank answers
+5) 03_top_qtypes.png - chart of common question categories
+6) 04_question_length_hist.png - chart of question length
+7) 05_answer_length_hist.png - chart of answer length
+8) 06_top_semantic_types.png - chart of question medical categories
+9) 07_feature_importance_redaction.png - chart of features predicting blank answers
+10) parse_medquad.py - code which reads thru dataset to get medquad_full.csv
+11) eda_medquad.py - code which creates eda_report.txt
