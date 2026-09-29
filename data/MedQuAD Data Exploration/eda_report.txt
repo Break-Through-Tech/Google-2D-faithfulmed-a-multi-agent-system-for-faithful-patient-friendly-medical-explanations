@@ -1,0 +1,161 @@
+MEDQUAD — SUMMARY STATISTICS
+Total QA pairs: 47,457
+Unique source documents: 5,403
+Unique focus topics (disease/drug/entity): 10,541
+Unique question types (qtype): 39
+Source folders/sites: 12
+
+--- QA pairs per source site ---
+source_site
+ADAM                     17348
+MPlusDrugs               12889
+GHR                       5430
+GARD                      5394
+NIDDK                     1192
+NINDS                     1104
+MPlusHealthTopics          981
+MPlusHerbsSupplements      792
+NIHSeniorHealth            769
+CancerGov                  729
+NHLBI                      559
+CDC                        270
+
+--- Missing/empty answers by source (copyright redaction) ---
+source_site
+ADAM                     100.0
+MPlusDrugs               100.0
+MPlusHerbsSupplements    100.0
+GARD                       0.1
+CancerGov                  0.0
+CDC                        0.0
+GHR                        0.0
+MPlusHealthTopics          0.0
+NHLBI                      0.0
+NIDDK                      0.0
+NIHSeniorHealth            0.0
+NINDS                      0.0
+
+Overall empty-answer rate: 65.4%
+
+--- Top 20 question types (qtype) ---
+qtype
+information                               9218
+symptoms                                  4338
+treatment                                 3910
+causes                                    2436
+outlook                                   2236
+exams and tests                           2058
+when to contact a medical professional    1738
+inheritance                               1446
+precautions                               1413
+side effects                              1301
+other information                         1280
+indication                                1258
+usage                                     1244
+prevention                                1239
+brand names                               1238
+emergency or overdose                     1140
+complications                             1120
+frequency                                 1120
+storage and disposal                      1117
+forget a dose                             1098
+
+--- Focus category (Disease/Drug/Other), where annotated ---
+focus_category
+Disease            16256
+(not annotated)    15447
+Drug               13681
+Other               2073
+
+--- Question / answer length stats (in words) ---
+       question_len_words  answer_len_words
+count             47457.0           47457.0
+mean                  8.9              69.7
+std                   2.5             174.7
+min                   3.0               0.0
+25%                   7.0               0.0
+50%                   9.0               0.0
+75%                  11.0              78.0
+max                  27.0            4281.0
+
+--- Top 15 UMLS semantic types ---
+umls_semantic_types
+T047    21291
+T019     3888
+T033     3155
+T191     2916
+T046     1494
+T184     1276
+T037     1226
+T048     1044
+T190      484
+T020      347
+T049      183
+T005      115
+T007       69
+T034        9
+T028        2
+
+--- Duplicate questions ---
+Exact duplicate question strings: 3,992 (8.4% of all rows)
+
+--- QA pairs per document (how many Q&As per disease/drug page) ---
+count    11258.0
+mean         4.2
+std          3.5
+min          1.0
+25%          1.0
+50%          3.0
+75%          7.0
+max         28.0
+
+======================================================================
+PREDICTIVE FEATURE ANALYSIS
+======================================================================
+
+Task A: Predict qtype from question text
+Using 46,696 rows across 28 qtypes with >=150 examples each.
+Test accuracy: 0.981  (baseline if always predicting the most common class: 0.197)
+
+Top 8 most predictive words/bigrams per qtype (logistic regression coefficients):
+  brand names          -> names, brand names, brand, injection, topical, oral, spray, nasal
+  brand names of combination products -> names combination, combination products, products, combination, brand, brand names, names, hydrochlorothiazide
+  causes               -> causes, causes need, causes chronic, disease, causes congenital, causes acute, syndrome, causes vaginal
+  complications        -> complications, complications acute, complications chronic, syndrome, complications congenital, disorder, acute, tumor
+  considerations       -> poisoning, pain, overdose, kidney, swelling, aid, muscle, diabetes
+  dietary              -> follow, special dietary, dietary instructions, instructions follow, instructions, dietary, special, injection
+  emergency or overdose -> case, case emergency, emergency overdose, emergency, overdose, injection, overdose insulin, insulin
+  exams and tests      -> diagnose, diagnose need, diagnose chronic, diagnose childhood, diagnose congenital, botulism, infections, diagnose high
+  forget a dose        -> forget dose, forget, dose, injection, topical, oral, ophthalmic, filgrastim
+  frequency            -> affected, people affected, people, common, deficiency, syndrome, affected hereditary, affected familial
+  genetic changes      -> genetic changes, changes related, genetic, changes, related, deficiency, related hereditary, related familial
+  important warning    -> important, important warning, warning information, warning, information know, know, information, injection
+  indication           -> prescribed, injection prescribed, topical prescribed, injection, ophthalmic prescribed, inhalation prescribed, oral, spray prescribed
+  information          -> information, syndrome, need know, diabetes, disorders, cancer, resources, deficiency
+  inheritance          -> inherited, syndrome inherited, deficiency inherited, disease inherited, type inherited, type, dystrophy inherited, familial
+  other information    -> information know, know, information, injection, topical, oral, ophthalmic, nasal
+  outlook              -> outlook, outlook chronic, movement, outlook childhood, discharge, outlook acute, aftercare, outlook adult
+  precautions          -> concerns special, safety concerns, special precautions, precautions, concerns, safety, special, injection
+  prevention           -> prevent, prevent parasites, hantavirus, botulism, prevent congenital, parasites, disease, infection
+  research             -> research, research clinical, clinical trials, trials, clinical, trials childhood, tuberculosis, childhood
+  side effects         -> effects risks, effects, risks, injection, topical, oral, vaccine, inhalation
+  storage and disposal -> disposal, storage disposal, know storage, storage, know, injection, topical, oral
+  support groups       -> support people, support, people, cancer, cell, tumor, alcohol, leukemia
+  susceptibility       -> risk, cancer, risk childhood, risk need, risk parasites, test, risk heart, repair
+  symptoms             -> symptoms, type, symptoms congenital, symptoms familial, autosomal, retardation, symptoms chronic, mental
+  treatment            -> treatments, treatment, treatments hereditary, treated, treatments need, treatments congenital, treatments familial, treatments chronic
+  usage                -> used, used dosage, dosage, injection used, topical used, injection, inhalation used, ophthalmic used
+  when to contact a medical professional -> need doctor, doctor, need, discharge, doctor chronic, doctor acute, aftercare, care
+
+Task B: Predict whether an answer is empty (copyright-redacted) from structured metadata
+Test accuracy: 1.000
+
+Feature importances (Random Forest):
+source_enc            0.609
+num_cuis              0.163
+num_semantic_types    0.140
+qtype_enc             0.039
+num_synonyms          0.035
+question_len_words    0.014
+
+(Interpretation: this basically re-discovers that 'source' almost fully determines redaction, since redaction was applied at the source-collection level, not randomly. qtype and text-length features add only marginal signal on top of that.)
