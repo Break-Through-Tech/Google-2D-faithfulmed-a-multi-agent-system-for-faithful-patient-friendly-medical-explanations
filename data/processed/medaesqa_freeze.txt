@@ -1,0 +1,26 @@
+MedAESQA processed data - FaithfulMed (Google 2D)
+Prepared by: Isha, Isabella
+
+source file:   medaesqa_v1.json
+source sha256: a062742c1678b4379121ad030a06bda574afd376f331df41575938dd9849c383
+
+Row counts:
+  medaesqa_questions.csv           40
+  medaesqa_nuggets.csv             498
+  medaesqa_sentences.csv           5162
+  medaesqa_citations.csv           8124
+
+Cleaning rules applied:
+  - Specialty and Body system split on '/', stripped, lowercased.
+    Originals kept in *_raw columns.
+  - Sentences with no relevance label retained and flagged via
+    has_relevance_label. All 244 come from answers marked not accurate.
+  - Citations collapsed to one row per sentence-PMID pair. On conflicting
+    verdicts the most severe wins: contradicts > supports > neutral >
+    not_relevant > invalid citation. 390 pairs were affected.
+  - No imputation, normalization, or outlier removal. Not applicable to this data.
+
+Known open question: our citation count is 8124 vs the paper's 8111. Likely related to the
+'invalid citation' label, which appears in the file but not the paper. Raised with advisor.
+
+Citation: Gupta, D., Bartels, D. & Demner-Fushman, D. Scientific Data 12, 1035 (2025). CC BY 4.0.
