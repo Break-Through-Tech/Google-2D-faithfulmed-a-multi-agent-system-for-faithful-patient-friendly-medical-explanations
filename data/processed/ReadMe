@@ -1,0 +1,212 @@
+# Processed MedAESQA
+
+Analysis-ready tables derived from `medaesqa_v1.json`. Load these instead of parsing the
+raw JSON.
+
+Produced by `notebooks/exploratory-data-analysis/medaesqa_prep.ipynb`.
+Source fingerprint and cleaning decisions are recorded in `medaesqa_freeze.txt`.
+
+**What MedAESQA is.** 40 real health questions from MedlinePlus, each answered by one
+medical expert and by 30 different AI systems. Medical experts then graded every sentence
+and every citation by hand. It is our human-labeled answer key for Verifier calibration
+and faithfulness evaluation, not training data.
+
+---
+
+## medaesqa_questions.csv — 40 rows
+
+One row per question.
+
+| Column | Description |
+|---|---|
+| `question_id` | Question identifier, 116 to 155 |
+| `question` | The question as a member of the public asked it |
+| `question_focus` | Main clinical entity, e.g. `sleep apnea` |
+| `question_type` | What is being asked: Treatment, Etiology, Prognosis, Diagnosis, Manifestation, and 11 others |
+| `task` | Decision support, Factoid, or Effect |
+| `subject_matter` | clinical / problem, clinical / drug, clinical / intervention, or genetics |
+| `body_system_raw` | Body system as written in the source file |
+| `specialty_raw` | Specialty as written in the source file |
+| `body_systems` | Cleaned, pipe-separated, lowercase |
+| `specialties` | Cleaned, pipe-separated, lowercase |
+| `n_body_systems` | Count of body systems |
+| `n_specialties` | Count of specialties. 9 questions list more than one |
+| `expert_answer` | The expert-written answer, with PMIDs in square brackets |
+
+**Why the `_raw` columns exist.** The source file packs several values into one string with
+inconsistent spacing, e.g. `pulmonology/ ENT / cardiology`. Counting those as a single
+category makes common specialties look rarer than they are. We split on `/`, stripped
+whitespace and lowercased, and kept the originals so the cleaning can be checked.
+
+To count honestly:
+```python
+questions["specialties"].str.split("|").explode().value_counts()
+```
+
+---
+
+## medaesqa_nuggets.csv — 498 rows
+
+One row per expert-curated atomic fact. Gold reference for the Extractor agent.
+
+| Column | Description |
+|---|---|
+| `question_id` | Links to questions |
+| `nugget_idx` | Position within that question's nugget list |
+| `nugget` | The fact as written, usually `Predicate(subject, object)` |
+| `predicate` | Parsed relation, e.g. `Treat`, `Cause`, `Is`. Null when the pattern doesn't fit |
+| `arguments` | Parsed contents of the parentheses |
+| `n_arguments` | Number of comma-separated arguments |
+| `fits_predicate_pattern` | True for 326, False for 172 |
+| `cuis` | UMLS concept IDs. **Empty for every row, see below** |
+| `n_cuis` | Count of CUIs, 0 throughout |
+
+Median 11.5 nuggets per question, range 3 to 31. Most common predicates: `Is` (55),
+`Associated` (27), `Cause` (27), `Include` (25), `Treat` (25).
+
+**Two findings for the Extractor owner.**
+
+35% of nuggets do not fit the simple `Predicate(a, b)` shape. They use if/then clauses,
+comparisons, and multi-part constructions. Any extraction schema needs to handle more than
+two-argument relations.
+
+The paper describes UMLS CUIs attached to each medical concept, but they are not present
+in this release of the JSON. Nuggets are plain strings. If CUI grounding matters for the
+Extractor, concepts will have to be mapped through the UMLS browser separately.
+
+---
+
+## medaesqa_sentences.csv — 5,162 rows
+
+One row per sentence of a machine-generated answer. This is the Verifier calibration set.
+
+| Column | Description |
+|---|---|
+| `question_id` | Links to questions |
+| `method_id` | Which AI system produced the answer, M1 to M30 |
+| `sentence_idx` | Zero-based position in the answer |
+| `sentence_id` | One-based id from the source file |
+| `sentence` | The sentence text |
+| `relevance` | Human grade. See distribution below |
+| `answer_is_accurate` | Whether the whole answer passed a first-pass accuracy check |
+| `n_citations` | Citations attached to this sentence |
+| `has_relevance_label` | False for 244 rows |
+
+Relevance distribution:
+
+| Label | Count | Share |
+|---|---|---|
+| required | 3,958 | 76.7% |
+| unnecessary | 698 | 13.5% |
+| (no label) | 244 | 4.7% |
+| borderline | 243 | 4.7% |
+| inappropriate | 19 | 0.4% |
+
+**Read this before computing agreement.** All 244 unlabeled sentences come from the four
+answers marked `answer_is_accurate = no`. Graders skipped sentence-level work on answers
+they had already rejected wholesale. So the labeled pool of 4,918 sentences is
+conditioned on the answer having passed a first check, which means the hardest cases may
+be underrepresented. Filter on `has_relevance_label` rather than imputing.
+
+**Raw agreement is misleading here.** 80.5% of labeled sentences are `required`, so a
+Verifier that outputs `required` for everything without reading scores 80.5%. That is
+above the project's 80% agreement target. Report Cohen's kappa instead, which subtracts
+out agreement expected by chance.
+
+**The 19 `inappropriate` sentences** are the potentially harmful ones. Small enough to read
+in full, and the most important cases in the dataset for error analysis.
+
+---
+
+## medaesqa_citations.csv — 8,124 rows
+
+One row per unique sentence-PMID pair. Join to sentences on
+`question_id` + `method_id` + `sentence_idx`.
+
+| Column | Description |
+|---|---|
+| `question_id` | Links to questions |
+| `method_id` | M1 to M30 |
+| `sentence_idx` | Links to sentences |
+| `pmid` | PubMed ID of the cited paper |
+| `evidence_relation` | Whether the paper backs the claim. See below |
+| `evidence_excerpt` | Human-written passage justifying the judgment |
+| `n_excerpts` | How many excerpts backed this pair, 1 to 7 |
+
+Evidence relation distribution:
+
+| Label | Count | Share |
+|---|---|---|
+| supports | 5,425 | 66.8% |
+| not_relevant | 1,550 | 19.1% |
+| neutral | 559 | 6.9% |
+| invalid citation | 409 | 5.0% |
+| contradicts | 181 | 2.2% |
+
+**How duplicates were resolved.** The raw file has 9,611 citation rows because one
+sentence-PMID pair can carry several excerpts. In 390 cases those excerpts disagree with
+each other. We collapsed to one row per pair, and when verdicts conflict the most severe
+wins:
+
+```
+contradicts > supports > neutral > not_relevant > invalid citation
+```
+
+Contradiction beats support because the source paper's own definition is that a document
+supports a claim only when nothing in it contradicts the claim. Picking arbitrarily would
+have scored roughly 40 contradictions as supporting.
+
+Those 390 conflicts are also a result in their own right. Roughly 5% of citations have no
+single agreed human verdict, which puts a practical ceiling on any Verifier's achievable
+agreement.
+
+**Two open questions for the advisor.** We get 8,124 pairs against the paper's 8,111. And
+`invalid citation` appears in the file but is not one of the four relations the paper
+describes, so we do not know how it was counted in the published totals.
+
+---
+
+## medaesqa_freeze.txt
+
+Source SHA-256, row counts, and every cleaning rule in plain text.
+
+**If the hash changes, every reported number is suspect.** Re-run the prep notebook and
+check its validation section before trusting anything downstream.
+
+To verify:
+```bash
+shasum -a 256 medaesqa_v1.json
+```
+
+---
+
+## Validation
+
+The prep notebook checks these against the published paper. All matched:
+
+| Check | Ours | Paper |
+|---|---|---|
+| Questions | 40 | 40 |
+| Answer sentences | 5,162 | 5,162 |
+| Sentences graded `required` | 3,958 | 3,958 |
+| Evidence excerpts | 7,651 | 7,651 |
+| Citations | 8,124 | 8,111 (see above) |
+
+---
+
+## Not applied
+
+No imputation, normalization, or outlier removal. MedAESQA contains only text and human
+labels, with no numeric features to scale and no missing values that could be filled
+without inventing data.
+
+---
+
+## Citation
+
+Gupta, D., Bartels, D. & Demner-Fushman, D. *A Dataset of Medical Questions Paired with
+Automatically Generated Answers and Evidence-supported References.* Scientific Data 12,
+1035 (2025). CC BY 4.0.
+
+Download the raw file from https://osf.io/ydbzq/ and save it as `data/medaesqa_v1.json`.
+It is not committed to this repo.
