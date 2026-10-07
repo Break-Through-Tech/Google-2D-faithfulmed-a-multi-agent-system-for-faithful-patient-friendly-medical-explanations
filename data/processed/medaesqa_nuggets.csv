@@ -1,499 +1,499 @@
-question_id,nugget_idx,nugget,predicate,arguments,n_arguments,fits_predicate_pattern,cuis,n_cuis
-116,0,"Exists (treat naturally[C0027495], sleep apnea [C0037315])",Exists,"treat naturally[C0027495], sleep apnea [C0037315]",2.0,True,,0
-116,1,"[may] Prevent (lifestyle changes [C0870811], sleep apnea [C0037315])",,,,False,,0
-116,2,"[may] Treat (lifestyle changes [C0870811], sleep apnea [C0037315])",,,,False,,0
-116,3,"Prevent (losing weight [C5439413], sleep apnea [C0037315])",Prevent,"losing weight [C5439413], sleep apnea [C0037315]",2.0,True,,0
-116,4,"Prevent (keeping weight down with diet [C0920298], sleep apnea [C0037315])",Prevent,"keeping weight down with diet [C0920298], sleep apnea [C0037315]",2.0,True,,0
-116,5,"Prevent (keeping weight down with exercise [C0920298], sleep apnea [C0037315])",Prevent,"keeping weight down with exercise [C0920298], sleep apnea [C0037315]",2.0,True,,0
-116,6,"Prevent (quitting alcohol [C3873525], sleep apnea [C0037315])",Prevent,"quitting alcohol [C3873525], sleep apnea [C0037315]",2.0,True,,0
-116,7,"Prevent (quitting smoking [C0085134], sleep apnea [C0037315])",Prevent,"quitting smoking [C0085134], sleep apnea [C0037315]",2.0,True,,0
-116,8,"Prevent (changing sleeping position [C2136000], sleep apnea [C0037315])",Prevent,"changing sleeping position [C2136000], sleep apnea [C0037315]",2.0,True,,0
-116,9,"[standard] Treat (CPAP [C0199451], obstructive sleep apnea [C0520679])",,,,False,,0
-116,10,"Reduce (massage [C3536731], snoring [C0037384])",Reduce,"massage [C3536731], snoring [C0037384]",2.0,True,,0
-116,11,"Reduce (massage [C3536731], apnea [C0003578])",Reduce,"massage [C3536731], apnea [C0003578]",2.0,True,,0
-116,12,"Reduce (dental treatments [C0011331], snoring [C0037384])",Reduce,"dental treatments [C0011331], snoring [C0037384]",2.0,True,,0
-116,13,"Reduce (dental treatments [C0011331], apnea [C0003578])",Reduce,"dental treatments [C0011331], apnea [C0003578]",2.0,True,,0
-116,14,"Reduce (tongue and throat exercises [C0886220], snoring [C0037384])",Reduce,"tongue and throat exercises [C0886220], snoring [C0037384]",2.0,True,,0
-116,15,"Reduce (tongue and throat exercises [C0886220], apnea [C0003578])",Reduce,"tongue and throat exercises [C0886220], apnea [C0003578]",2.0,True,,0
-116,16,"[may] Treat (drugs [C1547857], sleep apnea [C0037315])",,,,False,,0
-116,17,"[may] Treat (nerve stimulation [C0457946], sleep apnea [C0037315])",,,,False,,0
-116,18,"[may] Treat (surgery [C0543467], sleep apnea [C0037315])",,,,False,,0
-117,0,"Affects (runx2 [C1419771] mutation [C0596611], bone development [C0005939])",Affects,"runx2 [C1419771] mutation [C0596611], bone development [C0005939]",2.0,True,,0
-117,1,"Cause (runx2 [C1419771] mutation [C0596611], bone deformities [C0410719])",Cause,"runx2 [C1419771] mutation [C0596611], bone deformities [C0410719]",2.0,True,,0
-117,2,"Cause (runx2 [C1419771] mutation [C0596611], height lower than expected [C1629859])",Cause,"runx2 [C1419771] mutation [C0596611], height lower than expected [C1629859]",2.0,True,,0
-117,3,"Cause (runx2 [C1419771] mutation [C0596611], extra teeth [C0040457])",Cause,"runx2 [C1419771] mutation [C0596611], extra teeth [C0040457]",2.0,True,,0
-117,4,"Cause (runx2 [C1419771] mutation [C0596611], dental problems [C3842047])",Cause,"runx2 [C1419771] mutation [C0596611], dental problems [C3842047]",2.0,True,,0
-117,5,"Associated (runx2 [C1419771] mutation [C0596611], pancreatic cancer [C0346647])",Associated,"runx2 [C1419771] mutation [C0596611], pancreatic cancer [C0346647]",2.0,True,,0
-117,6,"Associated (runx2 [C1419771] mutation [C0596611], bone cancer [C0279530])",Associated,"runx2 [C1419771] mutation [C0596611], bone cancer [C0279530]",2.0,True,,0
-117,7,"Associated (runx2 [C1419771] mutation [C0596611], prostate cancer [C0376358])",Associated,"runx2 [C1419771] mutation [C0596611], prostate cancer [C0376358]",2.0,True,,0
-117,8,"Associated (runx2 [C1419771] mutation [C0596611], breast cancer [C0006142])",Associated,"runx2 [C1419771] mutation [C0596611], breast cancer [C0006142]",2.0,True,,0
-117,9,"Associated (runx2 [C1419771] mutation [C0596611], small cell lung cancer [C0149925])",Associated,"runx2 [C1419771] mutation [C0596611], small cell lung cancer [C0149925]",2.0,True,,0
-118,0,"[most] Heal (corneal injuries [C0521711], 24 to 72 hours)",,,,False,,0
-118,1,IF injury [C0521711] is greater than 4mm and vision is not getting better [C0042798] THEN a doctor should evaluate it again after 24 hours,,,,False,,0
-118,2,"[may] Need (severe corneal injuries [C0521711], two weeks of treatment or more)",,,,False,,0
-119,0,"Reduce (drugs [C1547857], COPD [C0024117] symptoms)",Reduce,"drugs [C1547857], COPD [C0024117] symptoms",2.0,True,,0
-119,1,"Prevent (drugs [C1547857], COPD flare-ups [C0340044])",Prevent,"drugs [C1547857], COPD flare-ups [C0340044]",2.0,True,,0
-119,2,"Improve (corticosteroids [C3536709], quality of life)",Improve,"corticosteroids [C3536709], quality of life",2.0,True,,0
-119,3,"Reduce (corticosteroids [C3536709], risk of death)",Reduce,"corticosteroids [C3536709], risk of death",2.0,True,,0
-119,4,"Reduce (corticosteroids [C3536709], COPD flare-ups [C0340044])",Reduce,"corticosteroids [C3536709], COPD flare-ups [C0340044]",2.0,True,,0
-119,5,"Improve (corticosteroids [C3536709], breathing)",Improve,"corticosteroids [C3536709], breathing",2.0,True,,0
-119,6,"Reduce (corticosteroids [C3536709], COPD [C0024117] symptoms)",Reduce,"corticosteroids [C3536709], COPD [C0024117] symptoms",2.0,True,,0
-119,7,"Treat (inhaled [C0001559] corticosteroid [C3536709], COPD [C0024117])",Treat,"inhaled [C0001559] corticosteroid [C3536709], COPD [C0024117]",2.0,True,,0
-119,8,"Treat (long-acting muscarinic antagonist [C0003385], COPD [C0024117])",Treat,"long-acting muscarinic antagonist [C0003385], COPD [C0024117]",2.0,True,,0
-119,9,"Treat (long-acting β2-agonist [C0354671] (ICS/LAMA/LABA), COPD [C0024117])",Treat,"long-acting β2-agonist [C0354671] (ICS/LAMA/LABA), COPD [C0024117]",2.0,True,,0
-119,10,"Treat (budesonide [C0054201], COPD [C0024117])",Treat,"budesonide [C0054201], COPD [C0024117]",2.0,True,,0
-119,11,"Treat (glycopyrronium [C3814772], COPD [C0024117])",Treat,"glycopyrronium [C3814772], COPD [C0024117]",2.0,True,,0
-119,12,"Treat (formoterol fumarate [C0771469], COPD [C0024117])",Treat,"formoterol fumarate [C0771469], COPD [C0024117]",2.0,True,,0
-119,13,"Help (muscarinic antagonists [C0003385], small muscles [C4083049])",Help,"muscarinic antagonists [C0003385], small muscles [C4083049]",2.0,True,,0
-119,14,"Help (muscarinic antagonists [C0003385], lung [C0024109] tissues)",Help,"muscarinic antagonists [C0003385], lung [C0024109] tissues",2.0,True,,0
-119,15,"Relax (long-acting β2-agonists [C0354671] (bronchodilators [C0006280]), muscles in the airways [C0458827])",Relax,"long-acting β2-agonists [C0354671] (bronchodilators [C0006280]), muscles in the airways [C0458827]",2.0,True,,0
-120,0,"[may] Associated (facial numbness [C0239511], trigeminal neuropathy [C0393789])",,,,False,,0
-120,1,"[may] Affected (trigeminal nerve [C0040996], damage to nearby blood vessels [C0178324])",,,,False,,0
-120,2,"[may] Affected (trigeminal nerve [C0040996], compression in the spine [C0037926])",,,,False,,0
-120,3,"[may] Affected (trigeminal nerve [C0040996], genetically sensitive nerves [C0027889])",,,,False,,0
-120,4,"[may] Affected (trigeminal nerve [C0040996], root canal treatment [C0700632])",,,,False,,0
-120,5,"[may] Affected (trigeminal nerve [C0040996], Guillain-Barre Syndrome [C0018378])",,,,False,,0
-120,6,"[may] Affected (trigeminal nerve [C0040996], tumors [C0027651])",,,,False,,0
-120,7,"[may] Affected (trigeminal nerve [C0040996], damage to the brain [C0270611])",,,,False,,0
-120,8,"[may] Affected (trigeminal nerve [C0040996], Sjögren's Syndrome [C1527336])",,,,False,,0
-121,0,"[may] Reduce (stress management [C0150788], cortisol levels [C0201968])",,,,False,,0
-121,1,"[may] Reduce (mindfulness [C5891058], cortisol levels [C0201968])",,,,False,,0
-121,2,"[may] Reduce (meditation [C0150277], cortisol levels [C0201968])",,,,False,,0
-121,3,"[may] Reduce (relaxation [C0035029], cortisol levels [C0201968])",,,,False,,0
-121,4,"[may] Reduce (interacting with dogs [C5392134], cortisol levels [C0201968])",,,,False,,0
-121,5,"[may] Reduce (balneotherapy [C0085867], cortisol levels [C0201968])",,,,False,,0
-121,6,"[may] Reduce (spa treatments [C0020311], cortisol levels [C0201968])",,,,False,,0
-121,7,"[may] Reduce (electrical stimulation [C0013786], cortisol levels [C0201968])",,,,False,,0
-121,8,"[may] Reduce (acupuncture [C0394664], cortisol levels [C0201968])",,,,False,,0
-121,9,"[may] Reduce (withania somnifera [C2930158], cortisol levels [C0201968])",,,,False,,0
-121,10,"[may] Reduce (melatonin [C0025219], cortisol levels [C0201968])",,,,False,,0
-121,11,"[may] Reduce (dehydroepiandrosterone [C0057277], cortisol levels [C0201968])",,,,False,,0
-122,0,"[commonly] Observed (T wave abnormalities [C1839341], electrocardiogram [C0013798])",,,,False,,0
-122,1,"[may] Is (T wave abnormalities [C1839341], harmless [C0205183])",,,,False,,0
-122,2,"[may] predict (T wave abnormalities [C1839341], life-threatening conditions [C2711184])",,,,False,,0
-122,3,"[may] Sign (tall T-waves [C0429060], heart attack [C0027051])",,,,False,,0
-122,4,"[may] Sign (prominent T-waves [C1839341], heart attack [C0027051])",,,,False,,0
-122,5,"Associated (Inverted T-wave [C0520888], coronary heart disease [C0010068])",Associated,"Inverted T-wave [C0520888], coronary heart disease [C0010068]",2.0,True,,0
-122,6,"Associated (cerebral T-waves, stroke [C0038454])",Associated,"cerebral T-waves, stroke [C0038454]",2.0,True,,0
-122,7,"[frequently] Associated (Peaked T waves [C0239242], kidney problems [C0022658])",,,,False,,0
-123,0,"Responsible (FBN1 [C1414542], connective tissues [C0009780])",Responsible,"FBN1 [C1414542], connective tissues [C0009780]",2.0,True,,0
-123,1,"Support (connective tissues [C0009780], structure of the human body [C0460148])",Support,"connective tissues [C0009780], structure of the human body [C0460148]",2.0,True,,0
-123,2,"Protect (connective tissues [C0009780], structure of the human body [C0460148])",Protect,"connective tissues [C0009780], structure of the human body [C0460148]",2.0,True,,0
-123,3,"[may] Cause (Mutations [C0596611] in specific parts of FBN1 [C1414542], health problems [C0012634])",,,,False,,0
-123,4,"Cause (Missense mutation [C0599155], tall stature [C0241240])",Cause,"Missense mutation [C0599155], tall stature [C0241240]",2.0,True,,0
-123,5,"Cause (Missense mutation [C0599155], short stature [C0349588])",Cause,"Missense mutation [C0599155], short stature [C0349588]",2.0,True,,0
-123,6,"Cause (Missense mutation [C0599155], finger deformities [C0265605])",Cause,"Missense mutation [C0599155], finger deformities [C0265605]",2.0,True,,0
-123,7,"Cause (Missense mutation [C0599155], problems with aorta [C0302467])",Cause,"Missense mutation [C0599155], problems with aorta [C0302467]",2.0,True,,0
-123,8,"Cause (Mutations [C0596611] in specific parts of FBN1 [C1414542], Marfan syndrome [C0024796])",Cause,"Mutations [C0596611] in specific parts of FBN1 [C1414542], Marfan syndrome [C0024796]",2.0,True,,0
-123,9,"Cause (Mutations [C0596611] in specific parts of FBN1 [C1414542], Weill-Marchesani syndrome [C0265313])",Cause,"Mutations [C0596611] in specific parts of FBN1 [C1414542], Weill-Marchesani syndrome [C0265313]",2.0,True,,0
-123,10,"Cause (Mutations [C0596611] in specific parts of FBN1 [C1414542], familial thoracic aortic aneurysms [C0162872]/dissections [C5779551])",Cause,"Mutations [C0596611] in specific parts of FBN1 [C1414542], familial thoracic aortic aneurysms [C0162872]/dissections [C5779551]",2.0,True,,0
-123,11,"Cause (Mutations [C0596611] in specific parts of FBN1 [C1414542], acromicric dysplasia [C0265287])",Cause,"Mutations [C0596611] in specific parts of FBN1 [C1414542], acromicric dysplasia [C0265287]",2.0,True,,0
-123,12,"Cause (Mutations [C0596611] in specific parts of FBN1 [C1414542], geleophysic dysplasia [C3489726])",Cause,"Mutations [C0596611] in specific parts of FBN1 [C1414542], geleophysic dysplasia [C3489726]",2.0,True,,0
-123,13,"Cause (Deletions [C1511760] in FBN1 [C1414542], Marfan syndrome [C0024796])",Cause,"Deletions [C1511760] in FBN1 [C1414542], Marfan syndrome [C0024796]",2.0,True,,0
-123,14,"Cause (Deletions [C1511760] in FBN1 [C1414542], heart problems [C0018799])",Cause,"Deletions [C1511760] in FBN1 [C1414542], heart problems [C0018799]",2.0,True,,0
-124,0,"Is (Coronary artery disease (CAD) [C1956346], a heart condition [C0018799])",Is,"Coronary artery disease (CAD) [C1956346], a heart condition [C0018799]",2.0,True,,0
-124,1,"Is (myocardial ischemia [C0151744], not enough blood and oxygen to heart muscle [C2371010])",Is,"myocardial ischemia [C0151744], not enough blood and oxygen to heart muscle [C2371010]",2.0,True,,0
-124,2,"Cause (CAD [C1956346], myocardial ischemia [C0151744])",Cause,"CAD [C1956346], myocardial ischemia [C0151744]",2.0,True,,0
-124,3,"Is (angina [C0002962], repeated chest pain [C1740831])",Is,"angina [C0002962], repeated chest pain [C1740831]",2.0,True,,0
-124,4,"[may] Symptom (angina [C0002962], CAD [C1956346])",,,,False,,0
-124,5,"[common] Affects (CAD without angina [C3248525] (silent ischemia [C0340291]), middle-aged and old men [C3825963])",,,,False,,0
-124,6,"Increase (silent ischemia [C0340291], risk of severe CHD-complications [C3649666])",Increase,"silent ischemia [C0340291], risk of severe CHD-complications [C3649666]",2.0,True,,0
-124,7,"Associated (silent ischemia [C0340291], less diagnostic tests [C0086143] and treatments [C0087111])",Associated,"silent ischemia [C0340291], less diagnostic tests [C0086143] and treatments [C0087111]",2.0,True,,0
-124,8,"NOT Have (three quarters of patients in a study of 5070 patients with CAD [C1956346], angina [C0002962])",NOT Have,"three quarters of patients in a study of 5070 patients with CAD [C1956346], angina [C0002962]",2.0,True,,0
-124,9,"[may] Treat (coronary artery bypass graft (CABG) surgery [C0010055], CAD patients without angina [C3248525])  GREATER THAN Treat (other treatments [C0087111], CAD patients without angina [C3248525])",,,,False,,0
-124,10,Angina absent (CAD) [C3248525]  LESS Diagnostic tests [C0086143]  THAN Angina present (CAD)[C3248257],,,,False,,0
-125,0,"Treat (tamsulosin [C0257343], benign prostatic hyperplasia [C1704272])",Treat,"tamsulosin [C0257343], benign prostatic hyperplasia [C1704272]",2.0,True,,0
-125,1,"Is (benign prostatic hyperplasia [C1704272], enlarged prostate gland [C0426732])",Is,"benign prostatic hyperplasia [C1704272], enlarged prostate gland [C0426732]",2.0,True,,0
-125,2,"Treat (tamsulosin [C0257343], overactive bladder (OAB) [C0878773])",Treat,"tamsulosin [C0257343], overactive bladder (OAB) [C0878773]",2.0,True,,0
-125,3,"Treat (tamsulosin [C0257343], lower urinary tract symptoms (LUTS) [C0574785])",Treat,"tamsulosin [C0257343], lower urinary tract symptoms (LUTS) [C0574785]",2.0,True,,0
-125,4,"Associated (lower urinary tract symptoms (LUTS) [C0574785], prostate inflammation [C0033581])",Associated,"lower urinary tract symptoms (LUTS) [C0574785], prostate inflammation [C0033581]",2.0,True,,0
-125,5,"Associated (lower urinary tract symptoms (LUTS) [C0574785], BPH [C1704272])",Associated,"lower urinary tract symptoms (LUTS) [C0574785], BPH [C1704272]",2.0,True,,0
-125,6,"Treat (tamsulosin [C0257343], ureteral stones [C0041952])",Treat,"tamsulosin [C0257343], ureteral stones [C0041952]",2.0,True,,0
-125,7,"Is (ureteral stones [C0041952], a stone in the urinary tract [C0042018])",Is,"ureteral stones [C0041952], a stone in the urinary tract [C0042018]",2.0,True,,0
-125,8,"Treat (tamsulosin [C0257343], pain caused by ureteral stones [C0235633])",Treat,"tamsulosin [C0257343], pain caused by ureteral stones [C0235633]",2.0,True,,0
-125,9,"Is (pain caused by ureteral stones [C0235633], renal colic [C0152169])",Is,"pain caused by ureteral stones [C0235633], renal colic [C0152169]",2.0,True,,0
-125,10,"Treat (tamsulosin [C0257343], lower urinary tract symptoms [C0574785] in children [C0008059])",Treat,"tamsulosin [C0257343], lower urinary tract symptoms [C0574785] in children [C0008059]",2.0,True,,0
-125,11,"Treat (tamsulosin [C0257343], lower urinary tract symptoms [C0574785] in women [C0043210])",Treat,"tamsulosin [C0257343], lower urinary tract symptoms [C0574785] in women [C0043210]",2.0,True,,0
-126,0,"Is (nondisjunction [C1834741], errors in splitting genetic materials [C0028303])",Is,"nondisjunction [C1834741], errors in splitting genetic materials [C0028303]",2.0,True,,0
-126,1,"Is (meiosis [C0025186], cell division that takes one of two copies of each chromosome)",Is,"meiosis [C0025186], cell division that takes one of two copies of each chromosome",2.0,True,,0
-126,2,"Is (mitosis [C0026255], cell division for growth and maintenance such that the number of chromosomes remains the same in the new cells)",Is,"mitosis [C0026255], cell division for growth and maintenance such that the number of chromosomes remains the same in the new cells",2.0,True,,0
-126,3,"Associated (nondisjunction [C0028303], mitosis [C0026255])",Associated,"nondisjunction [C0028303], mitosis [C0026255]",2.0,True,,0
-126,4,"Associated (nondisjunction [C0028303], meiosis [C0025186])",Associated,"nondisjunction [C0028303], meiosis [C0025186]",2.0,True,,0
-126,5,"Cause (chromosomes failing to split properly [C0028303], aneuploidy [C0002938])",Cause,"chromosomes failing to split properly [C0028303], aneuploidy [C0002938]",2.0,True,,0
-126,6,"Is (aneuploidy [C0002938], having too many or too few chromosomes instead of the normal two of each)",Is,"aneuploidy [C0002938], having too many or too few chromosomes instead of the normal two of each",2.0,True,,0
-126,7,"[may] Cause (genetics [C4510149], nondisjunction [C1834741])",,,,False,,0
-126,8,"[may] Cause (environment [C1516998], nondisjunction [C1834741])",,,,False,,0
-126,9,"[may] Cause (meiosis [C0025186], faulty chromosome in women's eggs [C2903189])",,,,False,,0
-126,10,"[may] Cause (meiosis [C0025186], faulty chromosome in male sperm [C4020789])",,,,False,,0
-126,11,"Occur (nondisjunction [C1834741], in older women [C4699285]) GREATER THAN Occur (nondisjunction [C1834741], in others)",Occur,"nondisjunction [C1834741], in older women [C4699285]) GREATER THAN Occur (nondisjunction [C1834741], in others",3.0,True,,0
-126,12,"Occur (nondisjunction [C1834741], in men who inherited faulty chromosomes [C0478108])",Occur,"nondisjunction [C1834741], in men who inherited faulty chromosomes [C0478108]",2.0,True,,0
-126,13,"Associated (hormone imbalance [C3263685], nondisjunction [C1834741])",Associated,"hormone imbalance [C3263685], nondisjunction [C1834741]",2.0,True,,0
-126,14,"Associated (faulty chromosomes in sperm [C0478108], drug treatments [C0013216])",Associated,"faulty chromosomes in sperm [C0478108], drug treatments [C0013216]",2.0,True,,0
-126,15,"Associated (faulty chromosomes in sperm [C0478108], occupational agents [C0337074])",Associated,"faulty chromosomes in sperm [C0478108], occupational agents [C0337074]",2.0,True,,0
-126,16,"Associated (faulty chromosomes in sperm [C0478108], lifestyle [C0023676])",Associated,"faulty chromosomes in sperm [C0478108], lifestyle [C0023676]",2.0,True,,0
-127,0,"Treat (gene therapy [C0017296], disease [C0012634])",Treat,"gene therapy [C0017296], disease [C0012634]",2.0,True,,0
-127,1,"Cure (gene therapy [C0017296], disease [C0012634])",Cure,"gene therapy [C0017296], disease [C0012634]",2.0,True,,0
-127,2,"Suppress (gene therapy [C0017296], genes [C0017337])",Suppress,"gene therapy [C0017296], genes [C0017337]",2.0,True,,0
-127,3,"Replace (gene therapy [C0017296], genes [C0017337])",Replace,"gene therapy [C0017296], genes [C0017337]",2.0,True,,0
-127,4,"Edit (gene therapy [C0017296], genes [C0017337])",Edit,"gene therapy [C0017296], genes [C0017337]",2.0,True,,0
-127,5,"[may] Have (gene suppression [C0017372], adverse effects [C0879626])",,,,False,,0
-127,6,"[may] Have (gene replacement [1304648], adverse effects [C0879626])",,,,False,,0
-127,7,"[may] Have (gene editing [C4277689], adverse effects [C0879626])",,,,False,,0
-127,8,"Depends (gene replacement [1304648], viruses and similar cells to deliver the gene [C1520007])",Depends,"gene replacement [1304648], viruses and similar cells to deliver the gene [C1520007]",2.0,True,,0
-127,9,"Is (toxic damage to the liver [C0348754], adverse effect [C0879626])",Is,"toxic damage to the liver [C0348754], adverse effect [C0879626]",2.0,True,,0
-127,10,"Is (hepatotoxicity [C0235378], adverse effect [C0879626])",Is,"hepatotoxicity [C0235378], adverse effect [C0879626]",2.0,True,,0
-127,11,"Is (toxic damage to the heart [C0876994], adverse effect [C0879626])",Is,"toxic damage to the heart [C0876994], adverse effect [C0879626]",2.0,True,,0
-127,12,"Is (cardiotoxicity [C0876994], adverse effect)",Is,"cardiotoxicity [C0876994], adverse effect",2.0,True,,0
-127,13,"Is (toxic damage to the nerves [C0393865], adverse effect [C0879626])",Is,"toxic damage to the nerves [C0393865], adverse effect [C0879626]",2.0,True,,0
-127,14,"Is (neurotoxicity [C0235032], adverse effect [C0879626])",Is,"neurotoxicity [C0235032], adverse effect [C0879626]",2.0,True,,0
-127,15,"Is (inflammation caused by immune response [C0021384], adverse effect [C0879626])",Is,"inflammation caused by immune response [C0021384], adverse effect [C0879626]",2.0,True,,0
-127,16,"Is (death [C1306577], adverse effect [C0879626])",Is,"death [C1306577], adverse effect [C0879626]",2.0,True,,0
-127,17,"[may] Cause (immune response suppression [C0021079], secondary infections [C0442886])",,,,False,,0
-127,18,"[may] Cause (gene editing [C4277689], unintended changes [C1519789])",,,,False,,0
-128,0,"Is (Cannabidiol (CBD) [C0006863], a non-psychoactive chemical [NOT  C0682880])",Is,"Cannabidiol (CBD) [C0006863], a non-psychoactive chemical [NOT  C0682880]",2.0,True,,0
-128,1,"Contains (Cannabidiol (CBD) [C0006863], Cannabis (marijuana) [C0936079])",Contains,"Cannabidiol (CBD) [C0006863], Cannabis (marijuana) [C0936079]",2.0,True,,0
-128,2,"[may] Cause (CBD [C0006863], liver enzymes to be higher than normal [C0857093])",,,,False,,0
-128,3,"[may] Cause (higher doses of CBD [C0006863], liver damage [C0151763])",,,,False,,0
-128,4,"[not] Associated (CBD [C0006863], higher liver enzymes [C0857093] in healthy adults [C0686750])",,,,False,,0
-128,5,"[may] Prevent (CBD [C0006863], some liver diseases [C0023895])",,,,False,,0
-129,0,"[may] Cause (suddenly stopping metoprolol [C0025859], withdrawal symptoms [C0086189])",,,,False,,0
-129,1,"[may] Cause (suddenly stopping metoprolol [C0025859], return of high blood pressure [C0520540])",,,,False,,0
-129,2,"[may] Cause (suddenly stopping metoprolol [C0025859], heart problems [C0795691])",,,,False,,0
-129,3,"Is (fast heartbeat [C0039231], metoprolol [C0025859] withdrawal symptom [C0086189])",Is,"fast heartbeat [C0039231], metoprolol [C0025859] withdrawal symptom [C0086189]",2.0,True,,0
-129,4,"Is (headache [C0018681], metoprolol [C0025859] withdrawal symptom [C0086189])",Is,"headache [C0018681], metoprolol [C0025859] withdrawal symptom [C0086189]",2.0,True,,0
-129,5,"Is (agitation [C0085631], metoprolol [C0025859] withdrawal symptom [C0086189])",Is,"agitation [C0085631], metoprolol [C0025859] withdrawal symptom [C0086189]",2.0,True,,0
-129,6,"Is (nausea [C0027497], metoprolol [C0025859] withdrawal symptom [C0086189])",Is,"nausea [C0027497], metoprolol [C0025859] withdrawal symptom [C0086189]",2.0,True,,0
-129,7,"Is (heart palpitations [C0030252], metoprolol [C0025859] withdrawal symptom [C0086189])",Is,"heart palpitations [C0030252], metoprolol [C0025859] withdrawal symptom [C0086189]",2.0,True,,0
-129,8,"Is (shaking [C0040822], metoprolol [C0025859] withdrawal symptom [C0086189])",Is,"shaking [C0040822], metoprolol [C0025859] withdrawal symptom [C0086189]",2.0,True,,0
-129,9,"[may] Cause (suddenly stopping metoprolol [C0025859] in patients with severe heart problems [C0741926],  [C1306577] death)",,,,False,,0
-129,10,"[may] Prevent (gradual withdrawal [C0441640] on a prolonged small dose of metoprolol [C0025859], withdrawal effects [C0086189])",,,,False,,0
-130,0,"Associated (PCOS [C0032460], oxidative stress (OS) [C0242606])",Associated,"PCOS [C0032460], oxidative stress (OS) [C0242606]",2.0,True,,0
-130,1,"Cause (unkown [C0743626], PCOS [C0032460])",Cause,"unkown [C0743626], PCOS [C0032460]",2.0,True,,0
-130,2,"[may] Cause (oxidative stress [C0242606], PCOS [C0032460] symptoms)",,,,False,,0
-130,3,"[may] Increase (oxidative stress [C0242606], risk of cancers [C4040945] caused by PCOS [C0032460])",,,,False,,0
-130,4,"Cause (oxidative stress [C0242606], hormonal imbalance [C3263685])",Cause,"oxidative stress [C0242606], hormonal imbalance [C3263685]",2.0,True,,0
-130,5,"Cause (hormonal imbalance [C3263685], fertility problems [C0278048])",Cause,"hormonal imbalance [C3263685], fertility problems [C0278048]",2.0,True,,0
-130,6,"Associated (oxidative stress [C0242606], heart problems [C0795691])",Associated,"oxidative stress [C0242606], heart problems [C0795691]",2.0,True,,0
-130,7,"Associated (oxidative stress [C0242606], blood problems [C0018939])",Associated,"oxidative stress [C0242606], blood problems [C0018939]",2.0,True,,0
-131,0,"Improve (formoterol [C0060657], breathing [C0035203] in patients with asthma [C3816164] and other lung problems [C0740941])",Improve,"formoterol [C0060657], breathing [C0035203] in patients with asthma [C3816164] and other lung problems [C0740941]",2.0,True,,0
-131,1,"Safe (formoterol [C0060657], for most patients)",Safe,"formoterol [C0060657], for most patients",2.0,True,,0
-131,2,"[frequently] Is (tremors [C0040822], adverse effect [C0879626])",,,,False,,0
-131,3,"[frequently] Is (palpitations [C0030252], adverse effect [C0879626])",,,,False,,0
-131,4,"Frequency increased (Tremors [C0040822], formoterol is taken orally [C2827690])",Frequency increased,"Tremors [C0040822], formoterol is taken orally [C2827690]",2.0,True,,0
-131,5,"Frequency increased (palpitations [C0030252], formoterol is taken orally [C2827690])",Frequency increased,"palpitations [C0030252], formoterol is taken orally [C2827690]",2.0,True,,0
-131,6,"[may] Cause (formoterol [C0060657], supraventricular tachycardia (SVT) [C0039240])",,,,False,,0
-131,7,"[frequently] Adverse effect (worsening of asthma [C0349790], in children [C0008059] with asthma [C3816164])",,,,False,,0
-131,8,"[frequently] Adverse effect (lung infection [C0876973], in children [C0008059] with asthma [C3816164])",,,,False,,0
-131,9,"[frequently] Adverse effect (cough [C0010200], in children [C0008059] with asthma [C3816164])",,,,False,,0
-131,10,"[frequently] Adverse effect (fever [C0015967], in children [C0008059] with asthma [C3816164])",,,,False,,0
-131,11,"[frequently] Adverse effect (headache [C0018681], in children [C0008059] with asthma [C3816164])",,,,False,,0
-131,12,"Adverse effect (tremors [C0040822], in cancer patients [C1516213])",Adverse effect,"tremors [C0040822], in cancer patients [C1516213]",2.0,True,,0
-131,13,"Adverse effect (swelling [C0038999], in cancer patients [C1516213])",Adverse effect,"swelling [C0038999], in cancer patients [C1516213]",2.0,True,,0
-131,14,"Adverse effect (increased heart rate [C0039231], in cancer patients [C1516213])",Adverse effect,"increased heart rate [C0039231], in cancer patients [C1516213]",2.0,True,,0
-131,15,"Adverse effect (indigestion [C0013395], in cancer patients [C1516213])",Adverse effect,"indigestion [C0013395], in cancer patients [C1516213]",2.0,True,,0
-132,0,"Associated (many conditions, low vitamin D [C4285871])",Associated,"many conditions, low vitamin D [C4285871]",2.0,True,,0
-132,1,"Associated (many conditions, vitamin D deficiency [C0042870])",Associated,"many conditions, vitamin D deficiency [C0042870]",2.0,True,,0
-132,2,"Cause (vitamin D deficiency [C0042870], some problems)",Cause,"vitamin D deficiency [C0042870], some problems",2.0,True,,0
-132,3,"[may] Cause (vitamin D deficiency [C0042870], bone softening [C0029442])",,,,False,,0
-132,4,"[may] Cause (vitamin D deficiency [C0042870], rickets in children [C3273089])",,,,False,,0
-132,5,"[may] Cause (vitamin D deficiency [C0042870], bone softening [C0029442] in adults)",,,,False,,0
-132,6,"[may] Cause (vitamin D deficiency [C0042870], brittleness [C0238788] and fractures [C0016658] in adults)",,,,False,,0
-132,7,"increased risk (vitamin D deficiency [C0042870], common cancers [C0006826])",increased risk,"vitamin D deficiency [C0042870], common cancers [C0006826]",2.0,True,,0
-132,8,"increased risk (vitamin D deficiency [C0042870], autoimmune diseases [C0004364])",increased risk,"vitamin D deficiency [C0042870], autoimmune diseases [C0004364]",2.0,True,,0
-132,9,"increased risk (vitamin D deficiency [C0042870], hypertension (high blood pressure) [C0020538])",increased risk,"vitamin D deficiency [C0042870], hypertension (high blood pressure) [C0020538]",2.0,True,,0
-132,10,"increased risk (vitamin D deficiency [C0042870], infections [C0009450])",increased risk,"vitamin D deficiency [C0042870], infections [C0009450]",2.0,True,,0
-132,11,"increased risk (vitamin D deficiency [C0042870], depression [C0011570])",increased risk,"vitamin D deficiency [C0042870], depression [C0011570]",2.0,True,,0
-132,12,"increased risk (vitamin D deficiency [C0042870], mental problems [C0848067])",increased risk,"vitamin D deficiency [C0042870], mental problems [C0848067]",2.0,True,,0
-132,13,"increased risk (vitamin D deficiency [C0042870], type 2 diabetes [C0011860])",increased risk,"vitamin D deficiency [C0042870], type 2 diabetes [C0011860]",2.0,True,,0
-132,14,"increased risk (vitamin D deficiency [C0042870], heart disease [C0018799])",increased risk,"vitamin D deficiency [C0042870], heart disease [C0018799]",2.0,True,,0
-132,15,"increased risk (vitamin D deficiency [C0042870], metabolic syndrome [C0524620])",increased risk,"vitamin D deficiency [C0042870], metabolic syndrome [C0524620]",2.0,True,,0
-132,16,"increased risk (vitamin D deficiency [C0042870], nervous system problems [C0221571])",increased risk,"vitamin D deficiency [C0042870], nervous system problems [C0221571]",2.0,True,,0
-133,0,"[may] Treat (Remove [C0195488], ovarian cyst [C0029927])",,,,False,,0
-133,1,"[may] Treat (Drain [C0554361], ovarian cyst [C0029927])",,,,False,,0
-133,2,"[may] Treat (Cauterize [C0007471], ovarian cyst [C0029927])",,,,False,,0
-133,3,"[try] Treat (small cut (laparoscopy) [C0031150], ovarian cyst [C0029927])",,,,False,,0
-133,4,"[may] Treat (opening the abdomen (laparotomy) [C0023038], ovarian cyst [C0029927])",,,,False,,0
-133,5,"IF Treat (laparoscopy [C0031150], ovarian cyst [C0029927]) THEN [may] Form (small number of patients, ovarian cyst [C0029927] again after laparoscopy)",IF Treat,"laparoscopy [C0031150], ovarian cyst [C0029927]) THEN [may] Form (small number of patients, ovarian cyst [C0029927] again after laparoscopy",3.0,True,,0
-133,6,"IF Occur (contents of ovarian cyst [C4518393] spills [C1511235], into abdomen [C0230168]) THEN [may] Form (patient, ovarian cyst [C0029927])",IF Occur,"contents of ovarian cyst [C4518393] spills [C1511235], into abdomen [C0230168]) THEN [may] Form (patient, ovarian cyst [C0029927]",3.0,True,,0
-133,7,"[may] Cause (spillage of the cyst content [C1511235] into abdomen [C0230168], inflammation in the abdomen (peritonitis) [C0031154])",,,,False,,0
-133,8,"Is (accidental cuts [C0418667] to bowels [C0021853], major surgery effect [C0274311])",Is,"accidental cuts [C0418667] to bowels [C0021853], major surgery effect [C0274311]",2.0,True,,0
-133,9,"Is (accidental cuts [C0418667] to ureter [C0041951], major surgery effect [C0274311])",Is,"accidental cuts [C0418667] to ureter [C0041951], major surgery effect [C0274311]",2.0,True,,0
-133,10,"Is (ureter [C0041951], the tube that carries urine from the kidney to the bladder)",Is,"ureter [C0041951], the tube that carries urine from the kidney to the bladder",2.0,True,,0
-133,11,"[may] Damage (surgery [C0543467], small blood vessels [C0225988])",,,,False,,0
-133,12,"[may] Cause (surgery [C0543467], minor blood loss [C3163616])",,,,False,,0
-133,13,"[may] Develop (cut [C0332803], inflammation [C0021368])",,,,False,,0
-133,14,"[may] Occur (part of the organ [C1268117], come through the cut (incisional hernia) [C0267716])",,,,False,,0
-133,15,"Is (infertility [C0021361], major long-term risk of the surgery [C0274311])",Is,"infertility [C0021361], major long-term risk of the surgery [C0274311]",2.0,True,,0
-133,16,"Occur (infertility [C0021361], among women who had cyst surgery [C0747096]) GREATER THAN Occur (infertility [C0021361], among women who did NOT have cyst surgery)",Occur,"infertility [C0021361], among women who had cyst surgery [C0747096]) GREATER THAN Occur (infertility [C0021361], among women who did NOT have cyst surgery",3.0,True,,0
-133,17,"Associated (surgery for the cyst [C0747096], impact of surgery on fertility [C0015895])",Associated,"surgery for the cyst [C0747096], impact of surgery on fertility [C0015895]",2.0,True,,0
-133,18,"Reduce (being careful during surgery [C0747096], impact of surgery on fertility [C0015895])",Reduce,"being careful during surgery [C0747096], impact of surgery on fertility [C0015895]",2.0,True,,0
-133,19,"Reduce (using cauterization sparingly, impact of surgery on fertility [C0015895])",Reduce,"using cauterization sparingly, impact of surgery on fertility [C0015895]",2.0,True,,0
-134,0,"Symptom (long-standing abdominal pain [C0232491], irritable bowel syndrome (IBS) [C0022104])",Symptom,"long-standing abdominal pain [C0232491], irritable bowel syndrome (IBS) [C0022104]",2.0,True,,0
-134,1,"Symptom (changes in bowel habits [C0278008], irritable bowel syndrome (IBS) [C0022104])",Symptom,"changes in bowel habits [C0278008], irritable bowel syndrome (IBS) [C0022104]",2.0,True,,0
-134,2,"Cause (unknown, symptoms of irritable bowel syndrome (IBS) [C0022104])",Cause,"unknown, symptoms of irritable bowel syndrome (IBS) [C0022104]",2.0,True,,0
-134,3,"Include (changes in bowel habits [C0278008], diarrhea (IBS-D) [C0348898])",Include,"changes in bowel habits [C0278008], diarrhea (IBS-D) [C0348898]",2.0,True,,0
-134,4,"Include (changes in bowel habits [C0278008], constipation (IBS-C) [C4268639])",Include,"changes in bowel habits [C0278008], constipation (IBS-C) [C4268639]",2.0,True,,0
-134,5,"Include (changes in bowel habits [C0278008], mixed stool pattern (IBS-M) [C4268640])",Include,"changes in bowel habits [C0278008], mixed stool pattern (IBS-M) [C4268640]",2.0,True,,0
-134,6,"Include (mixed stool pattern (IBS-M) [C4268640], constipation [C0009806])",Include,"mixed stool pattern (IBS-M) [C4268640], constipation [C0009806]",2.0,True,,0
-134,7,"Include (mixed stool pattern (IBS-M) [C4268640], diarrhea [C0011991])",Include,"mixed stool pattern (IBS-M) [C4268640], diarrhea [C0011991]",2.0,True,,0
-134,8,"Include (changes in bowel habits [C0278008], unclassified IBS [C0022104])",Include,"changes in bowel habits [C0278008], unclassified IBS [C0022104]",2.0,True,,0
-134,9,"Treat (drugs [C0013227], symptoms of IBS [C0022104])",Treat,"drugs [C0013227], symptoms of IBS [C0022104]",2.0,True,,0
-134,10,"Treat (brain-gut behavioral therapies (BGBTs), symptoms of IBS [C0022104])",Treat,"brain-gut behavioral therapies (BGBTs), symptoms of IBS [C0022104]",2.0,True,,0
-134,11,"(primary) Treat (lifestyle [C0870811] and dietary changes [C3671772], all IBS [C0022104] patients)",,,,False,,0
-134,12,"Include (probiotics [C0525033], lifestyle [C0870811] and dietary changes [C3671772])",Include,"probiotics [C0525033], lifestyle [C0870811] and dietary changes [C3671772]",2.0,True,,0
-134,13,"Include (low fermentable oligosaccharides, disaccharides, monosaccharides, polyols (FODMAP) diet [C5768808], lifestyle [C0870811] and dietary changes [C3671772])",Include,"low fermentable oligosaccharides, disaccharides, monosaccharides, polyols (FODMAP) diet [C5768808], lifestyle [C0870811] and dietary changes [C3671772]",5.0,True,,0
-134,14,"Include (gluten-free diet [C0344351], lifestyle [C0870811] and dietary changes [C3671772])",Include,"gluten-free diet [C0344351], lifestyle [C0870811] and dietary changes [C3671772]",2.0,True,,0
-134,15,"Treat (laxatives, IBS-C [C4268639])",Treat,"laxatives, IBS-C [C4268639]",2.0,True,,0
-134,16,"Is (laxatives [C0282090], linaclotide [C2000261])",Is,"laxatives [C0282090], linaclotide [C2000261]",2.0,True,,0
-134,17,"Is (laxatives [C0282090], lubiprostone [C1684405])",Is,"laxatives [C0282090], lubiprostone [C1684405]",2.0,True,,0
-134,18,"Is (laxatives [C0282090], plecanatide [C3711911])",Is,"laxatives [C0282090], plecanatide [C3711911]",2.0,True,,0
-134,19,"IF Ineffective (other laxatives [C0282090], IBS-C [C4268639]) THEN Recommend (linaclotide [C2000261], IBS-C [C4268639])",IF Ineffective,"other laxatives [C0282090], IBS-C [C4268639]) THEN Recommend (linaclotide [C2000261], IBS-C [C4268639]",3.0,True,,0
-134,20,"IF Ineffective (other laxatives [C0282090], IBS-C [C4268639]) THEN Recommend (lubiprostone lubiprostone, IBS-C [C4268639])",IF Ineffective,"other laxatives [C0282090], IBS-C [C4268639]) THEN Recommend (lubiprostone lubiprostone, IBS-C [C4268639]",3.0,True,,0
-134,21,"[may] Recommend (rifaximin [C0073374], IBS-D [C0348898])",,,,False,,0
-134,22,"[may] Recommend (eluxadoline [C3712232], IBS-D [C0348898])",,,,False,,0
-134,23,"[may] Recommend (alosetron [C0291772], IBS-D [C0348898])",,,,False,,0
-134,24,"[may] Recommend (loperamide [C0023992], IBS-D [C0348898])",,,,False,,0
-134,25,"[may] Recommend (alosetron [C0291772] and ramosetron [C0526950], IBS-D [C0348898])",,,,False,,0
-134,26,"[may] Treat (faecal microbial transplant [C2242628], IBS-D [C0348898] and IBS-M [C4268640])",,,,False,,0
-134,27,"[may] Treat (psychotherapy [C0033968], IBS-D [C0348898] and IBS-M [C4268640])",,,,False,,0
-134,28,"[may] Treat (hypnotherapy [C0020587], IBS-D [C0348898] and IBS-M [C4268640])",,,,False,,0
-134,29,"[may] Treat (acupuncture [C0394664], IBS-D [C0348898] and IBS-M [C4268640])",,,,False,,0
-134,30,"[may] Treat (herbs [C0025125], IBS-D [C0348898] and IBS-M [C4268640])",,,,False,,0
-135,0,"Symptom (under-active thyroid gland (hypothyroidism) [C0020676], fatigue)",Symptom,"under-active thyroid gland (hypothyroidism) [C0020676], fatigue",2.0,True,,0
-135,1,"Symptom (under-active thyroid gland (hypothyroidism) [C0020676], weight gain)",Symptom,"under-active thyroid gland (hypothyroidism) [C0020676], weight gain",2.0,True,,0
-135,2,"Symptom (under-active thyroid gland (hypothyroidism) [C0020676], constipation)",Symptom,"under-active thyroid gland (hypothyroidism) [C0020676], constipation",2.0,True,,0
-135,3,"Symptom (under-active thyroid gland (hypothyroidism) [C0020676], dry skin)",Symptom,"under-active thyroid gland (hypothyroidism) [C0020676], dry skin",2.0,True,,0
-135,4,"Symptom (under-active thyroid gland (hypothyroidism) [C0020676], cold intolerance)",Symptom,"under-active thyroid gland (hypothyroidism) [C0020676], cold intolerance",2.0,True,,0
-135,5,"Cause (untreated under-active thyroid gland (hypothyroidism) [C2749407], severe complications [C3495031])",Cause,"untreated under-active thyroid gland (hypothyroidism) [C2749407], severe complications [C3495031]",2.0,True,,0
-135,6,"Include (severe complications [C3495031], heart failure [C0018801])",Include,"severe complications [C3495031], heart failure [C0018801]",2.0,True,,0
-135,7,"Include (severe complications [C3495031], infertility [C0021359])",Include,"severe complications [C3495031], infertility [C0021359]",2.0,True,,0
-135,8,"Include (severe complications [C3495031], myxedema coma [C0238298])",Include,"severe complications [C3495031], myxedema coma [C0238298]",2.0,True,,0
-135,9,"Symptom (decreased mental status [C0234985], myxedema coma [C0238298])",Symptom,"decreased mental status [C0234985], myxedema coma [C0238298]",2.0,True,,0
-135,10,"Symptom (hypothermia [C0020672], myxedema coma [C0238298])",Symptom,"hypothermia [C0020672], myxedema coma [C0238298]",2.0,True,,0
-135,11,"Symptom (slowing of function in multiple organs [C0679384], myxedema coma [C0238298])",Symptom,"slowing of function in multiple organs [C0679384], myxedema coma [C0238298]",2.0,True,,0
-135,12,"[may] Cause (slowing of function in multiple organs [C0679384], death [C1306577])",,,,False,,0
-135,13,"Cause (untreated hyperthyroidism [C0020550], thyroid storm [C0040127])",Cause,"untreated hyperthyroidism [C0020550], thyroid storm [C0040127]",2.0,True,,0
-136,0,"[may] Cause (inflammation [C0021368], elbow pain [C0239266])",,,,False,,0
-136,1,"[may] Cause (injury [C3263723], elbow pain [C0239266])",,,,False,,0
-136,2,"Treat (painkillers [C0002771], elbow pain [C0239266])",Treat,"painkillers [C0002771], elbow pain [C0239266]",2.0,True,,0
-136,3,"Treat (rest [C0035253], elbow pain [C0239266])",Treat,"rest [C0035253], elbow pain [C0239266]",2.0,True,,0
-136,4,"Treat (non-steroidal anti-inflammatory medications (NSAIDs) [C0003211], elbow pain [C0239266])",Treat,"non-steroidal anti-inflammatory medications (NSAIDs) [C0003211], elbow pain [C0239266]",2.0,True,,0
-136,5,"Treat (physical therapy [C0949766], elbow pain [C0239266])",Treat,"physical therapy [C0949766], elbow pain [C0239266]",2.0,True,,0
-136,6,"Treat (steroids [C0038317], elbow pain [C0239266])",Treat,"steroids [C0038317], elbow pain [C0239266]",2.0,True,,0
-136,7,"IF NOT Treat (standard treatments [C0459914], pain [C0239266]) THEN [may] Suggested (surgery [C0543467], elbow pain [C0239266])",IF NOT Treat,"standard treatments [C0459914], pain [C0239266]) THEN [may] Suggested (surgery [C0543467], elbow pain [C0239266]",3.0,True,,0
-136,8,"Include (alternative treatments [C4716423], acupuncture [C0394664])",Include,"alternative treatments [C4716423], acupuncture [C0394664]",2.0,True,,0
-136,9,"Include (alternative treatments [C4716423], High-Intensity Laser Therapy [C1955835])",Include,"alternative treatments [C4716423], High-Intensity Laser Therapy [C1955835]",2.0,True,,0
-136,10,"Include (alternative treatments [C4716423], botulinum toxin [C0700702])",Include,"alternative treatments [C4716423], botulinum toxin [C0700702]",2.0,True,,0
-136,11,"Include (alternative treatments [C4716423], bone marrow injections [C0005961])",Include,"alternative treatments [C4716423], bone marrow injections [C0005961]",2.0,True,,0
-137,0,"Similar (low glycemic index diet [C0475638], ketogenic diet [C0259972])",Similar,"low glycemic index diet [C0475638], ketogenic diet [C0259972]",2.0,True,,0
-137,1,"Effect (low glycemic index diet [C0475638], lowering hemoglobin A1c [C1261236]) EQUAL Effect (metformin [C0025598], lowering hemoglobin A1c [C1261236])",Effect,"low glycemic index diet [C0475638], lowering hemoglobin A1c [C1261236]) EQUAL Effect (metformin [C0025598], lowering hemoglobin A1c [C1261236]",3.0,True,,0
-137,2,"[may] Cause (metabolic syndrome [C0524620], type 2 diabetes [C0011860])",,,,False,,0
-137,3,"Effect (ketogenic diet [C0259972], improved HbA1c [C1261236])",Effect,"ketogenic diet [C0259972], improved HbA1c [C1261236]",2.0,True,,0
-137,4,"Effect (ketogenic diet [C0259972] in combination with metformin [C0025598], improved HbA1c [C1261236])",Effect,"ketogenic diet [C0259972] in combination with metformin [C0025598], improved HbA1c [C1261236]",2.0,True,,0
-137,5,"[may] Stop (diabetic adults [C0421260], taking metformin [C0025598])",,,,False,,0
-137,6,"Maintain (HbA1c low [C1318607], combining diet [C0012159] and medications [C0013227])",Maintain,"HbA1c low [C1318607], combining diet [C0012159] and medications [C0013227]",2.0,True,,0
-137,7,"Is (long-term effects of ketogenic diet [C0259972], unknown)",Is,"long-term effects of ketogenic diet [C0259972], unknown",2.0,True,,0
-137,8,"[should] Is (patient on the ketogenic diet [C0259972], monitored)",,,,False,,0
-138,0,"Effect (sudafed [C0700727 (pseudoephedrine [C0033798]) ], congestion [C0700148])  EQUAL Effect (afrin  [C0718291] (oxymetazoline [C0030071]),  congestion [C0700148])",Effect,"sudafed [C0700727 (pseudoephedrine [C0033798]) ], congestion [C0700148])  EQUAL Effect (afrin  [C0718291] (oxymetazoline [C0030071]),  congestion [C0700148]",3.0,True,,0
-138,1,"[may] Affect (process [C3852980], heart [C0007226])",,,,False,,0
-138,2,"[may] Affect (process [C3852980], breathing [C0035203])",,,,False,,0
-138,3,"[may] Affect (process [C3852980], other body systems in adults [C4082212])",,,,False,,0
-138,4,"[may] Affect (process [C3852980], other body systems in children [C0008059])",,,,False,,0
-138,5,"[may] Cause (pseudoephedrine [C0033798], stroke [C0038454])",,,,False,,0
-138,6,"[may] Combine (local decongestants [C0042398], systemic decongestants [(C0282374])",,,,False,,0
-138,7,"NOT Affect (local decongestants [C0042398], blood pressure [C0005823] in healthy people [C0686750])",NOT Affect,"local decongestants [C0042398], blood pressure [C0005823] in healthy people [C0686750]",2.0,True,,0
-139,0,"Affects (anorexia [C0003123], all body systems [C0444584])",Affects,"anorexia [C0003123], all body systems [C0444584]",2.0,True,,0
-139,1,"Affects (anorexia [C0003123], heart [C0007226])",Affects,"anorexia [C0003123], heart [C0007226]",2.0,True,,0
-139,2,"Affects (anorexia [C0003123], bones [C0037253])",Affects,"anorexia [C0003123], bones [C0037253]",2.0,True,,0
-139,3,"Affects (anorexia [C0003123], digestive system [C0012240])",Affects,"anorexia [C0003123], digestive system [C0012240]",2.0,True,,0
-139,4,"Affects (anorexia [C0003123], ability to have children [C0015895])",Affects,"anorexia [C0003123], ability to have children [C0015895]",2.0,True,,0
-139,5,"[may] Cause (anorexia [C0003123], death [C1306577])",,,,False,,0
-139,6,"[frequently] Associated (anorexia [C0003123], anxiety [C0003467])",,,,False,,0
-139,7,"[frequently] Associated (anorexia [C0003123], depression [C0011570])",,,,False,,0
-139,8,"Associated (anorexia [C0003123], reduced sleep quality [C1262141])",Associated,"anorexia [C0003123], reduced sleep quality [C1262141]",2.0,True,,0
-139,9,"Associated (anorexia [C0003123], reduced quality of life [C4049260])",Associated,"anorexia [C0003123], reduced quality of life [C4049260]",2.0,True,,0
-140,0,"Cause (brittle bones [C1859069], fractures without trauma [C5936342])",Cause,"brittle bones [C1859069], fractures without trauma [C5936342]",2.0,True,,0
-140,1,"Cause (taking too much vitamin A [C0573813], fractures without trauma [C5936342])",Cause,"taking too much vitamin A [C0573813], fractures without trauma [C5936342]",2.0,True,,0
-140,2,"Cause (lack of vitamin D [C0042870], fractures without trauma [C5936342])",Cause,"lack of vitamin D [C0042870], fractures without trauma [C5936342]",2.0,True,,0
-140,3,"[may] Cause (enchondromas [C1704356], fractures in the hands [C0435632])",,,,False,,0
-140,4,"[may] Cause (chondromas [C0936248)], fractures in the hands [C0435632])",,,,False,,0
-140,5,"[may] Cause (bone cysts [C0005937], fractures in the hands [C0435632])",,,,False,,0
-140,6,"[infrequently] Cause (cancerous tumors [C0006826], fractures [C5936342])",,,,False,,0
-140,7,"Is (osteosarcoma [C0029463], cancerous tumor [C0006826])",Is,"osteosarcoma [C0029463], cancerous tumor [C0006826]",2.0,True,,0
-140,8,"Is (Ewing's sarcoma [C0553580], cancerous tumor [C0006826])",Is,"Ewing's sarcoma [C0553580], cancerous tumor [C0006826]",2.0,True,,0
-140,9,"Is (Paget's disease [C1368019], cancerous tumor [C0006826])",Is,"Paget's disease [C1368019], cancerous tumor [C0006826]",2.0,True,,0
-141,0,"[may] Cause (severe cases of yellow fever [C0043395], bleeding [C0019080])",,,,False,,0
-141,1,"[may] Cause (severe cases of yellow fever [C0043395], liver damage [C0151763])",,,,False,,0
-141,2,"[may] Cause (severe cases of yellow fever [C0043395], nerve damage [C0161479])",,,,False,,0
-141,3,"[may] Cause (severe cases of yellow fever [C0043395], kidney damage [C1408258])",,,,False,,0
-141,4,"[may] Cause (severe cases of yellow fever [C0043395], death [C1306577])",,,,False,,0
-141,5,"[may] Cause (yellow fever [C0043395], blood clotting problems [C1846821])",,,,False,,0
-141,6,"[may] Cause (yellow fever [C0043395], heart damage [C3844005])",,,,False,,0
-141,7,"[may] Cause (yellow fever [C0043395], pancreatic damage [C0813176])",,,,False,,0
-141,8,"[may] Cause (yellow fever [C0043395], multi-organ failure [C0026766])",,,,False,,0
-141,9,"Include (liver problems [C0577060], hepatitis [C0019158])",Include,"liver problems [C0577060], hepatitis [C0019158]",2.0,True,,0
-141,10,"Is (hepatitis [C0019158], inflammation of the liver)",Is,"hepatitis [C0019158], inflammation of the liver",2.0,True,,0
-141,11,"Include (kidney problems [C0812426], acute kidney injury [C2609414])",Include,"kidney problems [C0812426], acute kidney injury [C2609414]",2.0,True,,0
-142,0,"Increase (many drugs [C0013227], blood pressure [C0005823])",Increase,"many drugs [C0013227], blood pressure [C0005823]",2.0,True,,0
-142,1,"Increase (many drugs through interaction with other drugs [C0687133], blood pressure [C0005823])",Increase,"many drugs through interaction with other drugs [C0687133], blood pressure [C0005823]",2.0,True,,0
-142,2,"[most common] Affect (nonsteroidal anti-inflammatory drugs (NSAIDs) [C0003211], blood pressure [C0005823])",,,,False,,0
-142,3,"[most common] Affect (steroids [C0038317], blood pressure [C0005823])",,,,False,,0
-142,4,"Is (inhibitors of angiogenesis [C0596087], cancer-fighting drugs [C0003392])",Is,"inhibitors of angiogenesis [C0596087], cancer-fighting drugs [C0003392]",2.0,True,,0
-142,5,"[most common] Affect (inhibitors of angiogenesis [C0596087], blood pressure [C0005823])",,,,False,,0
-142,6,"[most common] Affect (some drugs [C0013227] that raise HDL [C2938903], blood pressure [C0005823])",,,,False,,0
-142,7,"Raise (drugs for treating depression [C0003289], blood pressure [C0005823])",Raise,"drugs for treating depression [C0003289], blood pressure [C0005823]",2.0,True,,0
-142,8,"Raise (drugs for treating attention deficit hyperactivity disorder [C5935472], blood pressure [C0005823])",Raise,"drugs for treating attention deficit hyperactivity disorder [C5935472], blood pressure [C0005823]",2.0,True,,0
-142,9,"Affect (obesity treatments orlistat [C0076275], blood pressure [C0005823])",Affect,"obesity treatments orlistat [C0076275], blood pressure [C0005823]",2.0,True,,0
-142,10,"Affect (obesity treatments sibutramine [C0074493], blood pressure [C0005823])",Affect,"obesity treatments sibutramine [C0074493], blood pressure [C0005823]",2.0,True,,0
-142,11,"Associated (anti-HIV lopinavir/ritonavir [C0939237] treatment, high blood pressure [C1868937])",Associated,"anti-HIV lopinavir/ritonavir [C0939237] treatment, high blood pressure [C1868937]",2.0,True,,0
-142,12,"Associated (Nirmatrelvir/ritonavir [C5564905] (Paxlovid [C5565871]) treatment, high blood pressure [C1868937])",Associated,"Nirmatrelvir/ritonavir [C5564905] (Paxlovid [C5565871]) treatment, high blood pressure [C1868937]",2.0,True,,0
-143,0,"Coping (living with Huntington's disease [C0020179], knowledge of the forthcoming functional changes [C0516739])",Coping,"living with Huntington's disease [C0020179], knowledge of the forthcoming functional changes [C0516739]",2.0,True,,0
-143,1,"Coping (living with Huntington's disease [C0020179], knowledge of the forthcoming behavioral changes [C0542299])",Coping,"living with Huntington's disease [C0020179], knowledge of the forthcoming behavioral changes [C0542299]",2.0,True,,0
-143,2,"Requires (living with Huntington's disease [C0020179], physical dependence [C1268609] on other people)",Requires,"living with Huntington's disease [C0020179], physical dependence [C1268609] on other people",2.0,True,,0
-143,3,"Hinders (apathy [C0085632], employment [C0014003])",Hinders,"apathy [C0085632], employment [C0014003]",2.0,True,,0
-143,4,"Hinders (chorea [C0008489], employment [C0014003])",Hinders,"chorea [C0008489], employment [C0014003]",2.0,True,,0
-143,5,"Onset (Huntington's disease [C0020179], over 60 years of age [C0393574] in a small number of people)",Onset,"Huntington's disease [C0020179], over 60 years of age [C0393574] in a small number of people",2.0,True,,0
-143,6,"Maintains (good nutrition [C1442959], health [C0018759])",Maintains,"good nutrition [C1442959], health [C0018759]",2.0,True,,0
-143,7,"Maintains (good nutrition [C1442959], functions [C0231162])",Maintains,"good nutrition [C1442959], functions [C0231162]",2.0,True,,0
-143,8,"Improves (rehabilitation programs [C0034991], quality of life [C0518214] in Huntington's disease [C0020179])",Improves,"rehabilitation programs [C0034991], quality of life [C0518214] in Huntington's disease [C0020179]",2.0,True,,0
-143,9,"Improves (breathing training [C0006155], quality of life [C0518214] in Huntington's disease [C0020179])",Improves,"breathing training [C0006155], quality of life [C0518214] in Huntington's disease [C0020179]",2.0,True,,0
-143,10,"Helps (currently available medications [C0013227], symptoms [C0037088])",Helps,"currently available medications [C0013227], symptoms [C0037088]",2.0,True,,0
-143,11,"Target (clinical trials [C0008976], harmful body chemicals [C0504082])",Target,"clinical trials [C0008976], harmful body chemicals [C0504082]",2.0,True,,0
-143,12,"Target (clinical trials [C0008976], harmful genes [C0872189])",Target,"clinical trials [C0008976], harmful genes [C0872189]",2.0,True,,0
-144,0,"Start (blood pressure treatments [C0419824], consider blood pressure levels [C1271104])",Start,"blood pressure treatments [C0419824], consider blood pressure levels [C1271104]",2.0,True,,0
-144,1,"Start (blood pressure treatments [C0419824], consider risk of heart disease [C0850624])",Start,"blood pressure treatments [C0419824], consider risk of heart disease [C0850624]",2.0,True,,0
-144,2,"Start (blood pressure treatments [C0419824], consider risk of stroke [C1277291])",Start,"blood pressure treatments [C0419824], consider risk of stroke [C1277291]",2.0,True,,0
-144,3,"Changed (guidelines [C0162791], for elderly [C0001792])",Changed,"guidelines [C0162791], for elderly [C0001792]",2.0,True,,0
-144,4,"Changed (guidelines [C0162791], for patients with diabetic kidney disease [C0011881])",Changed,"guidelines [C0162791], for patients with diabetic kidney disease [C0011881]",2.0,True,,0
-144,5,"Changed (guidelines [C0162791], for patients with chronic kidney disease [C1561643])",Changed,"guidelines [C0162791], for patients with chronic kidney disease [C1561643]",2.0,True,,0
-144,6,"Changed (guidelines [C0162791], for patients with stroke [C0038454])",Changed,"guidelines [C0162791], for patients with stroke [C0038454]",2.0,True,,0
-144,7,"Recommends (American College of Cardiology, 130/80 mmHg blood pressure levels [C1271104])",Recommends,"American College of Cardiology, 130/80 mmHg blood pressure levels [C1271104]",2.0,True,,0
-144,8,"[may] Cause (lowering blood pressure [C4529970] below 120/70 mmHg, heart problems [C0795691])",,,,False,,0
-144,9,"[may] Cause (lowering blood pressure [C4529970] below 120/70 mmHg, other problems)",,,,False,,0
-144,10,"[should] Adjusted (threshold [C0449864], people over 65 years old [C3843802])",,,,False,,0
-144,11,"[best] Time (take the medications [1290952], evening [C0587117])",,,,False,,0
-145,0,"[mostly] Can (opdivo [C3872108] (nivolumab [C3657270]) side effects, be managed)",,,,False,,0
-145,1,"[most frequent] Side effect (skin reactions [C0221743], opdivo [C3872108] (nivolumab [C3657270]))",,,,False,,0
-145,2,"Is (itching [C0033774], skin reaction [C0221743])",Is,"itching [C0033774], skin reaction [C0221743]",2.0,True,,0
-145,3,"Is (rash [C5779628], skin reaction [C0221743])",Is,"rash [C5779628], skin reaction [C0221743]",2.0,True,,0
-145,4,"Is (vitiligo [C0042900], skin reaction [C0221743])",Is,"vitiligo [C0042900], skin reaction [C0221743]",2.0,True,,0
-145,5,"Side effect (hepatitis [C0019158], opdivo [C3872108] (nivolumab [C3657270]))",Side effect,"hepatitis [C0019158], opdivo [C3872108] (nivolumab [C3657270])",2.0,True,,0
-145,6,"Side effect (reactions to drug infusion [C2368034], opdivo [C3872108] (nivolumab [C3657270]))",Side effect,"reactions to drug infusion [C2368034], opdivo [C3872108] (nivolumab [C3657270])",2.0,True,,0
-145,7,"[may] Affect (nivolumab [C3657270], blood [C0005767])",,,,False,,0
-145,8,"[may] Cause (nivolumab [C3657270], lymphocytic leukemia [C0023449])",,,,False,,0
-145,9,"Affects (nivolumab [C3657270], nervous system [C0027763])",Affects,"nivolumab [C3657270], nervous system [C0027763]",2.0,True,,0
-145,10,"Includes (nervous system [C0027763] effects, neuropathy [C0442874])",Includes,"nervous system [C0027763] effects, neuropathy [C0442874]",2.0,True,,0
-145,11,"Includes (nervous system [C0027763] effects, inflammation of the brain tissues [C5883489])",Includes,"nervous system [C0027763] effects, inflammation of the brain tissues [C5883489]",2.0,True,,0
-145,12,"Includes (inflammation of the brain tissues [C5883489], meningitis [C0025289])",Includes,"inflammation of the brain tissues [C5883489], meningitis [C0025289]",2.0,True,,0
-145,13,"Includes (inflammation of the brain tissues [C5883489], encephalitis [C0014038])",Includes,"inflammation of the brain tissues [C5883489], encephalitis [C0014038]",2.0,True,,0
-145,14,"[may] Damage (nivolumab [C3657270], kidney [C0022646])",,,,False,,0
-145,15,"[may] Damage (nivolumab [C3657270], thyroid function [C2242456])",,,,False,,0
-145,16,"[may] Cause (nivolumab [C3657270], swelling of the face [C0151602])",,,,False,,0
-146,0,"Treat (PTSD [C0038436], trauma-focused treatment [C1320387])",Treat,"PTSD [C0038436], trauma-focused treatment [C1320387]",2.0,True,,0
-146,1,"Is (Cognitive Processing Therapy (CPT) [C0009244], trauma-focused treatment [C1320387])",Is,"Cognitive Processing Therapy (CPT) [C0009244], trauma-focused treatment [C1320387]",2.0,True,,0
-146,2,"Is (Prolonged Exposure Therapy (PE) [C0870527], trauma-focused treatment [C1320387])",Is,"Prolonged Exposure Therapy (PE) [C0870527], trauma-focused treatment [C1320387]",2.0,True,,0
-146,3,"Is (Eye Movement Desensitization and Restructuring (EMDR) [C3164706], trauma-focused treatment [C1320387])",Is,"Eye Movement Desensitization and Restructuring (EMDR) [C3164706], trauma-focused treatment [C1320387]",2.0,True,,0
-146,4,"Recommend (Veterans Affairs (VA) [C1549054], avoiding benzodiazepines [C0005064])",Recommend,"Veterans Affairs (VA) [C1549054], avoiding benzodiazepines [C0005064]",2.0,True,,0
-146,5,"Recommend (Veterans Affairs (VA) [C1549054], avoiding other sedative hypnotic medications [C0020592])",Recommend,"Veterans Affairs (VA) [C1549054], avoiding other sedative hypnotic medications [C0020592]",2.0,True,,0
-146,6,"Recommend (Department of Defense (DoD) [C1511775], avoiding benzodiazepines [C0005064])",Recommend,"Department of Defense (DoD) [C1511775], avoiding benzodiazepines [C0005064]",2.0,True,,0
-146,7,"Recommend (Department of Defense (DoD) [C1511775], avoiding other sedative hypnotic medications [C0020592])",Recommend,"Department of Defense (DoD) [C1511775], avoiding other sedative hypnotic medications [C0020592]",2.0,True,,0
-146,8,"Treat (PTSD [C0038436], selective serotonin reuptake inhibitors (SSRIs) [C0360105])",Treat,"PTSD [C0038436], selective serotonin reuptake inhibitors (SSRIs) [C0360105]",2.0,True,,0
-146,9,"[often] Perscribed (Prazosin [C0032912], nightmares [C0028084])",,,,False,,0
-146,10,"Evidence (Prazosin [C0032912], inconclusive [C0205258])",Evidence,"Prazosin [C0032912], inconclusive [C0205258]",2.0,True,,0
-146,11,"Evidence (tricyclic antidepressants [C0003290], inconclusive [C0205258])",Evidence,"tricyclic antidepressants [C0003290], inconclusive [C0205258]",2.0,True,,0
-146,12,"Evidence (atypical antipsychotics [C1276996], inconclusive [C0205258])",Evidence,"atypical antipsychotics [C1276996], inconclusive [C0205258]",2.0,True,,0
-146,13,"[may] Treat (mindfulness skills [C3542996], PTSD [C0038436] symptoms)",,,,False,,0
-146,14,"Include (mindfulness skills [C3542996], non-judgmental acceptance [C0278069])",Include,"mindfulness skills [C3542996], non-judgmental acceptance [C0278069]",2.0,True,,0
-146,15,"Include (mindfulness skills [C3542996], attentional control)",Include,"mindfulness skills [C3542996], attentional control",2.0,True,,0
-146,16,"Include (mindfulness skills [C3542996], openness to experiences [C0871006])",Include,"mindfulness skills [C3542996], openness to experiences [C0871006]",2.0,True,,0
-146,17,"[may] Treat (fMRI-guided [C0376335] neurofeedback [C2713543], PTSD [C0038436] symptoms)",,,,False,,0
-146,18,"Treat (Hyperbaric oxygen therapy (HBOT) [C0020431], veterans with treatment-resistant [C4020575] PTSD [C0038436])",Treat,"Hyperbaric oxygen therapy (HBOT) [C0020431], veterans with treatment-resistant [C4020575] PTSD [C0038436]",2.0,True,,0
-147,0,"Reduce (statins [C0360714], effects of atherosclerosis [C0004153])",Reduce,"statins [C0360714], effects of atherosclerosis [C0004153]",2.0,True,,0
-147,1,"Reduce (statins [C0360714], levels of fat in the blood [C0020473])",Reduce,"statins [C0360714], levels of fat in the blood [C0020473]",2.0,True,,0
-147,2,"[may] Treat (agents targeting inflammatory pathways [C1512758], atherosclerosis [C0004153])",,,,False,,0
-147,3,"Reduce (low-dose colchicine [C0009262] added to statins [C0360714], rates of myocardial infarction [C0027051])",Reduce,"low-dose colchicine [C0009262] added to statins [C0360714], rates of myocardial infarction [C0027051]",2.0,True,,0
-147,4,"Reduce (low-dose colchicine [C0009262] added to statins [C0360714], rates of stroke [C0038454])",Reduce,"low-dose colchicine [C0009262] added to statins [C0360714], rates of stroke [C0038454]",2.0,True,,0
-147,5,"Reduce (low-dose colchicine [C0009262] added to statins [C0360714], rates of cardiovascular death [C0376297])",Reduce,"low-dose colchicine [C0009262] added to statins [C0360714], rates of cardiovascular death [C0376297]",2.0,True,,0
-147,6,"Improve (lifestyle changes [C0870811], many common age-related heart problems [C0795691])",Improve,"lifestyle changes [C0870811], many common age-related heart problems [C0795691]",2.0,True,,0
-147,7,"Improve (lifestyle changes [C0870811], many common age-related metabolism problems [C0848271])",Improve,"lifestyle changes [C0870811], many common age-related metabolism problems [C0848271]",2.0,True,,0
-147,8,"[may] Treat (focused ultrasound [C1517281], atherosclerosis [C0004153])",,,,False,,0
-147,9,"[may] Treat (specific light that stabilizes plaques and reduces inflammation [C0031740], atherosclerosis [C0004153])",,,,False,,0
-147,10,"[sometimes] Need (patient, surgery [C0543467])",,,,False,,0
-148,0,"[may] Have (easy bruising [C0423798], simple causes [C0205183])",,,,False,,0
-148,1,"[may] Cause (problems with blood clotting [C0005779], bruising [C0423798])",,,,False,,0
-148,2,"[may] Cause (liver problems [C0577060], bruising [C0423798])",,,,False,,0
-148,3,"[may] Cause (inherited bleeding disorders [C0852077], bruising [C0423798])",,,,False,,0
-148,4,"[may] Cause (von Willebrand's disease [C0042974], bruising [C0423798])",,,,False,,0
-148,5,"[may] Cause (deep tissue injury [C5780245], bruising [C0423798])",,,,False,,0
-148,6,"[may] Cause (Ehlers-Danlos syndrome [C0013720], bruising [C0423798])",,,,False,,0
-148,7,"[may] Occur (bruising [C0423798], in older people [C3826770])",,,,False,,0
-148,8,"[may] Occur (painful bruising syndrome [C0301928], young women with psychiatric problems [C1306597])",,,,False,,0
-149,0,"Diagnose (history of the problem [C0683519], disc herniation [C0021818])",Diagnose,"history of the problem [C0683519], disc herniation [C0021818]",2.0,True,,0
-149,1,"Diagnose (physical examination [C0031809] by your doctor, disc herniation [C0021818])",Diagnose,"physical examination [C0031809] by your doctor, disc herniation [C0021818]",2.0,True,,0
-149,2,"Diagnose (advanced medical imaging [C0025086], disc herniation [C0021818])",Diagnose,"advanced medical imaging [C0025086], disc herniation [C0021818]",2.0,True,,0
-149,3,"[some] Value LESS (imaging [C0025086], examination [C0031809] and history [C0683519])",,,,False,,0
-149,4,"Is (MRI [C0024485], the best imaging method [C0025086])",Is,"MRI [C0024485], the best imaging method [C0025086]",2.0,True,,0
-149,5,"Associated (deterioration of muscles around the spine [C0026846], disc herniation [C0021818])",Associated,"deterioration of muscles around the spine [C0026846], disc herniation [C0021818]",2.0,True,,0
-149,6,"[may] Diagnose (lumbar provocation discography [C0203209], disc herniation [C0021818])",,,,False,,0
-149,7,"IF Contraindicated (patient, MRI [C0024485]) THEN Have (patient, special CT images[C4055114])",IF Contraindicated,"patient, MRI [C0024485]) THEN Have (patient, special CT images[C4055114]",3.0,True,,0
-150,0,"Effective (physical therapy [C0949766], lumbar disc herniation [C0281899])",Effective,"physical therapy [C0949766], lumbar disc herniation [C0281899]",2.0,True,,0
-150,1,"Effective (pain reducing [C5230944] physical therapies [C0949766], lumbar disc herniation [C0281899])",Effective,"pain reducing [C5230944] physical therapies [C0949766], lumbar disc herniation [C0281899]",2.0,True,,0
-150,2,"Include (physical therapies [C0949766], mobilization therapies [C2080791])",Include,"physical therapies [C0949766], mobilization therapies [C2080791]",2.0,True,,0
-150,3,"Include (physical therapies [C0949766], exercise [C0015259])",Include,"physical therapies [C0949766], exercise [C0015259]",2.0,True,,0
-150,4,"Include (physical therapies [C0949766], traction [C0040597])",Include,"physical therapies [C0949766], traction [C0040597]",2.0,True,,0
-150,5,"Include (physical therapies [C0949766], decompression [C1829459])",Include,"physical therapies [C0949766], decompression [C1829459]",2.0,True,,0
-151,0,"[may] Have (gray skin discoloration [C0582068], many different causes [C1408355])",,,,False,,0
-151,1,"[may] Is (gray skin discoloration [C0582068], inherited [C0439660])",,,,False,,0
-151,2,"[may] Is (gray skin discoloration [C0582068], a sign of problems with other organs [C3540840])",,,,False,,0
-151,3,"[may] Cause (infection [C3714514], gray skin discoloration [C0582068])",,,,False,,0
-151,4,"[may] Cause (drugs [C0013227], gray skin discoloration [C0582068])",,,,False,,0
-151,5,"[may] Cause (anti-inflammatory drugs [C0003209], gray skin discoloration [C0582068])",,,,False,,0
-151,6,"[may] Cause (psoriasis [C0033860], gray skin discoloration [C0582068])",,,,False,,0
-151,7,"[may] Cause (aging [C0001811], gray skin discoloration [C0582068])",,,,False,,0
-151,8,"[may] Exclude (some tests [C0086143], skin cancer [C0007114])",,,,False,,0
-151,9,"[may] Exclude (some tests [C0086143], specific infections [C3714514])",,,,False,,0
-152,0,"Decrease (amlodipine [C0051696], blood pressure [C0005823] from pre-treatment baseline)",Decrease,"amlodipine [C0051696], blood pressure [C0005823] from pre-treatment baseline",2.0,True,,0
-152,1,"Stabilize (amlodipine [C0051696], blood pressure [C0005823])",Stabilize,"amlodipine [C0051696], blood pressure [C0005823]",2.0,True,,0
-152,2,"IF Stop (patient, amlodipine [C0051696]) THEN Return (blood pressure [C0005823], baseline over 7-10 days)",IF Stop,"patient, amlodipine [C0051696]) THEN Return (blood pressure [C0005823], baseline over 7-10 days",3.0,True,,0
-152,3,"Succeed (stop, anti-hypertensive medication [C0003364]) IF IS (patient, young [C0238598] to middle-aged adults [C0683973] with mildly high blood pressure [C3276943])",Succeed,"stop, anti-hypertensive medication [C0003364]) IF IS (patient, young [C0238598] to middle-aged adults [C0683973] with mildly high blood pressure [C3276943]",3.0,True,,0
-152,4,"Is (temporarily stopping [C0850893] antihypertensive medication [C0003364] for diagnostic evaluation, safe under doctor's guidance [C0583348])",Is,"temporarily stopping [C0850893] antihypertensive medication [C0003364] for diagnostic evaluation, safe under doctor's guidance [C0583348]",2.0,True,,0
-152,5,"IF Switch (patient, medication [C0003364]) THEN [may] Need (amlodipine [C0051696], adjusted dose [C2826232])",IF Switch,"patient, medication [C0003364]) THEN [may] Need (amlodipine [C0051696], adjusted dose [C2826232]",3.0,True,,0
-152,6,"[may] Need (patient, switching to another medication [C2936279]) IF Ineffective (amlodipine [C0051696], lower blood pressure [C4529970])",,,,False,,0
-152,7,"Control (amlodipine [C0051696], blood pressure [C0005823] in older adults [C0001792])",Control,"amlodipine [C0051696], blood pressure [C0005823] in older adults [C0001792]",2.0,True,,0
-152,8,"Protect (amlodipine [C0051696], against stroke [C0038454] in older adults [C0001792])",Protect,"amlodipine [C0051696], against stroke [C0038454] in older adults [C0001792]",2.0,True,,0
-152,9,"Protect (Amlodipine [C0051696], against myocardial infarction [C0027051] in older adults [C0001792])",Protect,"Amlodipine [C0051696], against myocardial infarction [C0027051] in older adults [C0001792]",2.0,True,,0
-152,10,"NOT Recommend (doctors, suddenly stopping [C0558681] the class of medications that includes amlodipine [C0051696])",NOT Recommend,"doctors, suddenly stopping [C0558681] the class of medications that includes amlodipine [C0051696]",2.0,True,,0
-153,0,"Is (optimal Hct [C0474548] in healthy women [C0043210], 35-40%)",Is,"optimal Hct [C0474548] in healthy women [C0043210], 35-40%",2.0,True,,0
-153,1,"Is (optimal Hct [C0474548] in men [C0086582], 39-50%)",Is,"optimal Hct [C0474548] in men [C0086582], 39-50%",2.0,True,,0
-153,2,"Is (recommended transfusion [C0005841] threshold in stable hospital patients, 7-8 g/dL hemoglobin [C0518015])",Is,"recommended transfusion [C0005841] threshold in stable hospital patients, 7-8 g/dL hemoglobin [C0518015]",2.0,True,,0
-153,3,"Is (recommended transfusion [C0005841] threshold in stable hospital patients, Hct [C0518014] 20-24%)",Is,"recommended transfusion [C0005841] threshold in stable hospital patients, Hct [C0518014] 20-24%",2.0,True,,0
-153,4,"Equal (3% change in hematocrit [C0518014], 1-""unit"" loss of blood [C0019080])",Equal,"3% change in hematocrit [C0518014], 1-""unit"" loss of blood [C0019080]",2.0,True,,0
-153,5,"Use (10/30 rule, begin blood transfusions [C0005841])",Use,"10/30 rule, begin blood transfusions [C0005841]",2.0,True,,0
-153,6,"NOT Decide (peripheral venous hematocrit levels [C0518014] alone,  transfusion [C0005841])",NOT Decide,"peripheral venous hematocrit levels [C0518014] alone,  transfusion [C0005841]",2.0,True,,0
-153,7,"Decide (other measurements [C0022885] and patient's condition [C0683521], transfusion [C0005841])",Decide,"other measurements [C0022885] and patient's condition [C0683521], transfusion [C0005841]",2.0,True,,0
-154,0,"[may] Cause (many different health problems [C0012634], shortness of breath (SoB) [C0013404])",,,,False,,0
-154,1,"Help (treating health problems [C0087111], SoB [C0013404])",Help,"treating health problems [C0087111], SoB [C0013404]",2.0,True,,0
-154,2,"Help (strengthening respiratory muscles [C3874239], SoB [C0013404])",Help,"strengthening respiratory muscles [C3874239], SoB [C0013404]",2.0,True,,0
-154,3,"Help (strengthening breast muscles [C0419118], SoB [C0013404])",Help,"strengthening breast muscles [C0419118], SoB [C0013404]",2.0,True,,0
-154,4,"Help (strengthening ribcage muscles [C0846687], SoB [C0013404])",Help,"strengthening ribcage muscles [C0846687], SoB [C0013404]",2.0,True,,0
-154,5,"Help (strengthening stomach muscles [C4287200], SoB [C0013404])",Help,"strengthening stomach muscles [C4287200], SoB [C0013404]",2.0,True,,0
-154,6,"Help (pursed lips breathing [C0425465], SoB [C0013404])",Help,"pursed lips breathing [C0425465], SoB [C0013404]",2.0,True,,0
-154,7,"Help (leaning forward [C0459198], SoB [C0013404])",Help,"leaning forward [C0459198], SoB [C0013404]",2.0,True,,0
-154,8,"Improve (aerobic exercise [C0001701] with or without breathing exercises [C0006155], breathing [C0035203])",Improve,"aerobic exercise [C0001701] with or without breathing exercises [C0006155], breathing [C0035203]",2.0,True,,0
-154,9,"Improve (inspiratory muscle training (IMT) [C0454511], breathing [C0035203])",Improve,"inspiratory muscle training (IMT) [C0454511], breathing [C0035203]",2.0,True,,0
-154,10,"Help (IMT [C0454511], breathing [C0035203])",Help,"IMT [C0454511], breathing [C0035203]",2.0,True,,0
-154,11,"[reported] Improve (reducing physical activity [C2095488], breathing [C0035203])",,,,False,,0
-154,12,"[reported] Improve (psychological strategies [C0009647], breathing [C0035203])",,,,False,,0
-154,13,"[reported] Improve (breathing techniques and positions [C0006155], breathing [C0035203])",,,,False,,0
-154,14,"Help (""Breathing SPACE"" approach, all breathing problems [C1260922])",Help,"""Breathing SPACE"" approach, all breathing problems [C1260922]",2.0,True,,0
-154,15,"Is (""S"" in ""Breathing SPACE"" approach, stopping smoking [C0085134])",Is,"""S"" in ""Breathing SPACE"" approach, stopping smoking [C0085134]",2.0,True,,0
-154,16,"Is (""P"" in ""Breathing SPACE"" approach, treating pulmonary disease [C0024115])",Is,"""P"" in ""Breathing SPACE"" approach, treating pulmonary disease [C0024115]",2.0,True,,0
-154,17,"Is (""A"" in ""Breathing SPACE"" approach, managing anxiety [C0871652]/psychosocial factors [C0009647])",Is,"""A"" in ""Breathing SPACE"" approach, managing anxiety [C0871652]/psychosocial factors [C0009647]",2.0,True,,0
-154,18,"Is (""C"" in ""Breathing SPACE"" approach, managing cardiac disease [C0018799])",Is,"""C"" in ""Breathing SPACE"" approach, managing cardiac disease [C0018799]",2.0,True,,0
-154,19,"Is (""E"" in ""Breathing SPACE"" approach, exercise [C0015259]/fitness [C1319164])",Is,"""E"" in ""Breathing SPACE"" approach, exercise [C0015259]/fitness [C1319164]",2.0,True,,0
-154,20,"Improve (yoga [C1883583] with pranayama breathing techniques, breathing [C0035203])",Improve,"yoga [C1883583] with pranayama breathing techniques, breathing [C0035203]",2.0,True,,0
-154,21,"Effect (diaphragmatic breathing [C0231898] on breathing [C0035203], not clear)",Effect,"diaphragmatic breathing [C0231898] on breathing [C0035203], not clear",2.0,True,,0
-154,22,"[may] Help (using a fan [C0441039], SoB [C0013404])",,,,False,,0
-155,0,"Prevent (using antibiotic eye drops [C0015399] for one week, eye infection [C0015403] after cataract surgery [C2939459]) EQUAL Prevent (using antibiotic eye drops [C0015399] for two week, eye infection [C0015403] after cataract surgery [C2939459])",Prevent,"using antibiotic eye drops [C0015399] for one week, eye infection [C0015403] after cataract surgery [C2939459]) EQUAL Prevent (using antibiotic eye drops [C0015399] for two week, eye infection [C0015403] after cataract surgery [C2939459]",3.0,True,,0
-155,1,"[recommended] Examine (patient, eye doctor [C1704292] a week after surgery [C2939459])",,,,False,,0
-155,2,"Need (eyes are dry [C0314719], month-long treatment after surgery [C2939459])",Need,"eyes are dry [C0314719], month-long treatment after surgery [C2939459]",2.0,True,,0
+question_id,nugget_idx,nugget,modality,predicate,arguments,n_arguments,fits_predicate_pattern,cuis,n_cuis
+116,0,"Exists (treat naturally[C0027495], sleep apnea [C0037315])",,Exists,"treat naturally[C0027495], sleep apnea [C0037315]",2.0,True,C0027495|C0037315,2
+116,1,"[may] Prevent (lifestyle changes [C0870811], sleep apnea [C0037315])",may,Prevent,"lifestyle changes [C0870811], sleep apnea [C0037315]",2.0,True,C0870811|C0037315,2
+116,2,"[may] Treat (lifestyle changes [C0870811], sleep apnea [C0037315])",may,Treat,"lifestyle changes [C0870811], sleep apnea [C0037315]",2.0,True,C0870811|C0037315,2
+116,3,"Prevent (losing weight [C5439413], sleep apnea [C0037315])",,Prevent,"losing weight [C5439413], sleep apnea [C0037315]",2.0,True,C5439413|C0037315,2
+116,4,"Prevent (keeping weight down with diet [C0920298], sleep apnea [C0037315])",,Prevent,"keeping weight down with diet [C0920298], sleep apnea [C0037315]",2.0,True,C0920298|C0037315,2
+116,5,"Prevent (keeping weight down with exercise [C0920298], sleep apnea [C0037315])",,Prevent,"keeping weight down with exercise [C0920298], sleep apnea [C0037315]",2.0,True,C0920298|C0037315,2
+116,6,"Prevent (quitting alcohol [C3873525], sleep apnea [C0037315])",,Prevent,"quitting alcohol [C3873525], sleep apnea [C0037315]",2.0,True,C3873525|C0037315,2
+116,7,"Prevent (quitting smoking [C0085134], sleep apnea [C0037315])",,Prevent,"quitting smoking [C0085134], sleep apnea [C0037315]",2.0,True,C0085134|C0037315,2
+116,8,"Prevent (changing sleeping position [C2136000], sleep apnea [C0037315])",,Prevent,"changing sleeping position [C2136000], sleep apnea [C0037315]",2.0,True,C2136000|C0037315,2
+116,9,"[standard] Treat (CPAP [C0199451], obstructive sleep apnea [C0520679])",standard,Treat,"CPAP [C0199451], obstructive sleep apnea [C0520679]",2.0,True,C0199451|C0520679,2
+116,10,"Reduce (massage [C3536731], snoring [C0037384])",,Reduce,"massage [C3536731], snoring [C0037384]",2.0,True,C3536731|C0037384,2
+116,11,"Reduce (massage [C3536731], apnea [C0003578])",,Reduce,"massage [C3536731], apnea [C0003578]",2.0,True,C3536731|C0003578,2
+116,12,"Reduce (dental treatments [C0011331], snoring [C0037384])",,Reduce,"dental treatments [C0011331], snoring [C0037384]",2.0,True,C0011331|C0037384,2
+116,13,"Reduce (dental treatments [C0011331], apnea [C0003578])",,Reduce,"dental treatments [C0011331], apnea [C0003578]",2.0,True,C0011331|C0003578,2
+116,14,"Reduce (tongue and throat exercises [C0886220], snoring [C0037384])",,Reduce,"tongue and throat exercises [C0886220], snoring [C0037384]",2.0,True,C0886220|C0037384,2
+116,15,"Reduce (tongue and throat exercises [C0886220], apnea [C0003578])",,Reduce,"tongue and throat exercises [C0886220], apnea [C0003578]",2.0,True,C0886220|C0003578,2
+116,16,"[may] Treat (drugs [C1547857], sleep apnea [C0037315])",may,Treat,"drugs [C1547857], sleep apnea [C0037315]",2.0,True,C1547857|C0037315,2
+116,17,"[may] Treat (nerve stimulation [C0457946], sleep apnea [C0037315])",may,Treat,"nerve stimulation [C0457946], sleep apnea [C0037315]",2.0,True,C0457946|C0037315,2
+116,18,"[may] Treat (surgery [C0543467], sleep apnea [C0037315])",may,Treat,"surgery [C0543467], sleep apnea [C0037315]",2.0,True,C0543467|C0037315,2
+117,0,"Affects (runx2 [C1419771] mutation [C0596611], bone development [C0005939])",,Affects,"runx2 [C1419771] mutation [C0596611], bone development [C0005939]",2.0,True,C1419771|C0596611|C0005939,3
+117,1,"Cause (runx2 [C1419771] mutation [C0596611], bone deformities [C0410719])",,Cause,"runx2 [C1419771] mutation [C0596611], bone deformities [C0410719]",2.0,True,C1419771|C0596611|C0410719,3
+117,2,"Cause (runx2 [C1419771] mutation [C0596611], height lower than expected [C1629859])",,Cause,"runx2 [C1419771] mutation [C0596611], height lower than expected [C1629859]",2.0,True,C1419771|C0596611|C1629859,3
+117,3,"Cause (runx2 [C1419771] mutation [C0596611], extra teeth [C0040457])",,Cause,"runx2 [C1419771] mutation [C0596611], extra teeth [C0040457]",2.0,True,C1419771|C0596611|C0040457,3
+117,4,"Cause (runx2 [C1419771] mutation [C0596611], dental problems [C3842047])",,Cause,"runx2 [C1419771] mutation [C0596611], dental problems [C3842047]",2.0,True,C1419771|C0596611|C3842047,3
+117,5,"Associated (runx2 [C1419771] mutation [C0596611], pancreatic cancer [C0346647])",,Associated,"runx2 [C1419771] mutation [C0596611], pancreatic cancer [C0346647]",2.0,True,C1419771|C0596611|C0346647,3
+117,6,"Associated (runx2 [C1419771] mutation [C0596611], bone cancer [C0279530])",,Associated,"runx2 [C1419771] mutation [C0596611], bone cancer [C0279530]",2.0,True,C1419771|C0596611|C0279530,3
+117,7,"Associated (runx2 [C1419771] mutation [C0596611], prostate cancer [C0376358])",,Associated,"runx2 [C1419771] mutation [C0596611], prostate cancer [C0376358]",2.0,True,C1419771|C0596611|C0376358,3
+117,8,"Associated (runx2 [C1419771] mutation [C0596611], breast cancer [C0006142])",,Associated,"runx2 [C1419771] mutation [C0596611], breast cancer [C0006142]",2.0,True,C1419771|C0596611|C0006142,3
+117,9,"Associated (runx2 [C1419771] mutation [C0596611], small cell lung cancer [C0149925])",,Associated,"runx2 [C1419771] mutation [C0596611], small cell lung cancer [C0149925]",2.0,True,C1419771|C0596611|C0149925,3
+118,0,"[most] Heal (corneal injuries [C0521711], 24 to 72 hours)",most,Heal,"corneal injuries [C0521711], 24 to 72 hours",2.0,True,C0521711,1
+118,1,IF injury [C0521711] is greater than 4mm and vision is not getting better [C0042798] THEN a doctor should evaluate it again after 24 hours,,,,,False,C0521711|C0042798,2
+118,2,"[may] Need (severe corneal injuries [C0521711], two weeks of treatment or more)",may,Need,"severe corneal injuries [C0521711], two weeks of treatment or more",2.0,True,C0521711,1
+119,0,"Reduce (drugs [C1547857], COPD [C0024117] symptoms)",,Reduce,"drugs [C1547857], COPD [C0024117] symptoms",2.0,True,C1547857|C0024117,2
+119,1,"Prevent (drugs [C1547857], COPD flare-ups [C0340044])",,Prevent,"drugs [C1547857], COPD flare-ups [C0340044]",2.0,True,C1547857|C0340044,2
+119,2,"Improve (corticosteroids [C3536709], quality of life)",,Improve,"corticosteroids [C3536709], quality of life",2.0,True,C3536709,1
+119,3,"Reduce (corticosteroids [C3536709], risk of death)",,Reduce,"corticosteroids [C3536709], risk of death",2.0,True,C3536709,1
+119,4,"Reduce (corticosteroids [C3536709], COPD flare-ups [C0340044])",,Reduce,"corticosteroids [C3536709], COPD flare-ups [C0340044]",2.0,True,C3536709|C0340044,2
+119,5,"Improve (corticosteroids [C3536709], breathing)",,Improve,"corticosteroids [C3536709], breathing",2.0,True,C3536709,1
+119,6,"Reduce (corticosteroids [C3536709], COPD [C0024117] symptoms)",,Reduce,"corticosteroids [C3536709], COPD [C0024117] symptoms",2.0,True,C3536709|C0024117,2
+119,7,"Treat (inhaled [C0001559] corticosteroid [C3536709], COPD [C0024117])",,Treat,"inhaled [C0001559] corticosteroid [C3536709], COPD [C0024117]",2.0,True,C0001559|C3536709|C0024117,3
+119,8,"Treat (long-acting muscarinic antagonist [C0003385], COPD [C0024117])",,Treat,"long-acting muscarinic antagonist [C0003385], COPD [C0024117]",2.0,True,C0003385|C0024117,2
+119,9,"Treat (long-acting β2-agonist [C0354671] (ICS/LAMA/LABA), COPD [C0024117])",,Treat,"long-acting β2-agonist [C0354671] (ICS/LAMA/LABA), COPD [C0024117]",2.0,True,C0354671|C0024117,2
+119,10,"Treat (budesonide [C0054201], COPD [C0024117])",,Treat,"budesonide [C0054201], COPD [C0024117]",2.0,True,C0054201|C0024117,2
+119,11,"Treat (glycopyrronium [C3814772], COPD [C0024117])",,Treat,"glycopyrronium [C3814772], COPD [C0024117]",2.0,True,C3814772|C0024117,2
+119,12,"Treat (formoterol fumarate [C0771469], COPD [C0024117])",,Treat,"formoterol fumarate [C0771469], COPD [C0024117]",2.0,True,C0771469|C0024117,2
+119,13,"Help (muscarinic antagonists [C0003385], small muscles [C4083049])",,Help,"muscarinic antagonists [C0003385], small muscles [C4083049]",2.0,True,C0003385|C4083049,2
+119,14,"Help (muscarinic antagonists [C0003385], lung [C0024109] tissues)",,Help,"muscarinic antagonists [C0003385], lung [C0024109] tissues",2.0,True,C0003385|C0024109,2
+119,15,"Relax (long-acting β2-agonists [C0354671] (bronchodilators [C0006280]), muscles in the airways [C0458827])",,Relax,"long-acting β2-agonists [C0354671] (bronchodilators [C0006280]), muscles in the airways [C0458827]",2.0,True,C0354671|C0006280|C0458827,3
+120,0,"[may] Associated (facial numbness [C0239511], trigeminal neuropathy [C0393789])",may,Associated,"facial numbness [C0239511], trigeminal neuropathy [C0393789]",2.0,True,C0239511|C0393789,2
+120,1,"[may] Affected (trigeminal nerve [C0040996], damage to nearby blood vessels [C0178324])",may,Affected,"trigeminal nerve [C0040996], damage to nearby blood vessels [C0178324]",2.0,True,C0040996|C0178324,2
+120,2,"[may] Affected (trigeminal nerve [C0040996], compression in the spine [C0037926])",may,Affected,"trigeminal nerve [C0040996], compression in the spine [C0037926]",2.0,True,C0040996|C0037926,2
+120,3,"[may] Affected (trigeminal nerve [C0040996], genetically sensitive nerves [C0027889])",may,Affected,"trigeminal nerve [C0040996], genetically sensitive nerves [C0027889]",2.0,True,C0040996|C0027889,2
+120,4,"[may] Affected (trigeminal nerve [C0040996], root canal treatment [C0700632])",may,Affected,"trigeminal nerve [C0040996], root canal treatment [C0700632]",2.0,True,C0040996|C0700632,2
+120,5,"[may] Affected (trigeminal nerve [C0040996], Guillain-Barre Syndrome [C0018378])",may,Affected,"trigeminal nerve [C0040996], Guillain-Barre Syndrome [C0018378]",2.0,True,C0040996|C0018378,2
+120,6,"[may] Affected (trigeminal nerve [C0040996], tumors [C0027651])",may,Affected,"trigeminal nerve [C0040996], tumors [C0027651]",2.0,True,C0040996|C0027651,2
+120,7,"[may] Affected (trigeminal nerve [C0040996], damage to the brain [C0270611])",may,Affected,"trigeminal nerve [C0040996], damage to the brain [C0270611]",2.0,True,C0040996|C0270611,2
+120,8,"[may] Affected (trigeminal nerve [C0040996], Sjögren's Syndrome [C1527336])",may,Affected,"trigeminal nerve [C0040996], Sjögren's Syndrome [C1527336]",2.0,True,C0040996|C1527336,2
+121,0,"[may] Reduce (stress management [C0150788], cortisol levels [C0201968])",may,Reduce,"stress management [C0150788], cortisol levels [C0201968]",2.0,True,C0150788|C0201968,2
+121,1,"[may] Reduce (mindfulness [C5891058], cortisol levels [C0201968])",may,Reduce,"mindfulness [C5891058], cortisol levels [C0201968]",2.0,True,C5891058|C0201968,2
+121,2,"[may] Reduce (meditation [C0150277], cortisol levels [C0201968])",may,Reduce,"meditation [C0150277], cortisol levels [C0201968]",2.0,True,C0150277|C0201968,2
+121,3,"[may] Reduce (relaxation [C0035029], cortisol levels [C0201968])",may,Reduce,"relaxation [C0035029], cortisol levels [C0201968]",2.0,True,C0035029|C0201968,2
+121,4,"[may] Reduce (interacting with dogs [C5392134], cortisol levels [C0201968])",may,Reduce,"interacting with dogs [C5392134], cortisol levels [C0201968]",2.0,True,C5392134|C0201968,2
+121,5,"[may] Reduce (balneotherapy [C0085867], cortisol levels [C0201968])",may,Reduce,"balneotherapy [C0085867], cortisol levels [C0201968]",2.0,True,C0085867|C0201968,2
+121,6,"[may] Reduce (spa treatments [C0020311], cortisol levels [C0201968])",may,Reduce,"spa treatments [C0020311], cortisol levels [C0201968]",2.0,True,C0020311|C0201968,2
+121,7,"[may] Reduce (electrical stimulation [C0013786], cortisol levels [C0201968])",may,Reduce,"electrical stimulation [C0013786], cortisol levels [C0201968]",2.0,True,C0013786|C0201968,2
+121,8,"[may] Reduce (acupuncture [C0394664], cortisol levels [C0201968])",may,Reduce,"acupuncture [C0394664], cortisol levels [C0201968]",2.0,True,C0394664|C0201968,2
+121,9,"[may] Reduce (withania somnifera [C2930158], cortisol levels [C0201968])",may,Reduce,"withania somnifera [C2930158], cortisol levels [C0201968]",2.0,True,C2930158|C0201968,2
+121,10,"[may] Reduce (melatonin [C0025219], cortisol levels [C0201968])",may,Reduce,"melatonin [C0025219], cortisol levels [C0201968]",2.0,True,C0025219|C0201968,2
+121,11,"[may] Reduce (dehydroepiandrosterone [C0057277], cortisol levels [C0201968])",may,Reduce,"dehydroepiandrosterone [C0057277], cortisol levels [C0201968]",2.0,True,C0057277|C0201968,2
+122,0,"[commonly] Observed (T wave abnormalities [C1839341], electrocardiogram [C0013798])",commonly,Observed,"T wave abnormalities [C1839341], electrocardiogram [C0013798]",2.0,True,C1839341|C0013798,2
+122,1,"[may] Is (T wave abnormalities [C1839341], harmless [C0205183])",may,Is,"T wave abnormalities [C1839341], harmless [C0205183]",2.0,True,C1839341|C0205183,2
+122,2,"[may] predict (T wave abnormalities [C1839341], life-threatening conditions [C2711184])",may,predict,"T wave abnormalities [C1839341], life-threatening conditions [C2711184]",2.0,True,C1839341|C2711184,2
+122,3,"[may] Sign (tall T-waves [C0429060], heart attack [C0027051])",may,Sign,"tall T-waves [C0429060], heart attack [C0027051]",2.0,True,C0429060|C0027051,2
+122,4,"[may] Sign (prominent T-waves [C1839341], heart attack [C0027051])",may,Sign,"prominent T-waves [C1839341], heart attack [C0027051]",2.0,True,C1839341|C0027051,2
+122,5,"Associated (Inverted T-wave [C0520888], coronary heart disease [C0010068])",,Associated,"Inverted T-wave [C0520888], coronary heart disease [C0010068]",2.0,True,C0520888|C0010068,2
+122,6,"Associated (cerebral T-waves, stroke [C0038454])",,Associated,"cerebral T-waves, stroke [C0038454]",2.0,True,C0038454,1
+122,7,"[frequently] Associated (Peaked T waves [C0239242], kidney problems [C0022658])",frequently,Associated,"Peaked T waves [C0239242], kidney problems [C0022658]",2.0,True,C0239242|C0022658,2
+123,0,"Responsible (FBN1 [C1414542], connective tissues [C0009780])",,Responsible,"FBN1 [C1414542], connective tissues [C0009780]",2.0,True,C1414542|C0009780,2
+123,1,"Support (connective tissues [C0009780], structure of the human body [C0460148])",,Support,"connective tissues [C0009780], structure of the human body [C0460148]",2.0,True,C0009780|C0460148,2
+123,2,"Protect (connective tissues [C0009780], structure of the human body [C0460148])",,Protect,"connective tissues [C0009780], structure of the human body [C0460148]",2.0,True,C0009780|C0460148,2
+123,3,"[may] Cause (Mutations [C0596611] in specific parts of FBN1 [C1414542], health problems [C0012634])",may,Cause,"Mutations [C0596611] in specific parts of FBN1 [C1414542], health problems [C0012634]",2.0,True,C0596611|C1414542|C0012634,3
+123,4,"Cause (Missense mutation [C0599155], tall stature [C0241240])",,Cause,"Missense mutation [C0599155], tall stature [C0241240]",2.0,True,C0599155|C0241240,2
+123,5,"Cause (Missense mutation [C0599155], short stature [C0349588])",,Cause,"Missense mutation [C0599155], short stature [C0349588]",2.0,True,C0599155|C0349588,2
+123,6,"Cause (Missense mutation [C0599155], finger deformities [C0265605])",,Cause,"Missense mutation [C0599155], finger deformities [C0265605]",2.0,True,C0599155|C0265605,2
+123,7,"Cause (Missense mutation [C0599155], problems with aorta [C0302467])",,Cause,"Missense mutation [C0599155], problems with aorta [C0302467]",2.0,True,C0599155|C0302467,2
+123,8,"Cause (Mutations [C0596611] in specific parts of FBN1 [C1414542], Marfan syndrome [C0024796])",,Cause,"Mutations [C0596611] in specific parts of FBN1 [C1414542], Marfan syndrome [C0024796]",2.0,True,C0596611|C1414542|C0024796,3
+123,9,"Cause (Mutations [C0596611] in specific parts of FBN1 [C1414542], Weill-Marchesani syndrome [C0265313])",,Cause,"Mutations [C0596611] in specific parts of FBN1 [C1414542], Weill-Marchesani syndrome [C0265313]",2.0,True,C0596611|C1414542|C0265313,3
+123,10,"Cause (Mutations [C0596611] in specific parts of FBN1 [C1414542], familial thoracic aortic aneurysms [C0162872]/dissections [C5779551])",,Cause,"Mutations [C0596611] in specific parts of FBN1 [C1414542], familial thoracic aortic aneurysms [C0162872]/dissections [C5779551]",2.0,True,C0596611|C1414542|C0162872|C5779551,4
+123,11,"Cause (Mutations [C0596611] in specific parts of FBN1 [C1414542], acromicric dysplasia [C0265287])",,Cause,"Mutations [C0596611] in specific parts of FBN1 [C1414542], acromicric dysplasia [C0265287]",2.0,True,C0596611|C1414542|C0265287,3
+123,12,"Cause (Mutations [C0596611] in specific parts of FBN1 [C1414542], geleophysic dysplasia [C3489726])",,Cause,"Mutations [C0596611] in specific parts of FBN1 [C1414542], geleophysic dysplasia [C3489726]",2.0,True,C0596611|C1414542|C3489726,3
+123,13,"Cause (Deletions [C1511760] in FBN1 [C1414542], Marfan syndrome [C0024796])",,Cause,"Deletions [C1511760] in FBN1 [C1414542], Marfan syndrome [C0024796]",2.0,True,C1511760|C1414542|C0024796,3
+123,14,"Cause (Deletions [C1511760] in FBN1 [C1414542], heart problems [C0018799])",,Cause,"Deletions [C1511760] in FBN1 [C1414542], heart problems [C0018799]",2.0,True,C1511760|C1414542|C0018799,3
+124,0,"Is (Coronary artery disease (CAD) [C1956346], a heart condition [C0018799])",,Is,"Coronary artery disease (CAD) [C1956346], a heart condition [C0018799]",2.0,True,C1956346|C0018799,2
+124,1,"Is (myocardial ischemia [C0151744], not enough blood and oxygen to heart muscle [C2371010])",,Is,"myocardial ischemia [C0151744], not enough blood and oxygen to heart muscle [C2371010]",2.0,True,C0151744|C2371010,2
+124,2,"Cause (CAD [C1956346], myocardial ischemia [C0151744])",,Cause,"CAD [C1956346], myocardial ischemia [C0151744]",2.0,True,C1956346|C0151744,2
+124,3,"Is (angina [C0002962], repeated chest pain [C1740831])",,Is,"angina [C0002962], repeated chest pain [C1740831]",2.0,True,C0002962|C1740831,2
+124,4,"[may] Symptom (angina [C0002962], CAD [C1956346])",may,Symptom,"angina [C0002962], CAD [C1956346]",2.0,True,C0002962|C1956346,2
+124,5,"[common] Affects (CAD without angina [C3248525] (silent ischemia [C0340291]), middle-aged and old men [C3825963])",common,Affects,"CAD without angina [C3248525] (silent ischemia [C0340291]), middle-aged and old men [C3825963]",2.0,True,C3248525|C0340291|C3825963,3
+124,6,"Increase (silent ischemia [C0340291], risk of severe CHD-complications [C3649666])",,Increase,"silent ischemia [C0340291], risk of severe CHD-complications [C3649666]",2.0,True,C0340291|C3649666,2
+124,7,"Associated (silent ischemia [C0340291], less diagnostic tests [C0086143] and treatments [C0087111])",,Associated,"silent ischemia [C0340291], less diagnostic tests [C0086143] and treatments [C0087111]",2.0,True,C0340291|C0086143|C0087111,3
+124,8,"NOT Have (three quarters of patients in a study of 5070 patients with CAD [C1956346], angina [C0002962])",,NOT Have,"three quarters of patients in a study of 5070 patients with CAD [C1956346], angina [C0002962]",2.0,True,C1956346|C0002962,2
+124,9,"[may] Treat (coronary artery bypass graft (CABG) surgery [C0010055], CAD patients without angina [C3248525])  GREATER THAN Treat (other treatments [C0087111], CAD patients without angina [C3248525])",may,Treat,"coronary artery bypass graft (CABG) surgery [C0010055], CAD patients without angina [C3248525])  GREATER THAN Treat (other treatments [C0087111], CAD patients without angina [C3248525]",3.0,True,C0010055|C3248525|C0087111,3
+124,10,Angina absent (CAD) [C3248525]  LESS Diagnostic tests [C0086143]  THAN Angina present (CAD)[C3248257],,,,,False,C3248525|C0086143|C3248257,3
+125,0,"Treat (tamsulosin [C0257343], benign prostatic hyperplasia [C1704272])",,Treat,"tamsulosin [C0257343], benign prostatic hyperplasia [C1704272]",2.0,True,C0257343|C1704272,2
+125,1,"Is (benign prostatic hyperplasia [C1704272], enlarged prostate gland [C0426732])",,Is,"benign prostatic hyperplasia [C1704272], enlarged prostate gland [C0426732]",2.0,True,C1704272|C0426732,2
+125,2,"Treat (tamsulosin [C0257343], overactive bladder (OAB) [C0878773])",,Treat,"tamsulosin [C0257343], overactive bladder (OAB) [C0878773]",2.0,True,C0257343|C0878773,2
+125,3,"Treat (tamsulosin [C0257343], lower urinary tract symptoms (LUTS) [C0574785])",,Treat,"tamsulosin [C0257343], lower urinary tract symptoms (LUTS) [C0574785]",2.0,True,C0257343|C0574785,2
+125,4,"Associated (lower urinary tract symptoms (LUTS) [C0574785], prostate inflammation [C0033581])",,Associated,"lower urinary tract symptoms (LUTS) [C0574785], prostate inflammation [C0033581]",2.0,True,C0574785|C0033581,2
+125,5,"Associated (lower urinary tract symptoms (LUTS) [C0574785], BPH [C1704272])",,Associated,"lower urinary tract symptoms (LUTS) [C0574785], BPH [C1704272]",2.0,True,C0574785|C1704272,2
+125,6,"Treat (tamsulosin [C0257343], ureteral stones [C0041952])",,Treat,"tamsulosin [C0257343], ureteral stones [C0041952]",2.0,True,C0257343|C0041952,2
+125,7,"Is (ureteral stones [C0041952], a stone in the urinary tract [C0042018])",,Is,"ureteral stones [C0041952], a stone in the urinary tract [C0042018]",2.0,True,C0041952|C0042018,2
+125,8,"Treat (tamsulosin [C0257343], pain caused by ureteral stones [C0235633])",,Treat,"tamsulosin [C0257343], pain caused by ureteral stones [C0235633]",2.0,True,C0257343|C0235633,2
+125,9,"Is (pain caused by ureteral stones [C0235633], renal colic [C0152169])",,Is,"pain caused by ureteral stones [C0235633], renal colic [C0152169]",2.0,True,C0235633|C0152169,2
+125,10,"Treat (tamsulosin [C0257343], lower urinary tract symptoms [C0574785] in children [C0008059])",,Treat,"tamsulosin [C0257343], lower urinary tract symptoms [C0574785] in children [C0008059]",2.0,True,C0257343|C0574785|C0008059,3
+125,11,"Treat (tamsulosin [C0257343], lower urinary tract symptoms [C0574785] in women [C0043210])",,Treat,"tamsulosin [C0257343], lower urinary tract symptoms [C0574785] in women [C0043210]",2.0,True,C0257343|C0574785|C0043210,3
+126,0,"Is (nondisjunction [C1834741], errors in splitting genetic materials [C0028303])",,Is,"nondisjunction [C1834741], errors in splitting genetic materials [C0028303]",2.0,True,C1834741|C0028303,2
+126,1,"Is (meiosis [C0025186], cell division that takes one of two copies of each chromosome)",,Is,"meiosis [C0025186], cell division that takes one of two copies of each chromosome",2.0,True,C0025186,1
+126,2,"Is (mitosis [C0026255], cell division for growth and maintenance such that the number of chromosomes remains the same in the new cells)",,Is,"mitosis [C0026255], cell division for growth and maintenance such that the number of chromosomes remains the same in the new cells",2.0,True,C0026255,1
+126,3,"Associated (nondisjunction [C0028303], mitosis [C0026255])",,Associated,"nondisjunction [C0028303], mitosis [C0026255]",2.0,True,C0028303|C0026255,2
+126,4,"Associated (nondisjunction [C0028303], meiosis [C0025186])",,Associated,"nondisjunction [C0028303], meiosis [C0025186]",2.0,True,C0028303|C0025186,2
+126,5,"Cause (chromosomes failing to split properly [C0028303], aneuploidy [C0002938])",,Cause,"chromosomes failing to split properly [C0028303], aneuploidy [C0002938]",2.0,True,C0028303|C0002938,2
+126,6,"Is (aneuploidy [C0002938], having too many or too few chromosomes instead of the normal two of each)",,Is,"aneuploidy [C0002938], having too many or too few chromosomes instead of the normal two of each",2.0,True,C0002938,1
+126,7,"[may] Cause (genetics [C4510149], nondisjunction [C1834741])",may,Cause,"genetics [C4510149], nondisjunction [C1834741]",2.0,True,C4510149|C1834741,2
+126,8,"[may] Cause (environment [C1516998], nondisjunction [C1834741])",may,Cause,"environment [C1516998], nondisjunction [C1834741]",2.0,True,C1516998|C1834741,2
+126,9,"[may] Cause (meiosis [C0025186], faulty chromosome in women's eggs [C2903189])",may,Cause,"meiosis [C0025186], faulty chromosome in women's eggs [C2903189]",2.0,True,C0025186|C2903189,2
+126,10,"[may] Cause (meiosis [C0025186], faulty chromosome in male sperm [C4020789])",may,Cause,"meiosis [C0025186], faulty chromosome in male sperm [C4020789]",2.0,True,C0025186|C4020789,2
+126,11,"Occur (nondisjunction [C1834741], in older women [C4699285]) GREATER THAN Occur (nondisjunction [C1834741], in others)",,Occur,"nondisjunction [C1834741], in older women [C4699285]) GREATER THAN Occur (nondisjunction [C1834741], in others",3.0,True,C1834741|C4699285,2
+126,12,"Occur (nondisjunction [C1834741], in men who inherited faulty chromosomes [C0478108])",,Occur,"nondisjunction [C1834741], in men who inherited faulty chromosomes [C0478108]",2.0,True,C1834741|C0478108,2
+126,13,"Associated (hormone imbalance [C3263685], nondisjunction [C1834741])",,Associated,"hormone imbalance [C3263685], nondisjunction [C1834741]",2.0,True,C3263685|C1834741,2
+126,14,"Associated (faulty chromosomes in sperm [C0478108], drug treatments [C0013216])",,Associated,"faulty chromosomes in sperm [C0478108], drug treatments [C0013216]",2.0,True,C0478108|C0013216,2
+126,15,"Associated (faulty chromosomes in sperm [C0478108], occupational agents [C0337074])",,Associated,"faulty chromosomes in sperm [C0478108], occupational agents [C0337074]",2.0,True,C0478108|C0337074,2
+126,16,"Associated (faulty chromosomes in sperm [C0478108], lifestyle [C0023676])",,Associated,"faulty chromosomes in sperm [C0478108], lifestyle [C0023676]",2.0,True,C0478108|C0023676,2
+127,0,"Treat (gene therapy [C0017296], disease [C0012634])",,Treat,"gene therapy [C0017296], disease [C0012634]",2.0,True,C0017296|C0012634,2
+127,1,"Cure (gene therapy [C0017296], disease [C0012634])",,Cure,"gene therapy [C0017296], disease [C0012634]",2.0,True,C0017296|C0012634,2
+127,2,"Suppress (gene therapy [C0017296], genes [C0017337])",,Suppress,"gene therapy [C0017296], genes [C0017337]",2.0,True,C0017296|C0017337,2
+127,3,"Replace (gene therapy [C0017296], genes [C0017337])",,Replace,"gene therapy [C0017296], genes [C0017337]",2.0,True,C0017296|C0017337,2
+127,4,"Edit (gene therapy [C0017296], genes [C0017337])",,Edit,"gene therapy [C0017296], genes [C0017337]",2.0,True,C0017296|C0017337,2
+127,5,"[may] Have (gene suppression [C0017372], adverse effects [C0879626])",may,Have,"gene suppression [C0017372], adverse effects [C0879626]",2.0,True,C0017372|C0879626,2
+127,6,"[may] Have (gene replacement [1304648], adverse effects [C0879626])",may,Have,"gene replacement [1304648], adverse effects [C0879626]",2.0,True,C0879626,1
+127,7,"[may] Have (gene editing [C4277689], adverse effects [C0879626])",may,Have,"gene editing [C4277689], adverse effects [C0879626]",2.0,True,C4277689|C0879626,2
+127,8,"Depends (gene replacement [1304648], viruses and similar cells to deliver the gene [C1520007])",,Depends,"gene replacement [1304648], viruses and similar cells to deliver the gene [C1520007]",2.0,True,C1520007,1
+127,9,"Is (toxic damage to the liver [C0348754], adverse effect [C0879626])",,Is,"toxic damage to the liver [C0348754], adverse effect [C0879626]",2.0,True,C0348754|C0879626,2
+127,10,"Is (hepatotoxicity [C0235378], adverse effect [C0879626])",,Is,"hepatotoxicity [C0235378], adverse effect [C0879626]",2.0,True,C0235378|C0879626,2
+127,11,"Is (toxic damage to the heart [C0876994], adverse effect [C0879626])",,Is,"toxic damage to the heart [C0876994], adverse effect [C0879626]",2.0,True,C0876994|C0879626,2
+127,12,"Is (cardiotoxicity [C0876994], adverse effect)",,Is,"cardiotoxicity [C0876994], adverse effect",2.0,True,C0876994,1
+127,13,"Is (toxic damage to the nerves [C0393865], adverse effect [C0879626])",,Is,"toxic damage to the nerves [C0393865], adverse effect [C0879626]",2.0,True,C0393865|C0879626,2
+127,14,"Is (neurotoxicity [C0235032], adverse effect [C0879626])",,Is,"neurotoxicity [C0235032], adverse effect [C0879626]",2.0,True,C0235032|C0879626,2
+127,15,"Is (inflammation caused by immune response [C0021384], adverse effect [C0879626])",,Is,"inflammation caused by immune response [C0021384], adverse effect [C0879626]",2.0,True,C0021384|C0879626,2
+127,16,"Is (death [C1306577], adverse effect [C0879626])",,Is,"death [C1306577], adverse effect [C0879626]",2.0,True,C1306577|C0879626,2
+127,17,"[may] Cause (immune response suppression [C0021079], secondary infections [C0442886])",may,Cause,"immune response suppression [C0021079], secondary infections [C0442886]",2.0,True,C0021079|C0442886,2
+127,18,"[may] Cause (gene editing [C4277689], unintended changes [C1519789])",may,Cause,"gene editing [C4277689], unintended changes [C1519789]",2.0,True,C4277689|C1519789,2
+128,0,"Is (Cannabidiol (CBD) [C0006863], a non-psychoactive chemical [NOT  C0682880])",,Is,"Cannabidiol (CBD) [C0006863], a non-psychoactive chemical [NOT  C0682880]",2.0,True,C0006863|C0682880,2
+128,1,"Contains (Cannabidiol (CBD) [C0006863], Cannabis (marijuana) [C0936079])",,Contains,"Cannabidiol (CBD) [C0006863], Cannabis (marijuana) [C0936079]",2.0,True,C0006863|C0936079,2
+128,2,"[may] Cause (CBD [C0006863], liver enzymes to be higher than normal [C0857093])",may,Cause,"CBD [C0006863], liver enzymes to be higher than normal [C0857093]",2.0,True,C0006863|C0857093,2
+128,3,"[may] Cause (higher doses of CBD [C0006863], liver damage [C0151763])",may,Cause,"higher doses of CBD [C0006863], liver damage [C0151763]",2.0,True,C0006863|C0151763,2
+128,4,"[not] Associated (CBD [C0006863], higher liver enzymes [C0857093] in healthy adults [C0686750])",not,Associated,"CBD [C0006863], higher liver enzymes [C0857093] in healthy adults [C0686750]",2.0,True,C0006863|C0857093|C0686750,3
+128,5,"[may] Prevent (CBD [C0006863], some liver diseases [C0023895])",may,Prevent,"CBD [C0006863], some liver diseases [C0023895]",2.0,True,C0006863|C0023895,2
+129,0,"[may] Cause (suddenly stopping metoprolol [C0025859], withdrawal symptoms [C0086189])",may,Cause,"suddenly stopping metoprolol [C0025859], withdrawal symptoms [C0086189]",2.0,True,C0025859|C0086189,2
+129,1,"[may] Cause (suddenly stopping metoprolol [C0025859], return of high blood pressure [C0520540])",may,Cause,"suddenly stopping metoprolol [C0025859], return of high blood pressure [C0520540]",2.0,True,C0025859|C0520540,2
+129,2,"[may] Cause (suddenly stopping metoprolol [C0025859], heart problems [C0795691])",may,Cause,"suddenly stopping metoprolol [C0025859], heart problems [C0795691]",2.0,True,C0025859|C0795691,2
+129,3,"Is (fast heartbeat [C0039231], metoprolol [C0025859] withdrawal symptom [C0086189])",,Is,"fast heartbeat [C0039231], metoprolol [C0025859] withdrawal symptom [C0086189]",2.0,True,C0039231|C0025859|C0086189,3
+129,4,"Is (headache [C0018681], metoprolol [C0025859] withdrawal symptom [C0086189])",,Is,"headache [C0018681], metoprolol [C0025859] withdrawal symptom [C0086189]",2.0,True,C0018681|C0025859|C0086189,3
+129,5,"Is (agitation [C0085631], metoprolol [C0025859] withdrawal symptom [C0086189])",,Is,"agitation [C0085631], metoprolol [C0025859] withdrawal symptom [C0086189]",2.0,True,C0085631|C0025859|C0086189,3
+129,6,"Is (nausea [C0027497], metoprolol [C0025859] withdrawal symptom [C0086189])",,Is,"nausea [C0027497], metoprolol [C0025859] withdrawal symptom [C0086189]",2.0,True,C0027497|C0025859|C0086189,3
+129,7,"Is (heart palpitations [C0030252], metoprolol [C0025859] withdrawal symptom [C0086189])",,Is,"heart palpitations [C0030252], metoprolol [C0025859] withdrawal symptom [C0086189]",2.0,True,C0030252|C0025859|C0086189,3
+129,8,"Is (shaking [C0040822], metoprolol [C0025859] withdrawal symptom [C0086189])",,Is,"shaking [C0040822], metoprolol [C0025859] withdrawal symptom [C0086189]",2.0,True,C0040822|C0025859|C0086189,3
+129,9,"[may] Cause (suddenly stopping metoprolol [C0025859] in patients with severe heart problems [C0741926],  [C1306577] death)",may,Cause,"suddenly stopping metoprolol [C0025859] in patients with severe heart problems [C0741926],  [C1306577] death",2.0,True,C0025859|C0741926|C1306577,3
+129,10,"[may] Prevent (gradual withdrawal [C0441640] on a prolonged small dose of metoprolol [C0025859], withdrawal effects [C0086189])",may,Prevent,"gradual withdrawal [C0441640] on a prolonged small dose of metoprolol [C0025859], withdrawal effects [C0086189]",2.0,True,C0441640|C0025859|C0086189,3
+130,0,"Associated (PCOS [C0032460], oxidative stress (OS) [C0242606])",,Associated,"PCOS [C0032460], oxidative stress (OS) [C0242606]",2.0,True,C0032460|C0242606,2
+130,1,"Cause (unkown [C0743626], PCOS [C0032460])",,Cause,"unkown [C0743626], PCOS [C0032460]",2.0,True,C0743626|C0032460,2
+130,2,"[may] Cause (oxidative stress [C0242606], PCOS [C0032460] symptoms)",may,Cause,"oxidative stress [C0242606], PCOS [C0032460] symptoms",2.0,True,C0242606|C0032460,2
+130,3,"[may] Increase (oxidative stress [C0242606], risk of cancers [C4040945] caused by PCOS [C0032460])",may,Increase,"oxidative stress [C0242606], risk of cancers [C4040945] caused by PCOS [C0032460]",2.0,True,C0242606|C4040945|C0032460,3
+130,4,"Cause (oxidative stress [C0242606], hormonal imbalance [C3263685])",,Cause,"oxidative stress [C0242606], hormonal imbalance [C3263685]",2.0,True,C0242606|C3263685,2
+130,5,"Cause (hormonal imbalance [C3263685], fertility problems [C0278048])",,Cause,"hormonal imbalance [C3263685], fertility problems [C0278048]",2.0,True,C3263685|C0278048,2
+130,6,"Associated (oxidative stress [C0242606], heart problems [C0795691])",,Associated,"oxidative stress [C0242606], heart problems [C0795691]",2.0,True,C0242606|C0795691,2
+130,7,"Associated (oxidative stress [C0242606], blood problems [C0018939])",,Associated,"oxidative stress [C0242606], blood problems [C0018939]",2.0,True,C0242606|C0018939,2
+131,0,"Improve (formoterol [C0060657], breathing [C0035203] in patients with asthma [C3816164] and other lung problems [C0740941])",,Improve,"formoterol [C0060657], breathing [C0035203] in patients with asthma [C3816164] and other lung problems [C0740941]",2.0,True,C0060657|C0035203|C3816164|C0740941,4
+131,1,"Safe (formoterol [C0060657], for most patients)",,Safe,"formoterol [C0060657], for most patients",2.0,True,C0060657,1
+131,2,"[frequently] Is (tremors [C0040822], adverse effect [C0879626])",frequently,Is,"tremors [C0040822], adverse effect [C0879626]",2.0,True,C0040822|C0879626,2
+131,3,"[frequently] Is (palpitations [C0030252], adverse effect [C0879626])",frequently,Is,"palpitations [C0030252], adverse effect [C0879626]",2.0,True,C0030252|C0879626,2
+131,4,"Frequency increased (Tremors [C0040822], formoterol is taken orally [C2827690])",,Frequency increased,"Tremors [C0040822], formoterol is taken orally [C2827690]",2.0,True,C0040822|C2827690,2
+131,5,"Frequency increased (palpitations [C0030252], formoterol is taken orally [C2827690])",,Frequency increased,"palpitations [C0030252], formoterol is taken orally [C2827690]",2.0,True,C0030252|C2827690,2
+131,6,"[may] Cause (formoterol [C0060657], supraventricular tachycardia (SVT) [C0039240])",may,Cause,"formoterol [C0060657], supraventricular tachycardia (SVT) [C0039240]",2.0,True,C0060657|C0039240,2
+131,7,"[frequently] Adverse effect (worsening of asthma [C0349790], in children [C0008059] with asthma [C3816164])",frequently,Adverse effect,"worsening of asthma [C0349790], in children [C0008059] with asthma [C3816164]",2.0,True,C0349790|C0008059|C3816164,3
+131,8,"[frequently] Adverse effect (lung infection [C0876973], in children [C0008059] with asthma [C3816164])",frequently,Adverse effect,"lung infection [C0876973], in children [C0008059] with asthma [C3816164]",2.0,True,C0876973|C0008059|C3816164,3
+131,9,"[frequently] Adverse effect (cough [C0010200], in children [C0008059] with asthma [C3816164])",frequently,Adverse effect,"cough [C0010200], in children [C0008059] with asthma [C3816164]",2.0,True,C0010200|C0008059|C3816164,3
+131,10,"[frequently] Adverse effect (fever [C0015967], in children [C0008059] with asthma [C3816164])",frequently,Adverse effect,"fever [C0015967], in children [C0008059] with asthma [C3816164]",2.0,True,C0015967|C0008059|C3816164,3
+131,11,"[frequently] Adverse effect (headache [C0018681], in children [C0008059] with asthma [C3816164])",frequently,Adverse effect,"headache [C0018681], in children [C0008059] with asthma [C3816164]",2.0,True,C0018681|C0008059|C3816164,3
+131,12,"Adverse effect (tremors [C0040822], in cancer patients [C1516213])",,Adverse effect,"tremors [C0040822], in cancer patients [C1516213]",2.0,True,C0040822|C1516213,2
+131,13,"Adverse effect (swelling [C0038999], in cancer patients [C1516213])",,Adverse effect,"swelling [C0038999], in cancer patients [C1516213]",2.0,True,C0038999|C1516213,2
+131,14,"Adverse effect (increased heart rate [C0039231], in cancer patients [C1516213])",,Adverse effect,"increased heart rate [C0039231], in cancer patients [C1516213]",2.0,True,C0039231|C1516213,2
+131,15,"Adverse effect (indigestion [C0013395], in cancer patients [C1516213])",,Adverse effect,"indigestion [C0013395], in cancer patients [C1516213]",2.0,True,C0013395|C1516213,2
+132,0,"Associated (many conditions, low vitamin D [C4285871])",,Associated,"many conditions, low vitamin D [C4285871]",2.0,True,C4285871,1
+132,1,"Associated (many conditions, vitamin D deficiency [C0042870])",,Associated,"many conditions, vitamin D deficiency [C0042870]",2.0,True,C0042870,1
+132,2,"Cause (vitamin D deficiency [C0042870], some problems)",,Cause,"vitamin D deficiency [C0042870], some problems",2.0,True,C0042870,1
+132,3,"[may] Cause (vitamin D deficiency [C0042870], bone softening [C0029442])",may,Cause,"vitamin D deficiency [C0042870], bone softening [C0029442]",2.0,True,C0042870|C0029442,2
+132,4,"[may] Cause (vitamin D deficiency [C0042870], rickets in children [C3273089])",may,Cause,"vitamin D deficiency [C0042870], rickets in children [C3273089]",2.0,True,C0042870|C3273089,2
+132,5,"[may] Cause (vitamin D deficiency [C0042870], bone softening [C0029442] in adults)",may,Cause,"vitamin D deficiency [C0042870], bone softening [C0029442] in adults",2.0,True,C0042870|C0029442,2
+132,6,"[may] Cause (vitamin D deficiency [C0042870], brittleness [C0238788] and fractures [C0016658] in adults)",may,Cause,"vitamin D deficiency [C0042870], brittleness [C0238788] and fractures [C0016658] in adults",2.0,True,C0042870|C0238788|C0016658,3
+132,7,"increased risk (vitamin D deficiency [C0042870], common cancers [C0006826])",,increased risk,"vitamin D deficiency [C0042870], common cancers [C0006826]",2.0,True,C0042870|C0006826,2
+132,8,"increased risk (vitamin D deficiency [C0042870], autoimmune diseases [C0004364])",,increased risk,"vitamin D deficiency [C0042870], autoimmune diseases [C0004364]",2.0,True,C0042870|C0004364,2
+132,9,"increased risk (vitamin D deficiency [C0042870], hypertension (high blood pressure) [C0020538])",,increased risk,"vitamin D deficiency [C0042870], hypertension (high blood pressure) [C0020538]",2.0,True,C0042870|C0020538,2
+132,10,"increased risk (vitamin D deficiency [C0042870], infections [C0009450])",,increased risk,"vitamin D deficiency [C0042870], infections [C0009450]",2.0,True,C0042870|C0009450,2
+132,11,"increased risk (vitamin D deficiency [C0042870], depression [C0011570])",,increased risk,"vitamin D deficiency [C0042870], depression [C0011570]",2.0,True,C0042870|C0011570,2
+132,12,"increased risk (vitamin D deficiency [C0042870], mental problems [C0848067])",,increased risk,"vitamin D deficiency [C0042870], mental problems [C0848067]",2.0,True,C0042870|C0848067,2
+132,13,"increased risk (vitamin D deficiency [C0042870], type 2 diabetes [C0011860])",,increased risk,"vitamin D deficiency [C0042870], type 2 diabetes [C0011860]",2.0,True,C0042870|C0011860,2
+132,14,"increased risk (vitamin D deficiency [C0042870], heart disease [C0018799])",,increased risk,"vitamin D deficiency [C0042870], heart disease [C0018799]",2.0,True,C0042870|C0018799,2
+132,15,"increased risk (vitamin D deficiency [C0042870], metabolic syndrome [C0524620])",,increased risk,"vitamin D deficiency [C0042870], metabolic syndrome [C0524620]",2.0,True,C0042870|C0524620,2
+132,16,"increased risk (vitamin D deficiency [C0042870], nervous system problems [C0221571])",,increased risk,"vitamin D deficiency [C0042870], nervous system problems [C0221571]",2.0,True,C0042870|C0221571,2
+133,0,"[may] Treat (Remove [C0195488], ovarian cyst [C0029927])",may,Treat,"Remove [C0195488], ovarian cyst [C0029927]",2.0,True,C0195488|C0029927,2
+133,1,"[may] Treat (Drain [C0554361], ovarian cyst [C0029927])",may,Treat,"Drain [C0554361], ovarian cyst [C0029927]",2.0,True,C0554361|C0029927,2
+133,2,"[may] Treat (Cauterize [C0007471], ovarian cyst [C0029927])",may,Treat,"Cauterize [C0007471], ovarian cyst [C0029927]",2.0,True,C0007471|C0029927,2
+133,3,"[try] Treat (small cut (laparoscopy) [C0031150], ovarian cyst [C0029927])",try,Treat,"small cut (laparoscopy) [C0031150], ovarian cyst [C0029927]",2.0,True,C0031150|C0029927,2
+133,4,"[may] Treat (opening the abdomen (laparotomy) [C0023038], ovarian cyst [C0029927])",may,Treat,"opening the abdomen (laparotomy) [C0023038], ovarian cyst [C0029927]",2.0,True,C0023038|C0029927,2
+133,5,"IF Treat (laparoscopy [C0031150], ovarian cyst [C0029927]) THEN [may] Form (small number of patients, ovarian cyst [C0029927] again after laparoscopy)",,IF Treat,"laparoscopy [C0031150], ovarian cyst [C0029927]) THEN [may] Form (small number of patients, ovarian cyst [C0029927] again after laparoscopy",3.0,True,C0031150|C0029927,2
+133,6,"IF Occur (contents of ovarian cyst [C4518393] spills [C1511235], into abdomen [C0230168]) THEN [may] Form (patient, ovarian cyst [C0029927])",,IF Occur,"contents of ovarian cyst [C4518393] spills [C1511235], into abdomen [C0230168]) THEN [may] Form (patient, ovarian cyst [C0029927]",3.0,True,C4518393|C1511235|C0230168|C0029927,4
+133,7,"[may] Cause (spillage of the cyst content [C1511235] into abdomen [C0230168], inflammation in the abdomen (peritonitis) [C0031154])",may,Cause,"spillage of the cyst content [C1511235] into abdomen [C0230168], inflammation in the abdomen (peritonitis) [C0031154]",2.0,True,C1511235|C0230168|C0031154,3
+133,8,"Is (accidental cuts [C0418667] to bowels [C0021853], major surgery effect [C0274311])",,Is,"accidental cuts [C0418667] to bowels [C0021853], major surgery effect [C0274311]",2.0,True,C0418667|C0021853|C0274311,3
+133,9,"Is (accidental cuts [C0418667] to ureter [C0041951], major surgery effect [C0274311])",,Is,"accidental cuts [C0418667] to ureter [C0041951], major surgery effect [C0274311]",2.0,True,C0418667|C0041951|C0274311,3
+133,10,"Is (ureter [C0041951], the tube that carries urine from the kidney to the bladder)",,Is,"ureter [C0041951], the tube that carries urine from the kidney to the bladder",2.0,True,C0041951,1
+133,11,"[may] Damage (surgery [C0543467], small blood vessels [C0225988])",may,Damage,"surgery [C0543467], small blood vessels [C0225988]",2.0,True,C0543467|C0225988,2
+133,12,"[may] Cause (surgery [C0543467], minor blood loss [C3163616])",may,Cause,"surgery [C0543467], minor blood loss [C3163616]",2.0,True,C0543467|C3163616,2
+133,13,"[may] Develop (cut [C0332803], inflammation [C0021368])",may,Develop,"cut [C0332803], inflammation [C0021368]",2.0,True,C0332803|C0021368,2
+133,14,"[may] Occur (part of the organ [C1268117], come through the cut (incisional hernia) [C0267716])",may,Occur,"part of the organ [C1268117], come through the cut (incisional hernia) [C0267716]",2.0,True,C1268117|C0267716,2
+133,15,"Is (infertility [C0021361], major long-term risk of the surgery [C0274311])",,Is,"infertility [C0021361], major long-term risk of the surgery [C0274311]",2.0,True,C0021361|C0274311,2
+133,16,"Occur (infertility [C0021361], among women who had cyst surgery [C0747096]) GREATER THAN Occur (infertility [C0021361], among women who did NOT have cyst surgery)",,Occur,"infertility [C0021361], among women who had cyst surgery [C0747096]) GREATER THAN Occur (infertility [C0021361], among women who did NOT have cyst surgery",3.0,True,C0021361|C0747096,2
+133,17,"Associated (surgery for the cyst [C0747096], impact of surgery on fertility [C0015895])",,Associated,"surgery for the cyst [C0747096], impact of surgery on fertility [C0015895]",2.0,True,C0747096|C0015895,2
+133,18,"Reduce (being careful during surgery [C0747096], impact of surgery on fertility [C0015895])",,Reduce,"being careful during surgery [C0747096], impact of surgery on fertility [C0015895]",2.0,True,C0747096|C0015895,2
+133,19,"Reduce (using cauterization sparingly, impact of surgery on fertility [C0015895])",,Reduce,"using cauterization sparingly, impact of surgery on fertility [C0015895]",2.0,True,C0015895,1
+134,0,"Symptom (long-standing abdominal pain [C0232491], irritable bowel syndrome (IBS) [C0022104])",,Symptom,"long-standing abdominal pain [C0232491], irritable bowel syndrome (IBS) [C0022104]",2.0,True,C0232491|C0022104,2
+134,1,"Symptom (changes in bowel habits [C0278008], irritable bowel syndrome (IBS) [C0022104])",,Symptom,"changes in bowel habits [C0278008], irritable bowel syndrome (IBS) [C0022104]",2.0,True,C0278008|C0022104,2
+134,2,"Cause (unknown, symptoms of irritable bowel syndrome (IBS) [C0022104])",,Cause,"unknown, symptoms of irritable bowel syndrome (IBS) [C0022104]",2.0,True,C0022104,1
+134,3,"Include (changes in bowel habits [C0278008], diarrhea (IBS-D) [C0348898])",,Include,"changes in bowel habits [C0278008], diarrhea (IBS-D) [C0348898]",2.0,True,C0278008|C0348898,2
+134,4,"Include (changes in bowel habits [C0278008], constipation (IBS-C) [C4268639])",,Include,"changes in bowel habits [C0278008], constipation (IBS-C) [C4268639]",2.0,True,C0278008|C4268639,2
+134,5,"Include (changes in bowel habits [C0278008], mixed stool pattern (IBS-M) [C4268640])",,Include,"changes in bowel habits [C0278008], mixed stool pattern (IBS-M) [C4268640]",2.0,True,C0278008|C4268640,2
+134,6,"Include (mixed stool pattern (IBS-M) [C4268640], constipation [C0009806])",,Include,"mixed stool pattern (IBS-M) [C4268640], constipation [C0009806]",2.0,True,C4268640|C0009806,2
+134,7,"Include (mixed stool pattern (IBS-M) [C4268640], diarrhea [C0011991])",,Include,"mixed stool pattern (IBS-M) [C4268640], diarrhea [C0011991]",2.0,True,C4268640|C0011991,2
+134,8,"Include (changes in bowel habits [C0278008], unclassified IBS [C0022104])",,Include,"changes in bowel habits [C0278008], unclassified IBS [C0022104]",2.0,True,C0278008|C0022104,2
+134,9,"Treat (drugs [C0013227], symptoms of IBS [C0022104])",,Treat,"drugs [C0013227], symptoms of IBS [C0022104]",2.0,True,C0013227|C0022104,2
+134,10,"Treat (brain-gut behavioral therapies (BGBTs), symptoms of IBS [C0022104])",,Treat,"brain-gut behavioral therapies (BGBTs), symptoms of IBS [C0022104]",2.0,True,C0022104,1
+134,11,"(primary) Treat (lifestyle [C0870811] and dietary changes [C3671772], all IBS [C0022104] patients)",,,,,False,C0870811|C3671772|C0022104,3
+134,12,"Include (probiotics [C0525033], lifestyle [C0870811] and dietary changes [C3671772])",,Include,"probiotics [C0525033], lifestyle [C0870811] and dietary changes [C3671772]",2.0,True,C0525033|C0870811|C3671772,3
+134,13,"Include (low fermentable oligosaccharides, disaccharides, monosaccharides, polyols (FODMAP) diet [C5768808], lifestyle [C0870811] and dietary changes [C3671772])",,Include,"low fermentable oligosaccharides, disaccharides, monosaccharides, polyols (FODMAP) diet [C5768808], lifestyle [C0870811] and dietary changes [C3671772]",5.0,True,C5768808|C0870811|C3671772,3
+134,14,"Include (gluten-free diet [C0344351], lifestyle [C0870811] and dietary changes [C3671772])",,Include,"gluten-free diet [C0344351], lifestyle [C0870811] and dietary changes [C3671772]",2.0,True,C0344351|C0870811|C3671772,3
+134,15,"Treat (laxatives, IBS-C [C4268639])",,Treat,"laxatives, IBS-C [C4268639]",2.0,True,C4268639,1
+134,16,"Is (laxatives [C0282090], linaclotide [C2000261])",,Is,"laxatives [C0282090], linaclotide [C2000261]",2.0,True,C0282090|C2000261,2
+134,17,"Is (laxatives [C0282090], lubiprostone [C1684405])",,Is,"laxatives [C0282090], lubiprostone [C1684405]",2.0,True,C0282090|C1684405,2
+134,18,"Is (laxatives [C0282090], plecanatide [C3711911])",,Is,"laxatives [C0282090], plecanatide [C3711911]",2.0,True,C0282090|C3711911,2
+134,19,"IF Ineffective (other laxatives [C0282090], IBS-C [C4268639]) THEN Recommend (linaclotide [C2000261], IBS-C [C4268639])",,IF Ineffective,"other laxatives [C0282090], IBS-C [C4268639]) THEN Recommend (linaclotide [C2000261], IBS-C [C4268639]",3.0,True,C0282090|C4268639|C2000261,3
+134,20,"IF Ineffective (other laxatives [C0282090], IBS-C [C4268639]) THEN Recommend (lubiprostone lubiprostone, IBS-C [C4268639])",,IF Ineffective,"other laxatives [C0282090], IBS-C [C4268639]) THEN Recommend (lubiprostone lubiprostone, IBS-C [C4268639]",3.0,True,C0282090|C4268639,2
+134,21,"[may] Recommend (rifaximin [C0073374], IBS-D [C0348898])",may,Recommend,"rifaximin [C0073374], IBS-D [C0348898]",2.0,True,C0073374|C0348898,2
+134,22,"[may] Recommend (eluxadoline [C3712232], IBS-D [C0348898])",may,Recommend,"eluxadoline [C3712232], IBS-D [C0348898]",2.0,True,C3712232|C0348898,2
+134,23,"[may] Recommend (alosetron [C0291772], IBS-D [C0348898])",may,Recommend,"alosetron [C0291772], IBS-D [C0348898]",2.0,True,C0291772|C0348898,2
+134,24,"[may] Recommend (loperamide [C0023992], IBS-D [C0348898])",may,Recommend,"loperamide [C0023992], IBS-D [C0348898]",2.0,True,C0023992|C0348898,2
+134,25,"[may] Recommend (alosetron [C0291772] and ramosetron [C0526950], IBS-D [C0348898])",may,Recommend,"alosetron [C0291772] and ramosetron [C0526950], IBS-D [C0348898]",2.0,True,C0291772|C0526950|C0348898,3
+134,26,"[may] Treat (faecal microbial transplant [C2242628], IBS-D [C0348898] and IBS-M [C4268640])",may,Treat,"faecal microbial transplant [C2242628], IBS-D [C0348898] and IBS-M [C4268640]",2.0,True,C2242628|C0348898|C4268640,3
+134,27,"[may] Treat (psychotherapy [C0033968], IBS-D [C0348898] and IBS-M [C4268640])",may,Treat,"psychotherapy [C0033968], IBS-D [C0348898] and IBS-M [C4268640]",2.0,True,C0033968|C0348898|C4268640,3
+134,28,"[may] Treat (hypnotherapy [C0020587], IBS-D [C0348898] and IBS-M [C4268640])",may,Treat,"hypnotherapy [C0020587], IBS-D [C0348898] and IBS-M [C4268640]",2.0,True,C0020587|C0348898|C4268640,3
+134,29,"[may] Treat (acupuncture [C0394664], IBS-D [C0348898] and IBS-M [C4268640])",may,Treat,"acupuncture [C0394664], IBS-D [C0348898] and IBS-M [C4268640]",2.0,True,C0394664|C0348898|C4268640,3
+134,30,"[may] Treat (herbs [C0025125], IBS-D [C0348898] and IBS-M [C4268640])",may,Treat,"herbs [C0025125], IBS-D [C0348898] and IBS-M [C4268640]",2.0,True,C0025125|C0348898|C4268640,3
+135,0,"Symptom (under-active thyroid gland (hypothyroidism) [C0020676], fatigue)",,Symptom,"under-active thyroid gland (hypothyroidism) [C0020676], fatigue",2.0,True,C0020676,1
+135,1,"Symptom (under-active thyroid gland (hypothyroidism) [C0020676], weight gain)",,Symptom,"under-active thyroid gland (hypothyroidism) [C0020676], weight gain",2.0,True,C0020676,1
+135,2,"Symptom (under-active thyroid gland (hypothyroidism) [C0020676], constipation)",,Symptom,"under-active thyroid gland (hypothyroidism) [C0020676], constipation",2.0,True,C0020676,1
+135,3,"Symptom (under-active thyroid gland (hypothyroidism) [C0020676], dry skin)",,Symptom,"under-active thyroid gland (hypothyroidism) [C0020676], dry skin",2.0,True,C0020676,1
+135,4,"Symptom (under-active thyroid gland (hypothyroidism) [C0020676], cold intolerance)",,Symptom,"under-active thyroid gland (hypothyroidism) [C0020676], cold intolerance",2.0,True,C0020676,1
+135,5,"Cause (untreated under-active thyroid gland (hypothyroidism) [C2749407], severe complications [C3495031])",,Cause,"untreated under-active thyroid gland (hypothyroidism) [C2749407], severe complications [C3495031]",2.0,True,C2749407|C3495031,2
+135,6,"Include (severe complications [C3495031], heart failure [C0018801])",,Include,"severe complications [C3495031], heart failure [C0018801]",2.0,True,C3495031|C0018801,2
+135,7,"Include (severe complications [C3495031], infertility [C0021359])",,Include,"severe complications [C3495031], infertility [C0021359]",2.0,True,C3495031|C0021359,2
+135,8,"Include (severe complications [C3495031], myxedema coma [C0238298])",,Include,"severe complications [C3495031], myxedema coma [C0238298]",2.0,True,C3495031|C0238298,2
+135,9,"Symptom (decreased mental status [C0234985], myxedema coma [C0238298])",,Symptom,"decreased mental status [C0234985], myxedema coma [C0238298]",2.0,True,C0234985|C0238298,2
+135,10,"Symptom (hypothermia [C0020672], myxedema coma [C0238298])",,Symptom,"hypothermia [C0020672], myxedema coma [C0238298]",2.0,True,C0020672|C0238298,2
+135,11,"Symptom (slowing of function in multiple organs [C0679384], myxedema coma [C0238298])",,Symptom,"slowing of function in multiple organs [C0679384], myxedema coma [C0238298]",2.0,True,C0679384|C0238298,2
+135,12,"[may] Cause (slowing of function in multiple organs [C0679384], death [C1306577])",may,Cause,"slowing of function in multiple organs [C0679384], death [C1306577]",2.0,True,C0679384|C1306577,2
+135,13,"Cause (untreated hyperthyroidism [C0020550], thyroid storm [C0040127])",,Cause,"untreated hyperthyroidism [C0020550], thyroid storm [C0040127]",2.0,True,C0020550|C0040127,2
+136,0,"[may] Cause (inflammation [C0021368], elbow pain [C0239266])",may,Cause,"inflammation [C0021368], elbow pain [C0239266]",2.0,True,C0021368|C0239266,2
+136,1,"[may] Cause (injury [C3263723], elbow pain [C0239266])",may,Cause,"injury [C3263723], elbow pain [C0239266]",2.0,True,C3263723|C0239266,2
+136,2,"Treat (painkillers [C0002771], elbow pain [C0239266])",,Treat,"painkillers [C0002771], elbow pain [C0239266]",2.0,True,C0002771|C0239266,2
+136,3,"Treat (rest [C0035253], elbow pain [C0239266])",,Treat,"rest [C0035253], elbow pain [C0239266]",2.0,True,C0035253|C0239266,2
+136,4,"Treat (non-steroidal anti-inflammatory medications (NSAIDs) [C0003211], elbow pain [C0239266])",,Treat,"non-steroidal anti-inflammatory medications (NSAIDs) [C0003211], elbow pain [C0239266]",2.0,True,C0003211|C0239266,2
+136,5,"Treat (physical therapy [C0949766], elbow pain [C0239266])",,Treat,"physical therapy [C0949766], elbow pain [C0239266]",2.0,True,C0949766|C0239266,2
+136,6,"Treat (steroids [C0038317], elbow pain [C0239266])",,Treat,"steroids [C0038317], elbow pain [C0239266]",2.0,True,C0038317|C0239266,2
+136,7,"IF NOT Treat (standard treatments [C0459914], pain [C0239266]) THEN [may] Suggested (surgery [C0543467], elbow pain [C0239266])",,IF NOT Treat,"standard treatments [C0459914], pain [C0239266]) THEN [may] Suggested (surgery [C0543467], elbow pain [C0239266]",3.0,True,C0459914|C0239266|C0543467,3
+136,8,"Include (alternative treatments [C4716423], acupuncture [C0394664])",,Include,"alternative treatments [C4716423], acupuncture [C0394664]",2.0,True,C4716423|C0394664,2
+136,9,"Include (alternative treatments [C4716423], High-Intensity Laser Therapy [C1955835])",,Include,"alternative treatments [C4716423], High-Intensity Laser Therapy [C1955835]",2.0,True,C4716423|C1955835,2
+136,10,"Include (alternative treatments [C4716423], botulinum toxin [C0700702])",,Include,"alternative treatments [C4716423], botulinum toxin [C0700702]",2.0,True,C4716423|C0700702,2
+136,11,"Include (alternative treatments [C4716423], bone marrow injections [C0005961])",,Include,"alternative treatments [C4716423], bone marrow injections [C0005961]",2.0,True,C4716423|C0005961,2
+137,0,"Similar (low glycemic index diet [C0475638], ketogenic diet [C0259972])",,Similar,"low glycemic index diet [C0475638], ketogenic diet [C0259972]",2.0,True,C0475638|C0259972,2
+137,1,"Effect (low glycemic index diet [C0475638], lowering hemoglobin A1c [C1261236]) EQUAL Effect (metformin [C0025598], lowering hemoglobin A1c [C1261236])",,Effect,"low glycemic index diet [C0475638], lowering hemoglobin A1c [C1261236]) EQUAL Effect (metformin [C0025598], lowering hemoglobin A1c [C1261236]",3.0,True,C0475638|C1261236|C0025598,3
+137,2,"[may] Cause (metabolic syndrome [C0524620], type 2 diabetes [C0011860])",may,Cause,"metabolic syndrome [C0524620], type 2 diabetes [C0011860]",2.0,True,C0524620|C0011860,2
+137,3,"Effect (ketogenic diet [C0259972], improved HbA1c [C1261236])",,Effect,"ketogenic diet [C0259972], improved HbA1c [C1261236]",2.0,True,C0259972|C1261236,2
+137,4,"Effect (ketogenic diet [C0259972] in combination with metformin [C0025598], improved HbA1c [C1261236])",,Effect,"ketogenic diet [C0259972] in combination with metformin [C0025598], improved HbA1c [C1261236]",2.0,True,C0259972|C0025598|C1261236,3
+137,5,"[may] Stop (diabetic adults [C0421260], taking metformin [C0025598])",may,Stop,"diabetic adults [C0421260], taking metformin [C0025598]",2.0,True,C0421260|C0025598,2
+137,6,"Maintain (HbA1c low [C1318607], combining diet [C0012159] and medications [C0013227])",,Maintain,"HbA1c low [C1318607], combining diet [C0012159] and medications [C0013227]",2.0,True,C1318607|C0012159|C0013227,3
+137,7,"Is (long-term effects of ketogenic diet [C0259972], unknown)",,Is,"long-term effects of ketogenic diet [C0259972], unknown",2.0,True,C0259972,1
+137,8,"[should] Is (patient on the ketogenic diet [C0259972], monitored)",should,Is,"patient on the ketogenic diet [C0259972], monitored",2.0,True,C0259972,1
+138,0,"Effect (sudafed [C0700727 (pseudoephedrine [C0033798]) ], congestion [C0700148])  EQUAL Effect (afrin  [C0718291] (oxymetazoline [C0030071]),  congestion [C0700148])",,Effect,"sudafed [C0700727 (pseudoephedrine [C0033798]) ], congestion [C0700148])  EQUAL Effect (afrin  [C0718291] (oxymetazoline [C0030071]),  congestion [C0700148]",3.0,True,C0700727|C0033798|C0700148|C0718291|C0030071,5
+138,1,"[may] Affect (process [C3852980], heart [C0007226])",may,Affect,"process [C3852980], heart [C0007226]",2.0,True,C3852980|C0007226,2
+138,2,"[may] Affect (process [C3852980], breathing [C0035203])",may,Affect,"process [C3852980], breathing [C0035203]",2.0,True,C3852980|C0035203,2
+138,3,"[may] Affect (process [C3852980], other body systems in adults [C4082212])",may,Affect,"process [C3852980], other body systems in adults [C4082212]",2.0,True,C3852980|C4082212,2
+138,4,"[may] Affect (process [C3852980], other body systems in children [C0008059])",may,Affect,"process [C3852980], other body systems in children [C0008059]",2.0,True,C3852980|C0008059,2
+138,5,"[may] Cause (pseudoephedrine [C0033798], stroke [C0038454])",may,Cause,"pseudoephedrine [C0033798], stroke [C0038454]",2.0,True,C0033798|C0038454,2
+138,6,"[may] Combine (local decongestants [C0042398], systemic decongestants [(C0282374])",may,Combine,"local decongestants [C0042398], systemic decongestants [(C0282374]",2.0,True,C0042398|C0282374,2
+138,7,"NOT Affect (local decongestants [C0042398], blood pressure [C0005823] in healthy people [C0686750])",,NOT Affect,"local decongestants [C0042398], blood pressure [C0005823] in healthy people [C0686750]",2.0,True,C0042398|C0005823|C0686750,3
+139,0,"Affects (anorexia [C0003123], all body systems [C0444584])",,Affects,"anorexia [C0003123], all body systems [C0444584]",2.0,True,C0003123|C0444584,2
+139,1,"Affects (anorexia [C0003123], heart [C0007226])",,Affects,"anorexia [C0003123], heart [C0007226]",2.0,True,C0003123|C0007226,2
+139,2,"Affects (anorexia [C0003123], bones [C0037253])",,Affects,"anorexia [C0003123], bones [C0037253]",2.0,True,C0003123|C0037253,2
+139,3,"Affects (anorexia [C0003123], digestive system [C0012240])",,Affects,"anorexia [C0003123], digestive system [C0012240]",2.0,True,C0003123|C0012240,2
+139,4,"Affects (anorexia [C0003123], ability to have children [C0015895])",,Affects,"anorexia [C0003123], ability to have children [C0015895]",2.0,True,C0003123|C0015895,2
+139,5,"[may] Cause (anorexia [C0003123], death [C1306577])",may,Cause,"anorexia [C0003123], death [C1306577]",2.0,True,C0003123|C1306577,2
+139,6,"[frequently] Associated (anorexia [C0003123], anxiety [C0003467])",frequently,Associated,"anorexia [C0003123], anxiety [C0003467]",2.0,True,C0003123|C0003467,2
+139,7,"[frequently] Associated (anorexia [C0003123], depression [C0011570])",frequently,Associated,"anorexia [C0003123], depression [C0011570]",2.0,True,C0003123|C0011570,2
+139,8,"Associated (anorexia [C0003123], reduced sleep quality [C1262141])",,Associated,"anorexia [C0003123], reduced sleep quality [C1262141]",2.0,True,C0003123|C1262141,2
+139,9,"Associated (anorexia [C0003123], reduced quality of life [C4049260])",,Associated,"anorexia [C0003123], reduced quality of life [C4049260]",2.0,True,C0003123|C4049260,2
+140,0,"Cause (brittle bones [C1859069], fractures without trauma [C5936342])",,Cause,"brittle bones [C1859069], fractures without trauma [C5936342]",2.0,True,C1859069|C5936342,2
+140,1,"Cause (taking too much vitamin A [C0573813], fractures without trauma [C5936342])",,Cause,"taking too much vitamin A [C0573813], fractures without trauma [C5936342]",2.0,True,C0573813|C5936342,2
+140,2,"Cause (lack of vitamin D [C0042870], fractures without trauma [C5936342])",,Cause,"lack of vitamin D [C0042870], fractures without trauma [C5936342]",2.0,True,C0042870|C5936342,2
+140,3,"[may] Cause (enchondromas [C1704356], fractures in the hands [C0435632])",may,Cause,"enchondromas [C1704356], fractures in the hands [C0435632]",2.0,True,C1704356|C0435632,2
+140,4,"[may] Cause (chondromas [C0936248)], fractures in the hands [C0435632])",may,Cause,"chondromas [C0936248)], fractures in the hands [C0435632]",2.0,True,C0936248|C0435632,2
+140,5,"[may] Cause (bone cysts [C0005937], fractures in the hands [C0435632])",may,Cause,"bone cysts [C0005937], fractures in the hands [C0435632]",2.0,True,C0005937|C0435632,2
+140,6,"[infrequently] Cause (cancerous tumors [C0006826], fractures [C5936342])",infrequently,Cause,"cancerous tumors [C0006826], fractures [C5936342]",2.0,True,C0006826|C5936342,2
+140,7,"Is (osteosarcoma [C0029463], cancerous tumor [C0006826])",,Is,"osteosarcoma [C0029463], cancerous tumor [C0006826]",2.0,True,C0029463|C0006826,2
+140,8,"Is (Ewing's sarcoma [C0553580], cancerous tumor [C0006826])",,Is,"Ewing's sarcoma [C0553580], cancerous tumor [C0006826]",2.0,True,C0553580|C0006826,2
+140,9,"Is (Paget's disease [C1368019], cancerous tumor [C0006826])",,Is,"Paget's disease [C1368019], cancerous tumor [C0006826]",2.0,True,C1368019|C0006826,2
+141,0,"[may] Cause (severe cases of yellow fever [C0043395], bleeding [C0019080])",may,Cause,"severe cases of yellow fever [C0043395], bleeding [C0019080]",2.0,True,C0043395|C0019080,2
+141,1,"[may] Cause (severe cases of yellow fever [C0043395], liver damage [C0151763])",may,Cause,"severe cases of yellow fever [C0043395], liver damage [C0151763]",2.0,True,C0043395|C0151763,2
+141,2,"[may] Cause (severe cases of yellow fever [C0043395], nerve damage [C0161479])",may,Cause,"severe cases of yellow fever [C0043395], nerve damage [C0161479]",2.0,True,C0043395|C0161479,2
+141,3,"[may] Cause (severe cases of yellow fever [C0043395], kidney damage [C1408258])",may,Cause,"severe cases of yellow fever [C0043395], kidney damage [C1408258]",2.0,True,C0043395|C1408258,2
+141,4,"[may] Cause (severe cases of yellow fever [C0043395], death [C1306577])",may,Cause,"severe cases of yellow fever [C0043395], death [C1306577]",2.0,True,C0043395|C1306577,2
+141,5,"[may] Cause (yellow fever [C0043395], blood clotting problems [C1846821])",may,Cause,"yellow fever [C0043395], blood clotting problems [C1846821]",2.0,True,C0043395|C1846821,2
+141,6,"[may] Cause (yellow fever [C0043395], heart damage [C3844005])",may,Cause,"yellow fever [C0043395], heart damage [C3844005]",2.0,True,C0043395|C3844005,2
+141,7,"[may] Cause (yellow fever [C0043395], pancreatic damage [C0813176])",may,Cause,"yellow fever [C0043395], pancreatic damage [C0813176]",2.0,True,C0043395|C0813176,2
+141,8,"[may] Cause (yellow fever [C0043395], multi-organ failure [C0026766])",may,Cause,"yellow fever [C0043395], multi-organ failure [C0026766]",2.0,True,C0043395|C0026766,2
+141,9,"Include (liver problems [C0577060], hepatitis [C0019158])",,Include,"liver problems [C0577060], hepatitis [C0019158]",2.0,True,C0577060|C0019158,2
+141,10,"Is (hepatitis [C0019158], inflammation of the liver)",,Is,"hepatitis [C0019158], inflammation of the liver",2.0,True,C0019158,1
+141,11,"Include (kidney problems [C0812426], acute kidney injury [C2609414])",,Include,"kidney problems [C0812426], acute kidney injury [C2609414]",2.0,True,C0812426|C2609414,2
+142,0,"Increase (many drugs [C0013227], blood pressure [C0005823])",,Increase,"many drugs [C0013227], blood pressure [C0005823]",2.0,True,C0013227|C0005823,2
+142,1,"Increase (many drugs through interaction with other drugs [C0687133], blood pressure [C0005823])",,Increase,"many drugs through interaction with other drugs [C0687133], blood pressure [C0005823]",2.0,True,C0687133|C0005823,2
+142,2,"[most common] Affect (nonsteroidal anti-inflammatory drugs (NSAIDs) [C0003211], blood pressure [C0005823])",most common,Affect,"nonsteroidal anti-inflammatory drugs (NSAIDs) [C0003211], blood pressure [C0005823]",2.0,True,C0003211|C0005823,2
+142,3,"[most common] Affect (steroids [C0038317], blood pressure [C0005823])",most common,Affect,"steroids [C0038317], blood pressure [C0005823]",2.0,True,C0038317|C0005823,2
+142,4,"Is (inhibitors of angiogenesis [C0596087], cancer-fighting drugs [C0003392])",,Is,"inhibitors of angiogenesis [C0596087], cancer-fighting drugs [C0003392]",2.0,True,C0596087|C0003392,2
+142,5,"[most common] Affect (inhibitors of angiogenesis [C0596087], blood pressure [C0005823])",most common,Affect,"inhibitors of angiogenesis [C0596087], blood pressure [C0005823]",2.0,True,C0596087|C0005823,2
+142,6,"[most common] Affect (some drugs [C0013227] that raise HDL [C2938903], blood pressure [C0005823])",most common,Affect,"some drugs [C0013227] that raise HDL [C2938903], blood pressure [C0005823]",2.0,True,C0013227|C2938903|C0005823,3
+142,7,"Raise (drugs for treating depression [C0003289], blood pressure [C0005823])",,Raise,"drugs for treating depression [C0003289], blood pressure [C0005823]",2.0,True,C0003289|C0005823,2
+142,8,"Raise (drugs for treating attention deficit hyperactivity disorder [C5935472], blood pressure [C0005823])",,Raise,"drugs for treating attention deficit hyperactivity disorder [C5935472], blood pressure [C0005823]",2.0,True,C5935472|C0005823,2
+142,9,"Affect (obesity treatments orlistat [C0076275], blood pressure [C0005823])",,Affect,"obesity treatments orlistat [C0076275], blood pressure [C0005823]",2.0,True,C0076275|C0005823,2
+142,10,"Affect (obesity treatments sibutramine [C0074493], blood pressure [C0005823])",,Affect,"obesity treatments sibutramine [C0074493], blood pressure [C0005823]",2.0,True,C0074493|C0005823,2
+142,11,"Associated (anti-HIV lopinavir/ritonavir [C0939237] treatment, high blood pressure [C1868937])",,Associated,"anti-HIV lopinavir/ritonavir [C0939237] treatment, high blood pressure [C1868937]",2.0,True,C0939237|C1868937,2
+142,12,"Associated (Nirmatrelvir/ritonavir [C5564905] (Paxlovid [C5565871]) treatment, high blood pressure [C1868937])",,Associated,"Nirmatrelvir/ritonavir [C5564905] (Paxlovid [C5565871]) treatment, high blood pressure [C1868937]",2.0,True,C5564905|C5565871|C1868937,3
+143,0,"Coping (living with Huntington's disease [C0020179], knowledge of the forthcoming functional changes [C0516739])",,Coping,"living with Huntington's disease [C0020179], knowledge of the forthcoming functional changes [C0516739]",2.0,True,C0020179|C0516739,2
+143,1,"Coping (living with Huntington's disease [C0020179], knowledge of the forthcoming behavioral changes [C0542299])",,Coping,"living with Huntington's disease [C0020179], knowledge of the forthcoming behavioral changes [C0542299]",2.0,True,C0020179|C0542299,2
+143,2,"Requires (living with Huntington's disease [C0020179], physical dependence [C1268609] on other people)",,Requires,"living with Huntington's disease [C0020179], physical dependence [C1268609] on other people",2.0,True,C0020179|C1268609,2
+143,3,"Hinders (apathy [C0085632], employment [C0014003])",,Hinders,"apathy [C0085632], employment [C0014003]",2.0,True,C0085632|C0014003,2
+143,4,"Hinders (chorea [C0008489], employment [C0014003])",,Hinders,"chorea [C0008489], employment [C0014003]",2.0,True,C0008489|C0014003,2
+143,5,"Onset (Huntington's disease [C0020179], over 60 years of age [C0393574] in a small number of people)",,Onset,"Huntington's disease [C0020179], over 60 years of age [C0393574] in a small number of people",2.0,True,C0020179|C0393574,2
+143,6,"Maintains (good nutrition [C1442959], health [C0018759])",,Maintains,"good nutrition [C1442959], health [C0018759]",2.0,True,C1442959|C0018759,2
+143,7,"Maintains (good nutrition [C1442959], functions [C0231162])",,Maintains,"good nutrition [C1442959], functions [C0231162]",2.0,True,C1442959|C0231162,2
+143,8,"Improves (rehabilitation programs [C0034991], quality of life [C0518214] in Huntington's disease [C0020179])",,Improves,"rehabilitation programs [C0034991], quality of life [C0518214] in Huntington's disease [C0020179]",2.0,True,C0034991|C0518214|C0020179,3
+143,9,"Improves (breathing training [C0006155], quality of life [C0518214] in Huntington's disease [C0020179])",,Improves,"breathing training [C0006155], quality of life [C0518214] in Huntington's disease [C0020179]",2.0,True,C0006155|C0518214|C0020179,3
+143,10,"Helps (currently available medications [C0013227], symptoms [C0037088])",,Helps,"currently available medications [C0013227], symptoms [C0037088]",2.0,True,C0013227|C0037088,2
+143,11,"Target (clinical trials [C0008976], harmful body chemicals [C0504082])",,Target,"clinical trials [C0008976], harmful body chemicals [C0504082]",2.0,True,C0008976|C0504082,2
+143,12,"Target (clinical trials [C0008976], harmful genes [C0872189])",,Target,"clinical trials [C0008976], harmful genes [C0872189]",2.0,True,C0008976|C0872189,2
+144,0,"Start (blood pressure treatments [C0419824], consider blood pressure levels [C1271104])",,Start,"blood pressure treatments [C0419824], consider blood pressure levels [C1271104]",2.0,True,C0419824|C1271104,2
+144,1,"Start (blood pressure treatments [C0419824], consider risk of heart disease [C0850624])",,Start,"blood pressure treatments [C0419824], consider risk of heart disease [C0850624]",2.0,True,C0419824|C0850624,2
+144,2,"Start (blood pressure treatments [C0419824], consider risk of stroke [C1277291])",,Start,"blood pressure treatments [C0419824], consider risk of stroke [C1277291]",2.0,True,C0419824|C1277291,2
+144,3,"Changed (guidelines [C0162791], for elderly [C0001792])",,Changed,"guidelines [C0162791], for elderly [C0001792]",2.0,True,C0162791|C0001792,2
+144,4,"Changed (guidelines [C0162791], for patients with diabetic kidney disease [C0011881])",,Changed,"guidelines [C0162791], for patients with diabetic kidney disease [C0011881]",2.0,True,C0162791|C0011881,2
+144,5,"Changed (guidelines [C0162791], for patients with chronic kidney disease [C1561643])",,Changed,"guidelines [C0162791], for patients with chronic kidney disease [C1561643]",2.0,True,C0162791|C1561643,2
+144,6,"Changed (guidelines [C0162791], for patients with stroke [C0038454])",,Changed,"guidelines [C0162791], for patients with stroke [C0038454]",2.0,True,C0162791|C0038454,2
+144,7,"Recommends (American College of Cardiology, 130/80 mmHg blood pressure levels [C1271104])",,Recommends,"American College of Cardiology, 130/80 mmHg blood pressure levels [C1271104]",2.0,True,C1271104,1
+144,8,"[may] Cause (lowering blood pressure [C4529970] below 120/70 mmHg, heart problems [C0795691])",may,Cause,"lowering blood pressure [C4529970] below 120/70 mmHg, heart problems [C0795691]",2.0,True,C4529970|C0795691,2
+144,9,"[may] Cause (lowering blood pressure [C4529970] below 120/70 mmHg, other problems)",may,Cause,"lowering blood pressure [C4529970] below 120/70 mmHg, other problems",2.0,True,C4529970,1
+144,10,"[should] Adjusted (threshold [C0449864], people over 65 years old [C3843802])",should,Adjusted,"threshold [C0449864], people over 65 years old [C3843802]",2.0,True,C0449864|C3843802,2
+144,11,"[best] Time (take the medications [1290952], evening [C0587117])",best,Time,"take the medications [1290952], evening [C0587117]",2.0,True,C0587117,1
+145,0,"[mostly] Can (opdivo [C3872108] (nivolumab [C3657270]) side effects, be managed)",mostly,Can,"opdivo [C3872108] (nivolumab [C3657270]) side effects, be managed",2.0,True,C3872108|C3657270,2
+145,1,"[most frequent] Side effect (skin reactions [C0221743], opdivo [C3872108] (nivolumab [C3657270]))",most frequent,Side effect,"skin reactions [C0221743], opdivo [C3872108] (nivolumab [C3657270])",2.0,True,C0221743|C3872108|C3657270,3
+145,2,"Is (itching [C0033774], skin reaction [C0221743])",,Is,"itching [C0033774], skin reaction [C0221743]",2.0,True,C0033774|C0221743,2
+145,3,"Is (rash [C5779628], skin reaction [C0221743])",,Is,"rash [C5779628], skin reaction [C0221743]",2.0,True,C5779628|C0221743,2
+145,4,"Is (vitiligo [C0042900], skin reaction [C0221743])",,Is,"vitiligo [C0042900], skin reaction [C0221743]",2.0,True,C0042900|C0221743,2
+145,5,"Side effect (hepatitis [C0019158], opdivo [C3872108] (nivolumab [C3657270]))",,Side effect,"hepatitis [C0019158], opdivo [C3872108] (nivolumab [C3657270])",2.0,True,C0019158|C3872108|C3657270,3
+145,6,"Side effect (reactions to drug infusion [C2368034], opdivo [C3872108] (nivolumab [C3657270]))",,Side effect,"reactions to drug infusion [C2368034], opdivo [C3872108] (nivolumab [C3657270])",2.0,True,C2368034|C3872108|C3657270,3
+145,7,"[may] Affect (nivolumab [C3657270], blood [C0005767])",may,Affect,"nivolumab [C3657270], blood [C0005767]",2.0,True,C3657270|C0005767,2
+145,8,"[may] Cause (nivolumab [C3657270], lymphocytic leukemia [C0023449])",may,Cause,"nivolumab [C3657270], lymphocytic leukemia [C0023449]",2.0,True,C3657270|C0023449,2
+145,9,"Affects (nivolumab [C3657270], nervous system [C0027763])",,Affects,"nivolumab [C3657270], nervous system [C0027763]",2.0,True,C3657270|C0027763,2
+145,10,"Includes (nervous system [C0027763] effects, neuropathy [C0442874])",,Includes,"nervous system [C0027763] effects, neuropathy [C0442874]",2.0,True,C0027763|C0442874,2
+145,11,"Includes (nervous system [C0027763] effects, inflammation of the brain tissues [C5883489])",,Includes,"nervous system [C0027763] effects, inflammation of the brain tissues [C5883489]",2.0,True,C0027763|C5883489,2
+145,12,"Includes (inflammation of the brain tissues [C5883489], meningitis [C0025289])",,Includes,"inflammation of the brain tissues [C5883489], meningitis [C0025289]",2.0,True,C5883489|C0025289,2
+145,13,"Includes (inflammation of the brain tissues [C5883489], encephalitis [C0014038])",,Includes,"inflammation of the brain tissues [C5883489], encephalitis [C0014038]",2.0,True,C5883489|C0014038,2
+145,14,"[may] Damage (nivolumab [C3657270], kidney [C0022646])",may,Damage,"nivolumab [C3657270], kidney [C0022646]",2.0,True,C3657270|C0022646,2
+145,15,"[may] Damage (nivolumab [C3657270], thyroid function [C2242456])",may,Damage,"nivolumab [C3657270], thyroid function [C2242456]",2.0,True,C3657270|C2242456,2
+145,16,"[may] Cause (nivolumab [C3657270], swelling of the face [C0151602])",may,Cause,"nivolumab [C3657270], swelling of the face [C0151602]",2.0,True,C3657270|C0151602,2
+146,0,"Treat (PTSD [C0038436], trauma-focused treatment [C1320387])",,Treat,"PTSD [C0038436], trauma-focused treatment [C1320387]",2.0,True,C0038436|C1320387,2
+146,1,"Is (Cognitive Processing Therapy (CPT) [C0009244], trauma-focused treatment [C1320387])",,Is,"Cognitive Processing Therapy (CPT) [C0009244], trauma-focused treatment [C1320387]",2.0,True,C0009244|C1320387,2
+146,2,"Is (Prolonged Exposure Therapy (PE) [C0870527], trauma-focused treatment [C1320387])",,Is,"Prolonged Exposure Therapy (PE) [C0870527], trauma-focused treatment [C1320387]",2.0,True,C0870527|C1320387,2
+146,3,"Is (Eye Movement Desensitization and Restructuring (EMDR) [C3164706], trauma-focused treatment [C1320387])",,Is,"Eye Movement Desensitization and Restructuring (EMDR) [C3164706], trauma-focused treatment [C1320387]",2.0,True,C3164706|C1320387,2
+146,4,"Recommend (Veterans Affairs (VA) [C1549054], avoiding benzodiazepines [C0005064])",,Recommend,"Veterans Affairs (VA) [C1549054], avoiding benzodiazepines [C0005064]",2.0,True,C1549054|C0005064,2
+146,5,"Recommend (Veterans Affairs (VA) [C1549054], avoiding other sedative hypnotic medications [C0020592])",,Recommend,"Veterans Affairs (VA) [C1549054], avoiding other sedative hypnotic medications [C0020592]",2.0,True,C1549054|C0020592,2
+146,6,"Recommend (Department of Defense (DoD) [C1511775], avoiding benzodiazepines [C0005064])",,Recommend,"Department of Defense (DoD) [C1511775], avoiding benzodiazepines [C0005064]",2.0,True,C1511775|C0005064,2
+146,7,"Recommend (Department of Defense (DoD) [C1511775], avoiding other sedative hypnotic medications [C0020592])",,Recommend,"Department of Defense (DoD) [C1511775], avoiding other sedative hypnotic medications [C0020592]",2.0,True,C1511775|C0020592,2
+146,8,"Treat (PTSD [C0038436], selective serotonin reuptake inhibitors (SSRIs) [C0360105])",,Treat,"PTSD [C0038436], selective serotonin reuptake inhibitors (SSRIs) [C0360105]",2.0,True,C0038436|C0360105,2
+146,9,"[often] Perscribed (Prazosin [C0032912], nightmares [C0028084])",often,Perscribed,"Prazosin [C0032912], nightmares [C0028084]",2.0,True,C0032912|C0028084,2
+146,10,"Evidence (Prazosin [C0032912], inconclusive [C0205258])",,Evidence,"Prazosin [C0032912], inconclusive [C0205258]",2.0,True,C0032912|C0205258,2
+146,11,"Evidence (tricyclic antidepressants [C0003290], inconclusive [C0205258])",,Evidence,"tricyclic antidepressants [C0003290], inconclusive [C0205258]",2.0,True,C0003290|C0205258,2
+146,12,"Evidence (atypical antipsychotics [C1276996], inconclusive [C0205258])",,Evidence,"atypical antipsychotics [C1276996], inconclusive [C0205258]",2.0,True,C1276996|C0205258,2
+146,13,"[may] Treat (mindfulness skills [C3542996], PTSD [C0038436] symptoms)",may,Treat,"mindfulness skills [C3542996], PTSD [C0038436] symptoms",2.0,True,C3542996|C0038436,2
+146,14,"Include (mindfulness skills [C3542996], non-judgmental acceptance [C0278069])",,Include,"mindfulness skills [C3542996], non-judgmental acceptance [C0278069]",2.0,True,C3542996|C0278069,2
+146,15,"Include (mindfulness skills [C3542996], attentional control)",,Include,"mindfulness skills [C3542996], attentional control",2.0,True,C3542996,1
+146,16,"Include (mindfulness skills [C3542996], openness to experiences [C0871006])",,Include,"mindfulness skills [C3542996], openness to experiences [C0871006]",2.0,True,C3542996|C0871006,2
+146,17,"[may] Treat (fMRI-guided [C0376335] neurofeedback [C2713543], PTSD [C0038436] symptoms)",may,Treat,"fMRI-guided [C0376335] neurofeedback [C2713543], PTSD [C0038436] symptoms",2.0,True,C0376335|C2713543|C0038436,3
+146,18,"Treat (Hyperbaric oxygen therapy (HBOT) [C0020431], veterans with treatment-resistant [C4020575] PTSD [C0038436])",,Treat,"Hyperbaric oxygen therapy (HBOT) [C0020431], veterans with treatment-resistant [C4020575] PTSD [C0038436]",2.0,True,C0020431|C4020575|C0038436,3
+147,0,"Reduce (statins [C0360714], effects of atherosclerosis [C0004153])",,Reduce,"statins [C0360714], effects of atherosclerosis [C0004153]",2.0,True,C0360714|C0004153,2
+147,1,"Reduce (statins [C0360714], levels of fat in the blood [C0020473])",,Reduce,"statins [C0360714], levels of fat in the blood [C0020473]",2.0,True,C0360714|C0020473,2
+147,2,"[may] Treat (agents targeting inflammatory pathways [C1512758], atherosclerosis [C0004153])",may,Treat,"agents targeting inflammatory pathways [C1512758], atherosclerosis [C0004153]",2.0,True,C1512758|C0004153,2
+147,3,"Reduce (low-dose colchicine [C0009262] added to statins [C0360714], rates of myocardial infarction [C0027051])",,Reduce,"low-dose colchicine [C0009262] added to statins [C0360714], rates of myocardial infarction [C0027051]",2.0,True,C0009262|C0360714|C0027051,3
+147,4,"Reduce (low-dose colchicine [C0009262] added to statins [C0360714], rates of stroke [C0038454])",,Reduce,"low-dose colchicine [C0009262] added to statins [C0360714], rates of stroke [C0038454]",2.0,True,C0009262|C0360714|C0038454,3
+147,5,"Reduce (low-dose colchicine [C0009262] added to statins [C0360714], rates of cardiovascular death [C0376297])",,Reduce,"low-dose colchicine [C0009262] added to statins [C0360714], rates of cardiovascular death [C0376297]",2.0,True,C0009262|C0360714|C0376297,3
+147,6,"Improve (lifestyle changes [C0870811], many common age-related heart problems [C0795691])",,Improve,"lifestyle changes [C0870811], many common age-related heart problems [C0795691]",2.0,True,C0870811|C0795691,2
+147,7,"Improve (lifestyle changes [C0870811], many common age-related metabolism problems [C0848271])",,Improve,"lifestyle changes [C0870811], many common age-related metabolism problems [C0848271]",2.0,True,C0870811|C0848271,2
+147,8,"[may] Treat (focused ultrasound [C1517281], atherosclerosis [C0004153])",may,Treat,"focused ultrasound [C1517281], atherosclerosis [C0004153]",2.0,True,C1517281|C0004153,2
+147,9,"[may] Treat (specific light that stabilizes plaques and reduces inflammation [C0031740], atherosclerosis [C0004153])",may,Treat,"specific light that stabilizes plaques and reduces inflammation [C0031740], atherosclerosis [C0004153]",2.0,True,C0031740|C0004153,2
+147,10,"[sometimes] Need (patient, surgery [C0543467])",sometimes,Need,"patient, surgery [C0543467]",2.0,True,C0543467,1
+148,0,"[may] Have (easy bruising [C0423798], simple causes [C0205183])",may,Have,"easy bruising [C0423798], simple causes [C0205183]",2.0,True,C0423798|C0205183,2
+148,1,"[may] Cause (problems with blood clotting [C0005779], bruising [C0423798])",may,Cause,"problems with blood clotting [C0005779], bruising [C0423798]",2.0,True,C0005779|C0423798,2
+148,2,"[may] Cause (liver problems [C0577060], bruising [C0423798])",may,Cause,"liver problems [C0577060], bruising [C0423798]",2.0,True,C0577060|C0423798,2
+148,3,"[may] Cause (inherited bleeding disorders [C0852077], bruising [C0423798])",may,Cause,"inherited bleeding disorders [C0852077], bruising [C0423798]",2.0,True,C0852077|C0423798,2
+148,4,"[may] Cause (von Willebrand's disease [C0042974], bruising [C0423798])",may,Cause,"von Willebrand's disease [C0042974], bruising [C0423798]",2.0,True,C0042974|C0423798,2
+148,5,"[may] Cause (deep tissue injury [C5780245], bruising [C0423798])",may,Cause,"deep tissue injury [C5780245], bruising [C0423798]",2.0,True,C5780245|C0423798,2
+148,6,"[may] Cause (Ehlers-Danlos syndrome [C0013720], bruising [C0423798])",may,Cause,"Ehlers-Danlos syndrome [C0013720], bruising [C0423798]",2.0,True,C0013720|C0423798,2
+148,7,"[may] Occur (bruising [C0423798], in older people [C3826770])",may,Occur,"bruising [C0423798], in older people [C3826770]",2.0,True,C0423798|C3826770,2
+148,8,"[may] Occur (painful bruising syndrome [C0301928], young women with psychiatric problems [C1306597])",may,Occur,"painful bruising syndrome [C0301928], young women with psychiatric problems [C1306597]",2.0,True,C0301928|C1306597,2
+149,0,"Diagnose (history of the problem [C0683519], disc herniation [C0021818])",,Diagnose,"history of the problem [C0683519], disc herniation [C0021818]",2.0,True,C0683519|C0021818,2
+149,1,"Diagnose (physical examination [C0031809] by your doctor, disc herniation [C0021818])",,Diagnose,"physical examination [C0031809] by your doctor, disc herniation [C0021818]",2.0,True,C0031809|C0021818,2
+149,2,"Diagnose (advanced medical imaging [C0025086], disc herniation [C0021818])",,Diagnose,"advanced medical imaging [C0025086], disc herniation [C0021818]",2.0,True,C0025086|C0021818,2
+149,3,"[some] Value LESS (imaging [C0025086], examination [C0031809] and history [C0683519])",some,Value LESS,"imaging [C0025086], examination [C0031809] and history [C0683519]",2.0,True,C0025086|C0031809|C0683519,3
+149,4,"Is (MRI [C0024485], the best imaging method [C0025086])",,Is,"MRI [C0024485], the best imaging method [C0025086]",2.0,True,C0024485|C0025086,2
+149,5,"Associated (deterioration of muscles around the spine [C0026846], disc herniation [C0021818])",,Associated,"deterioration of muscles around the spine [C0026846], disc herniation [C0021818]",2.0,True,C0026846|C0021818,2
+149,6,"[may] Diagnose (lumbar provocation discography [C0203209], disc herniation [C0021818])",may,Diagnose,"lumbar provocation discography [C0203209], disc herniation [C0021818]",2.0,True,C0203209|C0021818,2
+149,7,"IF Contraindicated (patient, MRI [C0024485]) THEN Have (patient, special CT images[C4055114])",,IF Contraindicated,"patient, MRI [C0024485]) THEN Have (patient, special CT images[C4055114]",3.0,True,C0024485|C4055114,2
+150,0,"Effective (physical therapy [C0949766], lumbar disc herniation [C0281899])",,Effective,"physical therapy [C0949766], lumbar disc herniation [C0281899]",2.0,True,C0949766|C0281899,2
+150,1,"Effective (pain reducing [C5230944] physical therapies [C0949766], lumbar disc herniation [C0281899])",,Effective,"pain reducing [C5230944] physical therapies [C0949766], lumbar disc herniation [C0281899]",2.0,True,C5230944|C0949766|C0281899,3
+150,2,"Include (physical therapies [C0949766], mobilization therapies [C2080791])",,Include,"physical therapies [C0949766], mobilization therapies [C2080791]",2.0,True,C0949766|C2080791,2
+150,3,"Include (physical therapies [C0949766], exercise [C0015259])",,Include,"physical therapies [C0949766], exercise [C0015259]",2.0,True,C0949766|C0015259,2
+150,4,"Include (physical therapies [C0949766], traction [C0040597])",,Include,"physical therapies [C0949766], traction [C0040597]",2.0,True,C0949766|C0040597,2
+150,5,"Include (physical therapies [C0949766], decompression [C1829459])",,Include,"physical therapies [C0949766], decompression [C1829459]",2.0,True,C0949766|C1829459,2
+151,0,"[may] Have (gray skin discoloration [C0582068], many different causes [C1408355])",may,Have,"gray skin discoloration [C0582068], many different causes [C1408355]",2.0,True,C0582068|C1408355,2
+151,1,"[may] Is (gray skin discoloration [C0582068], inherited [C0439660])",may,Is,"gray skin discoloration [C0582068], inherited [C0439660]",2.0,True,C0582068|C0439660,2
+151,2,"[may] Is (gray skin discoloration [C0582068], a sign of problems with other organs [C3540840])",may,Is,"gray skin discoloration [C0582068], a sign of problems with other organs [C3540840]",2.0,True,C0582068|C3540840,2
+151,3,"[may] Cause (infection [C3714514], gray skin discoloration [C0582068])",may,Cause,"infection [C3714514], gray skin discoloration [C0582068]",2.0,True,C3714514|C0582068,2
+151,4,"[may] Cause (drugs [C0013227], gray skin discoloration [C0582068])",may,Cause,"drugs [C0013227], gray skin discoloration [C0582068]",2.0,True,C0013227|C0582068,2
+151,5,"[may] Cause (anti-inflammatory drugs [C0003209], gray skin discoloration [C0582068])",may,Cause,"anti-inflammatory drugs [C0003209], gray skin discoloration [C0582068]",2.0,True,C0003209|C0582068,2
+151,6,"[may] Cause (psoriasis [C0033860], gray skin discoloration [C0582068])",may,Cause,"psoriasis [C0033860], gray skin discoloration [C0582068]",2.0,True,C0033860|C0582068,2
+151,7,"[may] Cause (aging [C0001811], gray skin discoloration [C0582068])",may,Cause,"aging [C0001811], gray skin discoloration [C0582068]",2.0,True,C0001811|C0582068,2
+151,8,"[may] Exclude (some tests [C0086143], skin cancer [C0007114])",may,Exclude,"some tests [C0086143], skin cancer [C0007114]",2.0,True,C0086143|C0007114,2
+151,9,"[may] Exclude (some tests [C0086143], specific infections [C3714514])",may,Exclude,"some tests [C0086143], specific infections [C3714514]",2.0,True,C0086143|C3714514,2
+152,0,"Decrease (amlodipine [C0051696], blood pressure [C0005823] from pre-treatment baseline)",,Decrease,"amlodipine [C0051696], blood pressure [C0005823] from pre-treatment baseline",2.0,True,C0051696|C0005823,2
+152,1,"Stabilize (amlodipine [C0051696], blood pressure [C0005823])",,Stabilize,"amlodipine [C0051696], blood pressure [C0005823]",2.0,True,C0051696|C0005823,2
+152,2,"IF Stop (patient, amlodipine [C0051696]) THEN Return (blood pressure [C0005823], baseline over 7-10 days)",,IF Stop,"patient, amlodipine [C0051696]) THEN Return (blood pressure [C0005823], baseline over 7-10 days",3.0,True,C0051696|C0005823,2
+152,3,"Succeed (stop, anti-hypertensive medication [C0003364]) IF IS (patient, young [C0238598] to middle-aged adults [C0683973] with mildly high blood pressure [C3276943])",,Succeed,"stop, anti-hypertensive medication [C0003364]) IF IS (patient, young [C0238598] to middle-aged adults [C0683973] with mildly high blood pressure [C3276943]",3.0,True,C0003364|C0238598|C0683973|C3276943,4
+152,4,"Is (temporarily stopping [C0850893] antihypertensive medication [C0003364] for diagnostic evaluation, safe under doctor's guidance [C0583348])",,Is,"temporarily stopping [C0850893] antihypertensive medication [C0003364] for diagnostic evaluation, safe under doctor's guidance [C0583348]",2.0,True,C0850893|C0003364|C0583348,3
+152,5,"IF Switch (patient, medication [C0003364]) THEN [may] Need (amlodipine [C0051696], adjusted dose [C2826232])",,IF Switch,"patient, medication [C0003364]) THEN [may] Need (amlodipine [C0051696], adjusted dose [C2826232]",3.0,True,C0003364|C0051696|C2826232,3
+152,6,"[may] Need (patient, switching to another medication [C2936279]) IF Ineffective (amlodipine [C0051696], lower blood pressure [C4529970])",may,Need,"patient, switching to another medication [C2936279]) IF Ineffective (amlodipine [C0051696], lower blood pressure [C4529970]",3.0,True,C2936279|C0051696|C4529970,3
+152,7,"Control (amlodipine [C0051696], blood pressure [C0005823] in older adults [C0001792])",,Control,"amlodipine [C0051696], blood pressure [C0005823] in older adults [C0001792]",2.0,True,C0051696|C0005823|C0001792,3
+152,8,"Protect (amlodipine [C0051696], against stroke [C0038454] in older adults [C0001792])",,Protect,"amlodipine [C0051696], against stroke [C0038454] in older adults [C0001792]",2.0,True,C0051696|C0038454|C0001792,3
+152,9,"Protect (Amlodipine [C0051696], against myocardial infarction [C0027051] in older adults [C0001792])",,Protect,"Amlodipine [C0051696], against myocardial infarction [C0027051] in older adults [C0001792]",2.0,True,C0051696|C0027051|C0001792,3
+152,10,"NOT Recommend (doctors, suddenly stopping [C0558681] the class of medications that includes amlodipine [C0051696])",,NOT Recommend,"doctors, suddenly stopping [C0558681] the class of medications that includes amlodipine [C0051696]",2.0,True,C0558681|C0051696,2
+153,0,"Is (optimal Hct [C0474548] in healthy women [C0043210], 35-40%)",,Is,"optimal Hct [C0474548] in healthy women [C0043210], 35-40%",2.0,True,C0474548|C0043210,2
+153,1,"Is (optimal Hct [C0474548] in men [C0086582], 39-50%)",,Is,"optimal Hct [C0474548] in men [C0086582], 39-50%",2.0,True,C0474548|C0086582,2
+153,2,"Is (recommended transfusion [C0005841] threshold in stable hospital patients, 7-8 g/dL hemoglobin [C0518015])",,Is,"recommended transfusion [C0005841] threshold in stable hospital patients, 7-8 g/dL hemoglobin [C0518015]",2.0,True,C0005841|C0518015,2
+153,3,"Is (recommended transfusion [C0005841] threshold in stable hospital patients, Hct [C0518014] 20-24%)",,Is,"recommended transfusion [C0005841] threshold in stable hospital patients, Hct [C0518014] 20-24%",2.0,True,C0005841|C0518014,2
+153,4,"Equal (3% change in hematocrit [C0518014], 1-""unit"" loss of blood [C0019080])",,Equal,"3% change in hematocrit [C0518014], 1-""unit"" loss of blood [C0019080]",2.0,True,C0518014|C0019080,2
+153,5,"Use (10/30 rule, begin blood transfusions [C0005841])",,Use,"10/30 rule, begin blood transfusions [C0005841]",2.0,True,C0005841,1
+153,6,"NOT Decide (peripheral venous hematocrit levels [C0518014] alone,  transfusion [C0005841])",,NOT Decide,"peripheral venous hematocrit levels [C0518014] alone,  transfusion [C0005841]",2.0,True,C0518014|C0005841,2
+153,7,"Decide (other measurements [C0022885] and patient's condition [C0683521], transfusion [C0005841])",,Decide,"other measurements [C0022885] and patient's condition [C0683521], transfusion [C0005841]",2.0,True,C0022885|C0683521|C0005841,3
+154,0,"[may] Cause (many different health problems [C0012634], shortness of breath (SoB) [C0013404])",may,Cause,"many different health problems [C0012634], shortness of breath (SoB) [C0013404]",2.0,True,C0012634|C0013404,2
+154,1,"Help (treating health problems [C0087111], SoB [C0013404])",,Help,"treating health problems [C0087111], SoB [C0013404]",2.0,True,C0087111|C0013404,2
+154,2,"Help (strengthening respiratory muscles [C3874239], SoB [C0013404])",,Help,"strengthening respiratory muscles [C3874239], SoB [C0013404]",2.0,True,C3874239|C0013404,2
+154,3,"Help (strengthening breast muscles [C0419118], SoB [C0013404])",,Help,"strengthening breast muscles [C0419118], SoB [C0013404]",2.0,True,C0419118|C0013404,2
+154,4,"Help (strengthening ribcage muscles [C0846687], SoB [C0013404])",,Help,"strengthening ribcage muscles [C0846687], SoB [C0013404]",2.0,True,C0846687|C0013404,2
+154,5,"Help (strengthening stomach muscles [C4287200], SoB [C0013404])",,Help,"strengthening stomach muscles [C4287200], SoB [C0013404]",2.0,True,C4287200|C0013404,2
+154,6,"Help (pursed lips breathing [C0425465], SoB [C0013404])",,Help,"pursed lips breathing [C0425465], SoB [C0013404]",2.0,True,C0425465|C0013404,2
+154,7,"Help (leaning forward [C0459198], SoB [C0013404])",,Help,"leaning forward [C0459198], SoB [C0013404]",2.0,True,C0459198|C0013404,2
+154,8,"Improve (aerobic exercise [C0001701] with or without breathing exercises [C0006155], breathing [C0035203])",,Improve,"aerobic exercise [C0001701] with or without breathing exercises [C0006155], breathing [C0035203]",2.0,True,C0001701|C0006155|C0035203,3
+154,9,"Improve (inspiratory muscle training (IMT) [C0454511], breathing [C0035203])",,Improve,"inspiratory muscle training (IMT) [C0454511], breathing [C0035203]",2.0,True,C0454511|C0035203,2
+154,10,"Help (IMT [C0454511], breathing [C0035203])",,Help,"IMT [C0454511], breathing [C0035203]",2.0,True,C0454511|C0035203,2
+154,11,"[reported] Improve (reducing physical activity [C2095488], breathing [C0035203])",reported,Improve,"reducing physical activity [C2095488], breathing [C0035203]",2.0,True,C2095488|C0035203,2
+154,12,"[reported] Improve (psychological strategies [C0009647], breathing [C0035203])",reported,Improve,"psychological strategies [C0009647], breathing [C0035203]",2.0,True,C0009647|C0035203,2
+154,13,"[reported] Improve (breathing techniques and positions [C0006155], breathing [C0035203])",reported,Improve,"breathing techniques and positions [C0006155], breathing [C0035203]",2.0,True,C0006155|C0035203,2
+154,14,"Help (""Breathing SPACE"" approach, all breathing problems [C1260922])",,Help,"""Breathing SPACE"" approach, all breathing problems [C1260922]",2.0,True,C1260922,1
+154,15,"Is (""S"" in ""Breathing SPACE"" approach, stopping smoking [C0085134])",,Is,"""S"" in ""Breathing SPACE"" approach, stopping smoking [C0085134]",2.0,True,C0085134,1
+154,16,"Is (""P"" in ""Breathing SPACE"" approach, treating pulmonary disease [C0024115])",,Is,"""P"" in ""Breathing SPACE"" approach, treating pulmonary disease [C0024115]",2.0,True,C0024115,1
+154,17,"Is (""A"" in ""Breathing SPACE"" approach, managing anxiety [C0871652]/psychosocial factors [C0009647])",,Is,"""A"" in ""Breathing SPACE"" approach, managing anxiety [C0871652]/psychosocial factors [C0009647]",2.0,True,C0871652|C0009647,2
+154,18,"Is (""C"" in ""Breathing SPACE"" approach, managing cardiac disease [C0018799])",,Is,"""C"" in ""Breathing SPACE"" approach, managing cardiac disease [C0018799]",2.0,True,C0018799,1
+154,19,"Is (""E"" in ""Breathing SPACE"" approach, exercise [C0015259]/fitness [C1319164])",,Is,"""E"" in ""Breathing SPACE"" approach, exercise [C0015259]/fitness [C1319164]",2.0,True,C0015259|C1319164,2
+154,20,"Improve (yoga [C1883583] with pranayama breathing techniques, breathing [C0035203])",,Improve,"yoga [C1883583] with pranayama breathing techniques, breathing [C0035203]",2.0,True,C1883583|C0035203,2
+154,21,"Effect (diaphragmatic breathing [C0231898] on breathing [C0035203], not clear)",,Effect,"diaphragmatic breathing [C0231898] on breathing [C0035203], not clear",2.0,True,C0231898|C0035203,2
+154,22,"[may] Help (using a fan [C0441039], SoB [C0013404])",may,Help,"using a fan [C0441039], SoB [C0013404]",2.0,True,C0441039|C0013404,2
+155,0,"Prevent (using antibiotic eye drops [C0015399] for one week, eye infection [C0015403] after cataract surgery [C2939459]) EQUAL Prevent (using antibiotic eye drops [C0015399] for two week, eye infection [C0015403] after cataract surgery [C2939459])",,Prevent,"using antibiotic eye drops [C0015399] for one week, eye infection [C0015403] after cataract surgery [C2939459]) EQUAL Prevent (using antibiotic eye drops [C0015399] for two week, eye infection [C0015403] after cataract surgery [C2939459]",3.0,True,C0015399|C0015403|C2939459,3
+155,1,"[recommended] Examine (patient, eye doctor [C1704292] a week after surgery [C2939459])",recommended,Examine,"patient, eye doctor [C1704292] a week after surgery [C2939459]",2.0,True,C1704292|C2939459,2
+155,2,"Need (eyes are dry [C0314719], month-long treatment after surgery [C2939459])",,Need,"eyes are dry [C0314719], month-long treatment after surgery [C2939459]",2.0,True,C0314719|C2939459,2

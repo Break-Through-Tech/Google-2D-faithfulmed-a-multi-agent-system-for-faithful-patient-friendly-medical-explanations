@@ -12,13 +12,17 @@ Row counts:
 
 Cleaning rules applied:
   - Specialty and Body system split on '/', stripped, lowercased.
-    Originals kept in *_raw columns.
+    'ob./gyn' mapped to 'ob-gyn' before splitting. Originals kept in *_raw columns.
+  - Nugget hedges like '[may]' moved to a modality column; CUIs extracted
+    from inline [Cxxxxxxx] tags.
   - Sentences with no relevance label retained and flagged via
     has_relevance_label. All 244 come from answers marked not accurate.
   - Citations collapsed to one row per sentence-PMID pair. On conflicting
     verdicts the most severe wins: contradicts > supports > neutral >
     not_relevant > invalid citation. 390 pairs were affected.
-  - No imputation, normalization, or outlier removal. Not applicable to this data.
+  - Missing values audited, never imputed (see notebook section 7).
+  - Outliers flagged in *_outlier columns (1.5 x IQR rule), never removed.
+  - Numeric counts z-scored into *_z columns; originals left untouched.
 
 Known open question: our citation count is 8124 vs the paper's 8111. Likely related to the
 'invalid citation' label, which appears in the file but not the paper. Raised with advisor.

@@ -21,22 +21,28 @@ One row per question.
 |---|---|
 | `question_id` | Question identifier, 116 to 155 |
 | `question` | The question as a member of the public asked it |
-| `question_focus` | Main clinical entity, e.g. `sleep apnea` |
-| `question_type` | What is being asked: Treatment, Etiology, Prognosis, Diagnosis, Manifestation, and 11 others |
-| `task` | Decision support, Factoid, or Effect |
+| `question_focus` | Main clinical entity, e.g. `sleep apnea`. Blank for 1 question in the source file |
+| `question_type` | What is being asked, lowercased: treatment, etiology, prognosis, diagnosis, manifestation, and 11 others |
+| `task` | Lowercased: decision support, factoid, or effect. The source mixes `Decision Support` and `Decision support` |
 | `subject_matter` | clinical / problem, clinical / drug, clinical / intervention, or genetics |
 | `body_system_raw` | Body system as written in the source file |
 | `specialty_raw` | Specialty as written in the source file |
 | `body_systems` | Cleaned, pipe-separated, lowercase |
 | `specialties` | Cleaned, pipe-separated, lowercase |
 | `n_body_systems` | Count of body systems |
-| `n_specialties` | Count of specialties. 9 questions list more than one |
+| `n_specialties` | Count of specialties. 7 questions list more than one |
 | `expert_answer` | The expert-written answer, with PMIDs in square brackets |
+| `expert_answer_n_words` | Word count of the expert answer |
+| `expert_answer_n_words_outlier` | True if the length is outside 1.5 x IQR. Flag only |
+| `expert_answer_n_words_z` | Z-score of the word count |
 
 **Why the `_raw` columns exist.** The source file packs several values into one string with
 inconsistent spacing, e.g. `pulmonology/ ENT / cardiology`. Counting those as a single
 category makes common specialties look rarer than they are. We split on `/`, stripped
 whitespace and lowercased, and kept the originals so the cleaning can be checked.
+
+One exception: `ob./gyn` is a single specialty that contains a slash. It is mapped to
+`ob-gyn` before splitting, so it is not counted as two fake specialties `ob.` and `gyn`.
 
 To count honestly:
 ```python
@@ -54,25 +60,38 @@ One row per expert-curated atomic fact. Gold reference for the Extractor agent.
 | `question_id` | Links to questions |
 | `nugget_idx` | Position within that question's nugget list |
 | `nugget` | The fact as written, usually `Predicate(subject, object)` |
+| `modality` | Hedge in front of the predicate, e.g. `may`. Null for 329 nuggets with no hedge; 169 (34%) have one |
 | `predicate` | Parsed relation, e.g. `Treat`, `Cause`, `Is`. Null when the pattern doesn't fit |
-| `arguments` | Parsed contents of the parentheses |
+| `arguments` | Parsed contents of the parentheses, CUI tags included |
 | `n_arguments` | Number of comma-separated arguments |
-| `fits_predicate_pattern` | True for 326, False for 172 |
-| `cuis` | UMLS concept IDs. **Empty for every row, see below** |
-| `n_cuis` | Count of CUIs, 0 throughout |
+| `fits_predicate_pattern` | True for 495, False for 3 |
+| `cuis` | UMLS concept IDs, pipe-separated, e.g. `C0870811\|C0037315` |
+| `n_cuis` | Count of CUIs. Every nugget has at least one |
 
-Median 11.5 nuggets per question, range 3 to 31. Most common predicates: `Is` (55),
-`Associated` (27), `Cause` (27), `Include` (25), `Treat` (25).
+Median 11.5 nuggets per question, range 3 to 31. To see the most common predicates:
+```python
+nuggets["predicate"].value_counts().head(10)
+```
 
-**Two findings for the Extractor owner.**
+**Three findings for the Extractor owner.**
 
-35% of nuggets do not fit the simple `Predicate(a, b)` shape. They use if/then clauses,
-comparisons, and multi-part constructions. Any extraction schema needs to handle more than
-two-argument relations.
+Hedges are common. About a third of nuggets start with a modality like `[may]`, as in
+`[may] Prevent (lifestyle changes [C0870811], sleep apnea [C0037315])`. The hedge is kept
+in `modality` rather than dropped, because "may prevent" and "prevents" are different
+claims and a faithful simplification has to preserve the difference.
 
-The paper describes UMLS CUIs attached to each medical concept, but they are not present
-in this release of the JSON. Nuggets are plain strings. If CUI grounding matters for the
-Extractor, concepts will have to be mapped through the UMLS browser separately.
+CUIs are present. They are written inline after each concept, e.g. `sleep apnea [C0037315]`,
+not in a separate field, and are extracted from the text with the pattern `C` + 7 digits.
+(An earlier version of these files missed them and reported 0 CUIs everywhere.)
+
+`fits_predicate_pattern` is a loose check. It means the nugget has the form
+`Word (...)`, not that it is a clean two-argument relation. Complex nuggets such as
+`IF Treat (...) THEN [may] Form (...)` still match, with `predicate` = `IF` and the rest
+packed into `arguments`. To find them:
+```python
+nuggets[nuggets["arguments"].str.contains(r"\)\s*(THEN|AND|OR)\b", na=False)]
+```
+Any extraction schema needs to handle more than two-argument relations.
 
 ---
 
@@ -91,6 +110,10 @@ One row per sentence of a machine-generated answer. This is the Verifier calibra
 | `answer_is_accurate` | Whether the whole answer passed a first-pass accuracy check |
 | `n_citations` | Citations attached to this sentence |
 | `has_relevance_label` | False for 244 rows |
+| `sentence_n_words` | Word count of the sentence |
+| `sentence_n_words_outlier` | True if the length is outside 1.5 x IQR. Flag only |
+| `sentence_n_words_z` | Z-score of the word count |
+| `n_citations_z` | Z-score of `n_citations` |
 
 Relevance distribution:
 
@@ -130,8 +153,11 @@ One row per unique sentence-PMID pair. Join to sentences on
 | `sentence_idx` | Links to sentences |
 | `pmid` | PubMed ID of the cited paper |
 | `evidence_relation` | Whether the paper backs the claim. See below |
-| `evidence_excerpt` | Human-written passage justifying the judgment |
+| `evidence_excerpt` | Human-written passage justifying the judgment. Blank for 1,959 rows (24.1%) |
 | `n_excerpts` | How many excerpts backed this pair, 1 to 7 |
+| `excerpt_n_words` | Word count of the excerpt. Null when the excerpt is blank |
+| `excerpt_n_words_outlier` | True if the length is outside 1.5 x IQR. Flag only |
+| `excerpt_n_words_z` | Z-score of the word count |
 
 Evidence relation distribution:
 
@@ -175,7 +201,8 @@ check its validation section before trusting anything downstream.
 
 To verify:
 ```bash
-shasum -a 256 medaesqa_v1.json
+shasum -a 256 medaesqa_v1.json                          # macOS / Linux
+Get-FileHash medaesqa_v1.json -Algorithm SHA256         # Windows PowerShell
 ```
 
 ---
@@ -194,11 +221,43 @@ The prep notebook checks these against the published paper. All matched:
 
 ---
 
-## Not applied
+## Missing values, outliers, normalization
 
-No imputation, normalization, or outlier removal. MedAESQA contains only text and human
-labels, with no numeric features to scale and no missing values that could be filled
-without inventing data.
+**Missing values are reported, never filled in.** In this dataset a gap always means either
+"a human did not grade this" or "this field does not apply", so imputing would invent labels
+the Verifier is later calibrated against. Every gap in the four tables:
+
+| Table | Column | Missing | Why |
+|---|---|---|---|
+| questions | `question_focus` | 1 (2.5%) | Left blank in the source file |
+| nuggets | `modality` | 329 (66.1%) | Nugget has no hedge |
+| nuggets | `predicate`, `arguments`, `n_arguments` | 3 (0.6%) | Nugget does not fit `Word (...)` |
+| sentences | `relevance` | 244 (4.7%) | Never graded: answer was rejected as inaccurate |
+| citations | `evidence_excerpt` | 1,959 (24.1%) | Annotator wrote no excerpt |
+
+**Outliers are flagged, never removed.** The only numeric values are word counts derived
+from the text. Anything outside 1.5 x IQR is marked in a `*_outlier` column. Rows are kept
+because this is a frozen evaluation set: dropping them would break every comparison with
+the paper, and a long sentence is still a real answer the Verifier has to judge. Counts
+like `n_citations` are not flagged, because almost every value is 1 and the rule would
+mark everything else as an outlier.
+
+| Column | Min | Median | Max | Normal range | Flagged |
+|---|---|---|---|---|---|
+| `expert_answer_n_words` | 45 | 88 | 204 | 13.5 to 153.5 | 3 (7.5%) |
+| `sentence_n_words` | 1 | 21 | 61 | 3.5 to 39.5 | 124 (2.4%) |
+| `excerpt_n_words` | 5 | 26 | 283 | up to 61.5 | 249 (3.1%) |
+
+**Short sentences are mostly junk, not real outliers.** The 1-word "sentences" are leftover
+citation placeholders like `[PMID1].` and `[PMID3].`, plus one `..`. Most come from rejected,
+ungraded answers, but the `..` (question 145, M5) was graded `unnecessary`. Anyone computing
+per-sentence metrics such as readability should filter on `sentence_n_words_outlier` or a
+minimum word count first, or these fragments will distort the averages.
+
+**Normalization is optional.** Nothing in the pipeline trains on these counts, so nothing
+needs scaling. For anyone who wants to compare them on one scale, z-scored copies
+`(x - mean) / std` are in `*_z` columns. The original counts are unchanged, since those are
+the numbers that match the paper.
 
 ---
 
