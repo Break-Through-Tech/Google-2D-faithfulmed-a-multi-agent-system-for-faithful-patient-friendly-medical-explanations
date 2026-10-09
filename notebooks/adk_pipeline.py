@@ -17,7 +17,8 @@ Note: ADK's exact class/kwarg names evolve — check the docs for your installed
 """
 from google.adk.agents import LlmAgent, SequentialAgent, LoopAgent
 
-MODEL = "gemini-2.0-flash"  # start on the free tier; swap per-agent for the leaderboard
+MODEL = "gemini-3.6-flash"  # 2.0-flash and 2.5-flash are RETIRED and return 404.
+                           # Check client.models.list() if this one 404s too.
 
 # 1) Extractor — pull clinical "atoms" (facts + types) from the source document.
 extractor = LlmAgent(
@@ -31,13 +32,29 @@ extractor = LlmAgent(
     output_key="atoms",
 )
 
-# 2) Simplifier — rewrite into plain language, grounded by RAG (wire retrieval into instruction/tools).
+# 2) Simplifier — rewrite into plain language, grounded by RAG.
+#
+# This is the ONLY agent that queries the glossary index. See docs/architecture.md.
+# Retrieval runs BEFORE this agent: src/glossary_lookup.py looks up each atom and
+# format_for_prompt() renders the result into {definitions}, which lists both the
+# definitions found and the terms that had none.
+#
+# The miss case is not an edge case. The glossary covers conditions well and contains
+# no medication entries at all (0 of 5 drugs tested), while discharge summaries are
+# largely medications. Inventing a drug definition is the exact failure this project
+# exists to prevent, so the instruction below is explicit about it.
 simplifier = LlmAgent(
     name="Simplifier",
     model=MODEL,
     instruction=(
-        "Rewrite the SOURCE for a patient at an 8th-grade reading level using only the extracted "
-        "{atoms}. Use plain-language definitions retrieved from the glossary. Add nothing new."
+        "Rewrite the SOURCE for a patient at an 8th-grade reading level using only the "
+        "extracted {atoms}.\n\n"
+        "{definitions}\n\n"
+        "Rules:\n"
+        "- Use the plain-language definitions above where they are given.\n"
+        "- For any term listed as having NO definition, keep it exactly as written in the "
+        "SOURCE. Do not guess at what it means and do not invent an explanation.\n"
+        "- Add no facts that are not in {atoms}. Drop no facts that are."
     ),
     output_key="draft",
 )
