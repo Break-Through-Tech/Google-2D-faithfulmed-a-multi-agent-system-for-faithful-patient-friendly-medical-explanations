@@ -203,58 +203,24 @@ report it as a limitation? Flagged in the 9/15 team update.
 
 | # | Problem | Who decides | Blocks |
 |---|---|---|---|
-| 0 | Three rules here contradict each other on an unretrieved term | Isha, Edwin, Gisele | Simplifier and Verifier |
-| 0b | Lab values need interpretation; no agent provides it | team | `lab_value` atoms |
-| 0c | Neither corpus contains patient instructions | team, Ram | the December demo |
-| 1 | Verifier checks atoms, not source | Isha | faithfulness claim |
-| 2 | Readability runs after the last verification | Edwin, team | final output |
-| 3 | The loop ends on an unverified Refiner write | team | |
-| 3b | No atom type for allergies; negations can invert | Vera | Extractor schema |
-| 3c | On Synthea the Extractor is a flattener, not an agent | team | November ablation |
-| 4 | No dataset here can define a medication | **Ram** | the whole Simplifier case |
-| 5 | PLABA missing, no owner | team | Simplifier evaluation |
+| 1 | Three rules here contradict each other on an unretrieved term | Isha, Gisele, Edwin | Simplifier and Verifier |
+| 2 | Lab values need interpretation; no agent provides it | team | `lab_value` atoms |
+| 3 | Neither corpus contains patient instructions | team, Ram | the December demo |
+| 4 | Verifier checks atoms, not source | Isha | the faithfulness claim |
+| 5 | Readability runs after the last verification | Edwin, team | final output |
+| 6 | The loop ends on an unverified Refiner write | team | |
+| 7 | No atom type for allergies; negations can invert meaning | Vera | Extractor schema |
+| 8 | On Synthea the Extractor is a flattener, not an agent | team | November ablation |
+| 9 | No dataset here can define a medication | **Ram** | the Simplifier's whole case |
+| 10 | PLABA missing, no owner | team | Simplifier evaluation |
 
-Items 0, 1 and 4 are the ones worth meeting about. The rest can be decided in the group chat.
+**Items 1, 4 and 9 are the ones worth meeting about.** The rest can be settled in the group chat.
 
 These were found by auditing this document against the repo and the advisor's brief on
 2026-10-13. They are listed here rather than quietly fixed because three of them need a
 team or advisor decision, not a unilateral one.
 
-### 1. The Verifier checks the draft against the atoms, not against the source
-
-The scaffold's Verifier instruction is "Compare {draft} against {atoms}". But the project
-brief's stated goal is explanations "provably faithful **to the source**".
-
-Those are not the same claim. If the Extractor drops a fact, the atoms are already
-incomplete, and the Verifier will pass a draft that is missing it. Verification inherits
-every extraction error silently.
-
-**Options:** give the Verifier the source as well as the atoms, which costs tokens on a
-tight quota; or add an extraction-completeness check; or accept the limitation and state
-it plainly in the December report. **Needs a decision. Isha owns the Verifier.**
-
-### 2. Readability runs after the Verifier, so its output is never verified
-
-Order is Extractor, Simplifier, Verifier and Refiner loop, then Readability. The
-Readability agent rewrites the text after the last verification, so a fact it breaks
-reaches the patient unchecked.
-
-`src/readability_agent.py` mitigates this with its own fact-check: any pass that changes a
-number or drops a negation is rejected. That is a guard, not verification. It catches
-numeric and negation damage, not a subtly reworded claim.
-
-**Options:** move Readability inside the loop; or re-verify after it; or keep the current
-order and rely on the agent's internal check. **Needs a decision.**
-
-### 3. The loop ends on a Refiner write, so the last edit is unverified
-
-`LoopAgent(sub_agents=[verifier, refiner], max_iterations=2)` runs verify, refine, verify,
-refine. The final Refiner edit is never read back by the Verifier.
-
-**Option:** a single verification pass after the loop closes, used as a report-only signal
-rather than another edit.
-
-### 0. Three rules in this document contradict each other
+### 1. Three rules in this document contradict each other
 
 This is the most serious problem found, and all three rules are ones I wrote.
 
@@ -277,8 +243,7 @@ maximally faithful to it. The Verifier should flag an *invented* definition, not
 **Proposed fix, needs Isha's agreement:** the Verifier flags a definition that does not
 appear in the source or the retrieved context. An unexplained term passes faithfulness and
 is reported separately as a readability gap, which is what it actually is.
-
-### 0b. Lab values need interpretation, which no agent provides
+### 2. Lab values need interpretation, which no agent provides
 
 A patient does not need "glucose is a sugar in your blood". They need "your blood sugar
 was higher than normal". That requires a reference range.
@@ -290,8 +255,7 @@ the design has no component for.
 
 **Options:** add reference ranges as a lookup; state values without interpretation; or
 scope lab interpretation out and say so.
-
-### 0c. Neither source corpus contains the instructions a patient most needs
+### 3. Neither source corpus contains the instructions a patient most needs
 
 MTSamples is dominated by operative notes and radiology reports, records of what was done
 rather than what the patient should do. PLAN appears 202 times in a 1,500-document sample,
@@ -301,8 +265,38 @@ instruction text at all, only coded care-plan descriptions.
 The `instruction` atom type is therefore the rarest thing in our data and the most
 important thing in a patient-facing explanation. If the December demo is meant to show
 discharge instructions being made readable, the corpus does not really contain them.
+### 4. The Verifier checks the draft against the atoms, not against the source
 
-### 3b. The atom type set has no slot for allergies or social history
+The scaffold's Verifier instruction is "Compare {draft} against {atoms}". But the project
+brief's stated goal is explanations "provably faithful **to the source**".
+
+Those are not the same claim. If the Extractor drops a fact, the atoms are already
+incomplete, and the Verifier will pass a draft that is missing it. Verification inherits
+every extraction error silently.
+
+**Options:** give the Verifier the source as well as the atoms, which costs tokens on a
+tight quota; or add an extraction-completeness check; or accept the limitation and state
+it plainly in the December report. **Needs a decision. Isha owns the Verifier.**
+### 5. Readability runs after the Verifier, so its output is never verified
+
+Order is Extractor, Simplifier, Verifier and Refiner loop, then Readability. The
+Readability agent rewrites the text after the last verification, so a fact it breaks
+reaches the patient unchecked.
+
+`src/readability_agent.py` mitigates this with its own fact-check: any pass that changes a
+number or drops a negation is rejected. That is a guard, not verification. It catches
+numeric and negation damage, not a subtly reworded claim.
+
+**Options:** move Readability inside the loop; or re-verify after it; or keep the current
+order and rely on the agent's internal check. **Needs a decision.**
+### 6. The loop ends on a Refiner write, so the last edit is unverified
+
+`LoopAgent(sub_agents=[verifier, refiner], max_iterations=2)` runs verify, refine, verify,
+refine. The final Refiner edit is never read back by the Verifier.
+
+**Option:** a single verification pass after the loop closes, used as a report-only signal
+rather than another edit.
+### 7. The atom type set has no slot for allergies or social history
 
 Five types are defined: diagnosis, medication, lab_value, procedure, instruction.
 
@@ -319,8 +313,7 @@ cardiopulmonary change". If the Extractor records the finding without its negati
 atom inverts the meaning, and the Verifier checks the draft against the atoms rather than
 the source, so nothing catches it. An atom schema needs a negation flag, or the extraction
 prompt has to be explicit that negated findings stay negated.
-
-### 3c. On Synthea the Extractor is not an LLM agent at all
+### 8. On Synthea the Extractor is not an LLM agent at all
 
 Synthea has no clinical narrative. Its rows are already typed atoms:
 conditions map to diagnosis, medications to medication, observations to lab_value,
@@ -332,8 +325,7 @@ run on MTSamples or MedAESQA, and the Synthea arm needs separate scoping.** Reni
 frames Synthea as an input-stage stress test rather than an evaluation set, which is the
 right call, but no one has written down the slicing rule: a median patient yields several
 hundred atoms and the largest yields thousands, which does not fit a 20-request daily quota.
-
-### 4. The index should probably cover more than MedlinePlus
+### 9. The index should probably cover more than MedlinePlus
 
 The September milestone says the index spans "the MedlinePlus lay-language glossary **and
 authoritative lay-health guidelines**", and the dataset table lists MedQuAD for "RAG
@@ -351,8 +343,7 @@ the medication gap is empty exactly where we need it.
 So the open question for Ram is sharper than first written: **no dataset currently in this
 project can define a medication in plain language.** Either we add a source outside the
 brief's list, or we accept the gap and report it.
-
-### 5. PLABA is unused and uncommitted
+### 10. PLABA is unused and uncommitted
 
 The brief calls "MTSamples + PLABA" the simplification core, and PLABA is listed as gold
 professional-to-plain-language pairs for the Simplifier. There is no PLABA data or notebook
