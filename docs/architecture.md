@@ -199,6 +199,23 @@ report it as a limitation? Flagged in the 9/15 team update.
 
 ## Open problems in this design
 
+**Summary, for anyone who reads one table in this document:**
+
+| # | Problem | Who decides | Blocks |
+|---|---|---|---|
+| 0 | Three rules here contradict each other on an unretrieved term | Isha, Edwin, Gisele | Simplifier and Verifier |
+| 0b | Lab values need interpretation; no agent provides it | team | `lab_value` atoms |
+| 0c | Neither corpus contains patient instructions | team, Ram | the December demo |
+| 1 | Verifier checks atoms, not source | Isha | faithfulness claim |
+| 2 | Readability runs after the last verification | Edwin, team | final output |
+| 3 | The loop ends on an unverified Refiner write | team | |
+| 3b | No atom type for allergies; negations can invert | Vera | Extractor schema |
+| 3c | On Synthea the Extractor is a flattener, not an agent | team | November ablation |
+| 4 | No dataset here can define a medication | **Ram** | the whole Simplifier case |
+| 5 | PLABA missing, no owner | team | Simplifier evaluation |
+
+Items 0, 1 and 4 are the ones worth meeting about. The rest can be decided in the group chat.
+
 These were found by auditing this document against the repo and the advisor's brief on
 2026-10-13. They are listed here rather than quietly fixed because three of them need a
 team or advisor decision, not a unilateral one.
@@ -237,6 +254,54 @@ refine. The final Refiner edit is never read back by the Verifier.
 **Option:** a single verification pass after the loop closes, used as a report-only signal
 rather than another edit.
 
+### 0. Three rules in this document contradict each other
+
+This is the most serious problem found, and all three rules are ones I wrote.
+
+1. The Simplifier, on a retrieval miss, **keeps the term as written**.
+2. The Verifier **treats an unretrieved definition as an unsupported claim**.
+3. The Readability agent must **hit grade 8 without changing or dropping any fact**, and
+   is told to keep a medical term that has no everyday equivalent.
+
+Now trace a medication atom, which is the common case since the glossary defines zero
+drugs. The Simplifier correctly leaves "Hydrochlorothiazide 25 MG Oral Tablet" untouched.
+The Verifier then flags it as unsupported, so the expected case becomes a verification
+failure. The Refiner is asked to fix something that is not broken. The Readability agent
+inherits a grade-12 string and is told both to reach grade 8 and not to change it.
+
+**Rule 2 is the wrong one.** "No definition was retrieved" and "this claim is not
+supported by the source" are different things. A term copied verbatim from the source is
+maximally faithful to it. The Verifier should flag an *invented* definition, not an
+*absent* one.
+
+**Proposed fix, needs Isha's agreement:** the Verifier flags a definition that does not
+appear in the source or the retrieved context. An unexplained term passes faithfulness and
+is reported separately as a readability gap, which is what it actually is.
+
+### 0b. Lab values need interpretation, which no agent provides
+
+A patient does not need "glucose is a sugar in your blood". They need "your blood sugar
+was higher than normal". That requires a reference range.
+
+Synthea stores VALUE and UNITS as separate columns, so the number is available, but
+nothing in the pipeline turns 142 mg/dL into "higher than normal", and the glossary
+carries definitions, not ranges. The `lab_value` atom type implies an interpretation step
+the design has no component for.
+
+**Options:** add reference ranges as a lookup; state values without interpretation; or
+scope lab interpretation out and say so.
+
+### 0c. Neither source corpus contains the instructions a patient most needs
+
+MTSamples is dominated by operative notes and radiology reports, records of what was done
+rather than what the patient should do. PLAN appears 202 times in a 1,500-document sample,
+and Discharge Summary is only 108 of 4,999 rows before deduplication. Synthea has no
+instruction text at all, only coded care-plan descriptions.
+
+The `instruction` atom type is therefore the rarest thing in our data and the most
+important thing in a patient-facing explanation. If the December demo is meant to show
+discharge instructions being made readable, the corpus does not really contain them.
+
 ### 3b. The atom type set has no slot for allergies or social history
 
 Five types are defined: diagnosis, medication, lab_value, procedure, instruction.
@@ -248,6 +313,12 @@ rows and quality-of-life indices on 10,121, which are not lab values in any usef
 
 **Proposal:** add `allergy` as a sixth type. Social history can wait, but allergies
 should not.
+
+**Negated findings are the dangerous gap.** MTSamples is full of phrases like "no acute
+cardiopulmonary change". If the Extractor records the finding without its negation, the
+atom inverts the meaning, and the Verifier checks the draft against the atoms rather than
+the source, so nothing catches it. An atom schema needs a negation flag, or the extraction
+prompt has to be explicit that negated findings stay negated.
 
 ### 3c. On Synthea the Extractor is not an LLM agent at all
 
