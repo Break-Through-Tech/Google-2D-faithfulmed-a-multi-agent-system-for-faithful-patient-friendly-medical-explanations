@@ -102,16 +102,3 @@ Either we add a source outside the brief's list, or we report it as a limitation
 **Team: patient instructions.** Neither MTSamples nor Synthea really contains discharge
 instructions, which is what patients need most. Worth deciding what the December demo
 shows.
-
----
-
-## If someone asks
-
-**"Did you change my agent?"** The starter scaffold, yes, since that is the architecture
-task. The prompts in `adk_pipeline.py` are a starting point. Your own agent code is yours.
-
-**"Why is the default model 3.5-flash?"** 2.0 and 2.5 are retired. 3.6 failed on every long
-prompt on 10/13 while 3.5 handled them. It is one parameter to change.
-
-**"Why pin the ADK version?"** The latest ADK marks the two classes we use as deprecated.
-They still work, but an unpinned upgrade could break everyone's notebook mid-semester.
