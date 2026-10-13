@@ -11,20 +11,20 @@ can check the wiring without an API key.
 
 ---
 
-## What changed in version 2
+## What's new in version 2
 
-Version 1 had a design that contradicted itself. Five fixes, all in the code and all
-covered by the offline test:
+Version 2 adds two steps and tightens how verification works. Everything below is in the
+code and covered by the offline test.
 
-| # | v1 problem | v2 fix |
-|---|---|---|
-| 1 | The Verifier checked the draft against the Extractor's list only. A fact the Extractor missed was invisible. | The Verifier reads the **source** as well. The atoms become a checklist, not the ground truth. |
-| 2 | An unexplained medication counted as an unsupported claim, so the normal case was a failure. | A term copied from the source is **faithful**. It is reported as a readability gap under `unexplained_terms`. |
-| 3 | Readability ran after the last check, and the loop ended on an unchecked Refiner edit. The text a patient reads was never verified. | A **FinalCheck** reads the final text. It reports and does not edit, so it cannot loop. |
-| 4 | The Simplifier referenced `{definitions}` but nothing wrote it. ADK would have raised a KeyError on the first real run. | A **Retriever** step writes `definitions`, and the Verifier can now see what was retrieved. |
-| 5 | No place for allergies, and "no chest pain" could be extracted as "chest pain". | Atoms gain an `allergy` type, a `negated` flag, and a `term` to look up. |
+| # | Area | v1 | v2 |
+|---|---|---|---|
+| 1 | What the Verifier reads | The draft and the extracted facts | Also the original **source**. The facts become a checklist. |
+| 2 | Unexplained terms | Counted against faithfulness | **Faithful**, reported as a readability gap under `unexplained_terms` |
+| 3 | The final text | Readability was the last step | A **FinalCheck** reads the final text. Report only, so it cannot loop. |
+| 4 | Retrieval | Part of the Simplifier step | Its own **Retriever** step. Output stays in state, so the Verifier can see it. |
+| 5 | Fact schema | Five types | Adds an `allergy` type, a `negated` flag, and a `term` to look up |
 
-What did **not** change: five agents, fixed order, one loop capped at two rounds,
+What stays the same: five agents, fixed order, one loop capped at two rounds,
 temperature 0, and only one step allowed to query the glossary.
 
 ---
@@ -256,79 +256,104 @@ faithful, so it is **not** an unsupported claim. It is listed under `unexplained
 which is a readability measure. What the Verifier does flag is an *invented* definition: an
 explanation that appears in neither the source nor the retrieved definitions.
 
-v1 said the opposite, and it made the most common case a failure. Since the glossary
-defines no medications, every drug in every document would have failed verification.
+This matters because the glossary defines no medications, so drug names are the most
+common unexplained terms.
 
 Open question for Ram: do we add a second source for medications, or accept the gap and
 report it as a limitation? MedQuAD cannot fill it: its drug answers are 100% empty.
 
 ---
 
-## Open problems in this design
+## Design decisions behind v2
 
-**Summary, for anyone who reads one table in this document:**
+The reasoning for each v2 change, for anyone building against it.
 
-| # | Problem | Status | Who decides |
+### The Verifier reads the source, not only the extracted facts
+
+The brief asks for explanations "provably faithful **to the source**". If the Verifier
+compared the draft only against the extracted facts, any fact the Extractor dropped would
+be invisible to it, and verification would inherit every extraction error. So the Verifier
+and FinalCheck both read the source. The extracted facts are still passed in, as a
+checklist for omissions.
+
+The cost is a longer prompt, which matters on a tight quota. It is the only way to make the
+faithfulness claim match what the brief asks for.
+
+### An unexplained term is faithful
+
+Three rules have to work together on a term with no definition:
+
+1. The Simplifier **keeps the term as written**.
+2. The Verifier decides whether that counts against faithfulness.
+3. The Readability agent must **reach grade 8 without changing any fact**, and keeps a
+   medical term that has no everyday equivalent.
+
+The glossary defines zero medications, so this is the common case. A term copied verbatim
+from the source is as faithful as text gets, so the Verifier does **not** count it as an
+unsupported claim. It is listed under `unexplained_terms`, which is a readability measure.
+What the Verifier flags is an *invented* definition: an explanation found in neither the
+source nor the retrieved definitions.
+
+### FinalCheck verifies the text the patient reads
+
+Readability rewrites the text after the refine loop, and the loop's last step is a Refiner
+edit. So the final text needs its own check. FinalCheck runs the Verifier's instruction on
+the final text and reports. It does not edit, because anything that edits would need
+checking too.
+
+`src/readability_agent.py` adds a second guard for evaluation runs: it rejects any rewrite
+that changes a number or drops a negation, and keeps the harder but correct text.
+
+### Retrieval is its own step
+
+Retrieval runs as a plain Python step between the Extractor and the Simplifier. Exact
+matches cost no quota, and the result is written to state as `definitions`, so both the
+Simplifier and the Verifier can read it. Every `{placeholder}` in an ADK instruction must
+exist in state at run time, so a dedicated step is also what guarantees `definitions` is
+there.
+
+### Facts carry a type, a term, and a negation flag
+
+- **`allergy`** is a sixth type. Synthea records 597 allergies and ALLERGIES appears 261
+  times in a 1,500-document MTSamples sample. They are safety-relevant and need a home.
+- **`negated`** keeps "no acute cardiopulmonary change" from becoming "acute
+  cardiopulmonary change". MTSamples is full of negated findings.
+- **`term`** is what the Retriever looks up. "metformin" matches; "metformin 500 mg twice
+  daily" does not.
+
+Social history (smoking status, quality-of-life scores) has no type yet. It can wait.
+
+---
+
+## Open questions
+
+| # | Question | Status | Who decides |
 |---|---|---|---|
-| 1 | Three rules contradicted each other on an unexplained term | **Fixed in v2** | Isha to confirm |
-| 2 | Lab values need interpretation; no agent provides it | Default set: state the value, no "high/low" unless the source says so. Reference ranges still open. | team |
-| 3 | Neither corpus contains patient instructions | **Open** | team, Ram |
-| 4 | Verifier checked atoms, not source | **Fixed in v2** | Isha to confirm |
-| 5 | Readability ran after the last verification | **Fixed in v2** (FinalCheck) | |
-| 6 | The loop ended on an unverified Refiner write | **Fixed in v2** (FinalCheck) | |
-| 7 | No atom type for allergies; negations could invert | **Fixed in v2** | Vera to confirm |
-| 8 | On Synthea the Extractor is a flattener, not an agent | **Open** | team |
-| 9 | No dataset here can define a medication | **Open** | **Ram** |
-| 10 | PLABA missing, no owner | **Open** | team |
+| 1 | Lab values need interpretation; no agent provides it | Default: state the value, no high or low unless the source says so. Reference ranges open. | team |
+| 2 | Neither corpus contains patient instructions | Open | team, Ram |
+| 3 | On Synthea the Extractor is a flattener, not an agent | Open | team |
+| 4 | No dataset here can define a medication | Open | **Ram** |
+| 5 | PLABA missing, no owner | Open | team |
 
-**Still needs the group:** item 9 for Ram, item 3 for the demo, and Isha confirming items 1
-and 4, since the Verifier is hers. Everything marked fixed is in the code and covered by
-`src/test_pipeline_offline.py`.
+**Also to confirm:** Isha on the Verifier changes and Vera on the fact schema, since those
+agents are theirs.
 
-These were found by auditing this document against the repo and the advisor's brief on
-2026-10-13. They are listed here rather than quietly fixed because three of them need a
-team or advisor decision, not a unilateral one.
+### 1. Lab values need interpretation, which no agent provides
 
-### 1. Three rules in this document contradict each other
-
-> **Status:** Fixed in v2. The Verifier now lists an unexplained term under `unexplained_terms` and does not count it as unsupported.
-
-This is the most serious problem found, and all three rules are ones I wrote.
-
-1. The Simplifier, on a retrieval miss, **keeps the term as written**.
-2. The Verifier **treats an unretrieved definition as an unsupported claim**.
-3. The Readability agent must **hit grade 8 without changing or dropping any fact**, and
-   is told to keep a medical term that has no everyday equivalent.
-
-Now trace a medication atom, which is the common case since the glossary defines zero
-drugs. The Simplifier correctly leaves "Hydrochlorothiazide 25 MG Oral Tablet" untouched.
-The Verifier then flags it as unsupported, so the expected case becomes a verification
-failure. The Refiner is asked to fix something that is not broken. The Readability agent
-inherits a grade-12 string and is told both to reach grade 8 and not to change it.
-
-**Rule 2 is the wrong one.** "No definition was retrieved" and "this claim is not
-supported by the source" are different things. A term copied verbatim from the source is
-maximally faithful to it. The Verifier should flag an *invented* definition, not an
-*absent* one.
-
-**Proposed fix, needs Isha's agreement:** the Verifier flags a definition that does not
-appear in the source or the retrieved context. An unexplained term passes faithfulness and
-is reported separately as a readability gap, which is what it actually is.
-### 2. Lab values need interpretation, which no agent provides
-
-> **Status:** Partly addressed. The Simplifier states lab values as the source does and never calls them high or low on its own. Interpreting them still needs reference ranges, which nothing provides yet.
+> **Default for now:** the Simplifier states lab values as the source does and never calls them high or low on its own. Interpreting them still needs reference ranges.
 
 A patient does not need "glucose is a sugar in your blood". They need "your blood sugar
 was higher than normal". That requires a reference range.
 
 Synthea stores VALUE and UNITS as separate columns, so the number is available, but
 nothing in the pipeline turns 142 mg/dL into "higher than normal", and the glossary
-carries definitions, not ranges. The `lab_value` atom type implies an interpretation step
-the design has no component for.
+carries definitions, not ranges. The `lab_value` type needs an interpretation step that
+the pipeline does not have yet.
 
 **Options:** add reference ranges as a lookup; state values without interpretation; or
 scope lab interpretation out and say so.
-### 3. Neither source corpus contains the instructions a patient most needs
+
+### 2. Neither source corpus contains the instructions a patient most needs
 
 MTSamples is dominated by operative notes and radiology reports, records of what was done
 rather than what the patient should do. PLAN appears 202 times in a 1,500-document sample,
@@ -338,63 +363,8 @@ instruction text at all, only coded care-plan descriptions.
 The `instruction` atom type is therefore the rarest thing in our data and the most
 important thing in a patient-facing explanation. If the December demo is meant to show
 discharge instructions being made readable, the corpus does not really contain them.
-### 4. The Verifier checks the draft against the atoms, not against the source
 
-> **Status:** Fixed in v2. The Verifier and FinalCheck both read the source; the atoms are a checklist.
-
-The scaffold's Verifier instruction is "Compare {draft} against {atoms}". But the project
-brief's stated goal is explanations "provably faithful **to the source**".
-
-Those are not the same claim. If the Extractor drops a fact, the atoms are already
-incomplete, and the Verifier will pass a draft that is missing it. Verification inherits
-every extraction error silently.
-
-**Options:** give the Verifier the source as well as the atoms, which costs tokens on a
-tight quota; or add an extraction-completeness check; or accept the limitation and state
-it plainly in the December report. **Needs a decision. Isha owns the Verifier.**
-### 5. Readability runs after the Verifier, so its output is never verified
-
-> **Status:** Fixed in v2. FinalCheck reads the final text after Readability.
-
-Order is Extractor, Simplifier, Verifier and Refiner loop, then Readability. The
-Readability agent rewrites the text after the last verification, so a fact it breaks
-reaches the patient unchecked.
-
-`src/readability_agent.py` mitigates this with its own fact-check: any pass that changes a
-number or drops a negation is rejected. That is a guard, not verification. It catches
-numeric and negation damage, not a subtly reworded claim.
-
-**Options:** move Readability inside the loop; or re-verify after it; or keep the current
-order and rely on the agent's internal check. **Needs a decision.**
-### 6. The loop ends on a Refiner write, so the last edit is unverified
-
-> **Status:** Fixed in v2. FinalCheck reads the text after the last Refiner edit, so that edit is now checked.
-
-`LoopAgent(sub_agents=[verifier, refiner], max_iterations=2)` runs verify, refine, verify,
-refine. The final Refiner edit is never read back by the Verifier.
-
-**Option:** a single verification pass after the loop closes, used as a report-only signal
-rather than another edit.
-### 7. The atom type set has no slot for allergies or social history
-
-> **Status:** Fixed in v2. Atoms now have an `allergy` type and a `negated` flag.
-
-Five types are defined: diagnosis, medication, lab_value, procedure, instruction.
-
-Synthea records 597 allergies, and ALLERGIES appears 261 times in a 1,500-document
-MTSamples sample. An allergy is patient-safety relevant and currently has nowhere to go,
-so it gets mistyped or silently dropped. Synthea also records smoking status on 12,552
-rows and quality-of-life indices on 10,121, which are not lab values in any useful sense.
-
-**Proposal:** add `allergy` as a sixth type. Social history can wait, but allergies
-should not.
-
-**Negated findings are the dangerous gap.** MTSamples is full of phrases like "no acute
-cardiopulmonary change". If the Extractor records the finding without its negation, the
-atom inverts the meaning, and the Verifier checks the draft against the atoms rather than
-the source, so nothing catches it. An atom schema needs a negation flag, or the extraction
-prompt has to be explicit that negated findings stay negated.
-### 8. On Synthea the Extractor is not an LLM agent at all
+### 3. On Synthea the Extractor is not an LLM agent at all
 
 Synthea has no clinical narrative. Its rows are already typed atoms:
 conditions map to diagnosis, medications to medication, observations to lab_value,
@@ -406,7 +376,8 @@ run on MTSamples or MedAESQA, and the Synthea arm needs separate scoping.** Reni
 frames Synthea as an input-stage stress test rather than an evaluation set, which is the
 right call, but no one has written down the slicing rule: a median patient yields several
 hundred atoms and the largest yields thousands, which does not fit a 20-request daily quota.
-### 9. The index should probably cover more than MedlinePlus
+
+### 4. No dataset here can define a medication
 
 The September milestone says the index spans "the MedlinePlus lay-language glossary **and
 authoritative lay-health guidelines**", and the dataset table lists MedQuAD for "RAG
@@ -421,10 +392,11 @@ answers overall, and the drug sources specifically are 100% empty: MedlinePlus D
 were redacted at collection for copyright. The one dataset that looked like it could fill
 the medication gap is empty exactly where we need it.
 
-So the open question for Ram is sharper than first written: **no dataset currently in this
-project can define a medication in plain language.** Either we add a source outside the
+So the question for Ram is this: **no dataset currently in this project can define a
+medication in plain language.** Either we add a source outside the
 brief's list, or we accept the gap and report it.
-### 10. PLABA is unused and uncommitted
+
+### 5. PLABA is unused and uncommitted
 
 The brief calls "MTSamples + PLABA" the simplification core, and PLABA is listed as gold
 professional-to-plain-language pairs for the Simplifier. There is no PLABA data or notebook

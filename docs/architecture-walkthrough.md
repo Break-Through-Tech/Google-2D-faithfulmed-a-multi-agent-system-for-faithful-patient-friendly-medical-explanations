@@ -44,23 +44,20 @@ Simplifier before Renita's embeddings are done.
 I checked v1 against everyone's notebooks and the brief, then refined it. Here is what
 changed.
 
-**The main change: how we handle medications.** The glossary defines zero medications. v1 said the
-Simplifier keeps an unknown drug name as written, which is right. But it also said the
-Verifier counts an unknown term as unsupported. So every drug in every document would have
-failed verification, even though nothing was wrong with it.
+**The main change: how we handle medications.** The glossary defines zero medications, so
+drug names usually have no definition. In v2 the Simplifier keeps a drug name as written,
+and the Verifier counts that as faithful, because it is copied straight from the source. It
+gets listed as "unexplained", which is a readability issue, not a faithfulness one. The
+Verifier only flags things that are *made up*.
 
-**The fix:** a term copied from the source is faithful. It gets listed as "unexplained",
-which is a readability issue, not a faithfulness one. The Verifier only flags things that
-are *made up*.
+Four more changes:
 
-Four more fixes:
-
-| Problem in v1 | Fix in v2 |
+| v1 | v2 |
 |---|---|
-| The Verifier only checked the Extractor's list, so anything the Extractor missed was invisible | The Verifier reads the original source too |
-| Nobody checked the final text the patient reads | New FinalCheck step at the end. It reports, it does not edit, so no endless loop |
-| The Simplifier needed definitions, but no step produced them yet | New Retriever step produces them |
-| No place for allergies, and "no chest pain" could come out as "chest pain" | Allergy type added, and every fact carries a negated yes/no |
+| The Verifier checked the draft against the extracted facts | It also reads the original source, so it catches anything extraction missed |
+| Readability was the last step | New FinalCheck step reads the final text. It reports and does not edit, so no endless loop |
+| Retrieval was part of the Simplifier | New Retriever step, so the definitions are saved and the Verifier can see them |
+| Five fact types | Allergy type added, and every fact carries a negated yes/no so "no chest pain" stays negative |
 
 **How we know it works:** `python src/test_pipeline_offline.py` runs the whole thing with a
 fake model. 26 checks pass: right order, every input reaches the right agent, the Verifier
