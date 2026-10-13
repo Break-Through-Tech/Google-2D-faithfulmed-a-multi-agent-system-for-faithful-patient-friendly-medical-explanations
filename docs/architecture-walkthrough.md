@@ -41,13 +41,13 @@ Simplifier before Renita's embeddings are done.
 
 ## 3. What changed from v1, and why (4 min)
 
-I checked v1 against everyone's notebooks and the brief, and it had real problems. Worth
-being upfront about, because the fixes are the interesting part.
+I checked v1 against everyone's notebooks and the brief, then refined it. Here is what
+changed.
 
-**The big one: v1 contradicted itself.** The glossary defines zero medications. v1 said the
+**The main change: how we handle medications.** The glossary defines zero medications. v1 said the
 Simplifier keeps an unknown drug name as written, which is right. But it also said the
 Verifier counts an unknown term as unsupported. So every drug in every document would have
-failed verification. The normal case was a failure.
+failed verification, even though nothing was wrong with it.
 
 **The fix:** a term copied from the source is faithful. It gets listed as "unexplained",
 which is a readability issue, not a faithfulness one. The Verifier only flags things that
@@ -59,7 +59,7 @@ Four more fixes:
 |---|---|
 | The Verifier only checked the Extractor's list, so anything the Extractor missed was invisible | The Verifier reads the original source too |
 | Nobody checked the final text the patient reads | New FinalCheck step at the end. It reports, it does not edit, so no endless loop |
-| The Simplifier asked for definitions nothing ever produced. It would have crashed on the first real run. | New Retriever step produces them |
+| The Simplifier needed definitions, but no step produced them yet | New Retriever step produces them |
 | No place for allergies, and "no chest pain" could come out as "chest pain" | Allergy type added, and every fact carries a negated yes/no |
 
 **How we know it works:** `python src/test_pipeline_offline.py` runs the whole thing with a
