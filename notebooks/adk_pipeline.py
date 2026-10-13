@@ -1,124 +1,260 @@
 """
-FaithfulMed — minimal Google ADK pipeline skeleton.
+FaithfulMed: Google ADK pipeline, architecture v2.
 
-Shows the *shape* the SME review asked for: a deterministic DAG (SequentialAgent), not open-ended
-recursion, with a single BOUNDED loop (LoopAgent, max_iterations=2) for Refiner <-> Verifier.
+See docs/architecture.md for the reasoning behind every rule below.
 
-This is a scaffold to react to, not a finished pipeline. Each fellow fleshes out their own agent's
-instruction, output schema, and tools.
+    Extractor -> Retriever -> Simplifier -> [Verifier <-> Refiner] x<=2 -> Readability -> FinalCheck
 
-Setup:
-    pip install google-adk
-    export GEMINI_API_KEY=...        # free key from https://aistudio.google.com
-Docs: https://google.github.io/adk-docs
+What changed from v1, and why
+-----------------------------
+1. The Verifier checks the draft against the SOURCE, not only the atoms.
+   The brief asks for explanations "provably faithful to the source". Checking only the
+   atoms meant any fact the Extractor missed was invisible to verification.
 
-Note: ADK's exact class/kwarg names evolve — check the docs for your installed version. The intent
-(SequentialAgent for the DAG, LoopAgent with a hard iteration cap for the refine step) is the point.
+2. "No definition found" is no longer a faithfulness failure.
+   The glossary defines zero medications, so an unexplained drug name is the normal
+   case. A term copied verbatim from the source is faithful. It is reported as a
+   readability gap (`unexplained_terms`), not as an unsupported claim.
+
+3. A FinalCheck runs after Readability.
+   v1 ran Readability after the last verification and ended the loop on an unchecked
+   Refiner edit, so the text a patient reads was never verified. FinalCheck reads the
+   final text and reports; it does not edit, so it cannot loop.
+
+4. Retrieval is its own deterministic step, and its output stays in state.
+   v1 referenced {definitions} in the Simplifier but nothing ever wrote it, which would
+   have raised a KeyError at runtime. The Retriever writes it, and the Verifier can now
+   see what was retrieved, so it can tell a retrieved definition from an invented one.
+
+5. Atoms gain a `term`, a `negated` flag, and an `allergy` type.
+   `term` is what the Retriever looks up ("metformin", not the whole sentence).
+   `negated` stops "no acute change" from becoming "acute change".
+
+Running it
+----------
+The source text must be in session state under `source` before the run:
+
+    session = await session_service.create_session(
+        app_name="faithfulmed", user_id="u1", state=new_session_state(text))
+
+Model: gemini-2.0-flash and gemini-2.5-flash are RETIRED (404). gemini-3.6-flash
+returned 503 on long prompts on 2026-10-13 while gemini-3.5-flash did not, so the model
+is a parameter. Temperature 0 everywhere, so the ablation compares like with like.
 """
-from google.adk.agents import LlmAgent, SequentialAgent, LoopAgent
+from __future__ import annotations
 
-MODEL = "gemini-3.6-flash"  # 2.0-flash and 2.5-flash are RETIRED and return 404.
-                           # Check client.models.list() if this one 404s too.
+import json
+import re
+import sys
+from pathlib import Path
+from typing import AsyncGenerator, Optional
 
-# 1) Extractor — pull clinical "atoms" (facts + types) from the source document.
-extractor = LlmAgent(
-    name="Extractor",
-    model=MODEL,
-    instruction=(
-        "Extract every clinically meaningful fact from the SOURCE as a JSON list of atoms, each "
-        "with {text, type} where type is one of: diagnosis, medication, lab_value, procedure, "
-        "instruction. Do not add facts that are not in the SOURCE."
-    ),
-    output_key="atoms",
+from google.adk.agents import BaseAgent, LlmAgent, LoopAgent, SequentialAgent
+from google.adk.agents.invocation_context import InvocationContext
+from google.adk.events import Event, EventActions
+from google.genai import types
+
+sys.path.insert(0, str(Path(__file__).resolve().parent.parent / "src"))
+from glossary_lookup import GlossaryLookup, format_for_prompt  # noqa: E402
+
+DEFAULT_MODEL = "gemini-3.5-flash"
+ATOM_TYPES = ("diagnosis", "medication", "lab_value", "procedure", "instruction", "allergy")
+_GEN = types.GenerateContentConfig(temperature=0.0)
+
+
+def new_session_state(source: str) -> dict:
+    """Initial state for one run. Every {placeholder} below must resolve from this."""
+    return {"source": source}
+
+
+# ------------------------------------------------------------------ 1. Extractor
+
+EXTRACTOR_INSTRUCTION = (
+    "Extract every clinically meaningful fact from the SOURCE below as a JSON list.\n"
+    "Each item has exactly these keys:\n"
+    "  text: the fact, worded as close to the SOURCE as possible\n"
+    "  type: one of " + ", ".join(ATOM_TYPES) + "\n"
+    "  term: the single medical word or phrase a patient might not know "
+    "(for example 'metformin' or 'HbA1c'), or an empty string\n"
+    "  negated: true if the SOURCE says the finding is absent ('no fracture', "
+    "'denies chest pain'), otherwise false\n\n"
+    "Rules:\n"
+    "- Include allergies as type allergy. Never drop them.\n"
+    "- Keep every number exactly as written: doses, lab values, dates, frequencies.\n"
+    "- Skip redaction placeholders such as XXXX. They are not values.\n"
+    "- Do not add any fact that is not in the SOURCE.\n"
+    "- Return only the JSON list, no other text.\n\n"
+    "SOURCE:\n{source}"
 )
 
-# 2) Simplifier — rewrite into plain language, grounded by RAG.
-#
-# This is the ONLY agent that queries the glossary index. See docs/architecture.md.
-# Retrieval runs BEFORE this agent: src/glossary_lookup.py looks up each atom and
-# format_for_prompt() renders the result into {definitions}, which lists both the
-# definitions found and the terms that had none.
-#
-# The miss case is not an edge case. The glossary covers conditions well and contains
-# no medication entries at all (0 of 5 drugs tested), while discharge summaries are
-# largely medications. Inventing a drug definition is the exact failure this project
-# exists to prevent, so the instruction below is explicit about it.
-simplifier = LlmAgent(
-    name="Simplifier",
-    model=MODEL,
-    instruction=(
-        "Rewrite the SOURCE for a patient at an 8th-grade reading level using only the "
-        "extracted {atoms}.\n\n"
-        "{definitions}\n\n"
-        "Rules:\n"
-        "- Use the plain-language definitions above where they are given.\n"
-        "- For any term listed as having NO definition, keep it exactly as written in the "
-        "SOURCE. Do not guess at what it means and do not invent an explanation.\n"
-        "- Add no facts that are not in {atoms}. Drop no facts that are."
-    ),
-    output_key="draft",
+
+# ------------------------------------------------------------------ 2. Retriever
+
+def parse_atoms(raw) -> list[dict]:
+    """Parse the Extractor's output. Tolerates ```json fences and stray prose."""
+    if isinstance(raw, list):
+        return [a for a in raw if isinstance(a, dict)]
+    text = str(raw or "")
+    text = re.sub(r"^```(?:json)?\s*|\s*```$", "", text.strip(), flags=re.M)
+    m = re.search(r"\[.*\]", text, flags=re.S)
+    if not m:
+        return []
+    try:
+        data = json.loads(m.group(0))
+    except json.JSONDecodeError:
+        return []
+    return [a for a in data if isinstance(a, dict)]
+
+
+class Retriever(BaseAgent):
+    """Deterministic lookup step. No LLM, no quota cost for exact matches.
+
+    The ONLY place in the pipeline that queries the glossary. Writes:
+      definitions        text block for the Simplifier and Verifier prompts
+      unexplained_terms  terms with no definition, as a JSON list
+    """
+
+    lookup: Optional[GlossaryLookup] = None
+    model_config = {"arbitrary_types_allowed": True}
+
+    async def _run_async_impl(self, ctx: InvocationContext) -> AsyncGenerator[Event, None]:
+        atoms = parse_atoms(ctx.session.state.get("atoms"))
+        queries = [{"text": (a.get("term") or "").strip()} for a in atoms]
+        queries = [q for q in queries if q["text"]]
+
+        if self.lookup is None:
+            definitions = ("NO GLOSSARY CONFIGURED. Treat every medical term as having no "
+                           "definition: keep it exactly as written in the SOURCE.")
+            missing = [q["text"] for q in queries]
+        else:
+            results = self.lookup.lookup_atoms(queries)
+            definitions = format_for_prompt(results) or "No medical terms to look up."
+            missing = [r.term for r in results.values() if not r.found]
+
+        yield Event(
+            author=self.name,
+            invocation_id=ctx.invocation_id,
+            actions=EventActions(state_delta={
+                "definitions": definitions,
+                "unexplained_terms": json.dumps(missing),
+            }),
+        )
+
+
+# ------------------------------------------------------------------ 3. Simplifier
+
+SIMPLIFIER_INSTRUCTION = (
+    "Rewrite the SOURCE for a patient at an 8th-grade reading level.\n\n"
+    "SOURCE:\n{source}\n\n"
+    "EXTRACTED FACTS (every one must appear in your rewrite):\n{atoms}\n\n"
+    "{definitions}\n\n"
+    "Rules:\n"
+    "- Use the plain-language definitions above where they are given.\n"
+    "- For a term with no definition, keep it exactly as written. Do not guess what it "
+    "means.\n"
+    "- Keep every negation. 'No fracture' must not become 'fracture'.\n"
+    "- State lab values exactly as the SOURCE does. Do not say whether a value is high, "
+    "low or normal unless the SOURCE says so.\n"
+    "- Add no fact that is not in the SOURCE. Drop no fact that is.\n"
+    "- Plain prose only."
 )
 
-# 3) Verifier — LLM-as-judge: is every claim in {draft} supported by {atoms}? Flag omissions/additions.
-verifier = LlmAgent(
-    name="Verifier",
-    model=MODEL,
-    instruction=(
-        "Compare {draft} against {atoms}. Return JSON: {faithful: bool, unsupported_claims: [...], "
-        "omissions: [...], reading_level_ok: bool}. Be strict: an unsupported clinical claim is a failure."
-    ),
-    output_key="verdict",
+
+# ------------------------------------------------------------------ 4. Verifier / FinalCheck
+
+def _verifier_instruction(text_key: str) -> str:
+    return (
+        "You are checking a patient-friendly explanation for faithfulness.\n\n"
+        "SOURCE (the ground truth):\n{source}\n\n"
+        "EXTRACTED FACTS (a checklist, may be incomplete):\n{atoms}\n\n"
+        "RETRIEVED DEFINITIONS (allowed background, not from the SOURCE):\n{definitions}\n\n"
+        "EXPLANATION TO CHECK:\n{" + text_key + "}\n\n"
+        "Return a JSON object with these keys:\n"
+        "  faithful: true only if unsupported_claims and omissions are both empty\n"
+        "  unsupported_claims: statements in the explanation that are supported by NEITHER "
+        "the SOURCE NOR the retrieved definitions\n"
+        "  omissions: facts in the SOURCE that the explanation leaves out\n"
+        "  negation_errors: findings whose negation was lost or flipped\n"
+        "  unexplained_terms: medical terms left without a plain explanation\n"
+        "  reading_level_ok: true if a typical 8th grader could read it\n\n"
+        "Important: a medical term copied from the SOURCE without explanation is NOT an "
+        "unsupported claim. It is faithful. List it under unexplained_terms only.\n"
+        "Treat a negation error as an unsupported claim as well.\n"
+        "Return only the JSON object."
+    )
+
+
+# ------------------------------------------------------------------ 5. Refiner
+
+REFINER_INSTRUCTION = (
+    "Fix the explanation using the verdict. Change nothing else.\n\n"
+    "SOURCE:\n{source}\n\n"
+    "EXPLANATION:\n{draft}\n\n"
+    "VERDICT:\n{verdict}\n\n"
+    "Rules:\n"
+    "- Remove every unsupported claim.\n"
+    "- Add back every omission, worded plainly, using only the SOURCE.\n"
+    "- Fix every negation error.\n"
+    "- Do not rewrite sentences the verdict did not flag.\n"
+    "- If the verdict says faithful is true, return the explanation unchanged.\n"
+    "- Return only the explanation text."
 )
 
-# 4) Refiner — fix only what the Verifier flagged. No free rewriting.
-refiner = LlmAgent(
-    name="Refiner",
-    model=MODEL,
-    instruction=(
-        "Given {draft} and {verdict}, produce a corrected draft that removes unsupported claims and "
-        "restores omissions, changing nothing else. If {verdict.faithful} is true, return {draft} unchanged."
-    ),
-    output_key="draft",  # overwrites the draft so the loop re-verifies the corrected version
+
+# ------------------------------------------------------------------ 6. Readability
+
+READABILITY_INSTRUCTION = (
+    "Rewrite the explanation so a patient can read it easily. Target Flesch-Kincaid "
+    "grade 8 or below.\n\n"
+    "EXPLANATION:\n{draft}\n\n"
+    "- Shorter sentences. Split anything longer than about 15 words.\n"
+    "- Everyday words where an everyday word exists.\n"
+    "- Every number stays exactly as written: doses, values, how many times a day.\n"
+    "- Every 'not', 'no', 'do not', 'avoid', 'stop' stays. Never flip a negative.\n"
+    "- Drop no fact. Add no fact.\n"
+    "- If a medical term has no everyday equivalent, keep the term.\n"
+    "- Return only the rewritten text."
 )
 
-# Bounded refine loop: Verifier -> Refiner, at most twice. This is the ONLY loop in the system.
-refine_loop = LoopAgent(
-    name="RefineLoop",
-    sub_agents=[verifier, refiner],
-    max_iterations=2,
-)
 
-# 5) Readability — final pass to hit the target grade level and tone.
-#
-# This agent runs AFTER the Verifier, so nothing downstream catches a fact it breaks.
-# src/readability_agent.py therefore wraps it with two guards:
-#   - bounded at 2 passes (each pass is a chance to lose a fact)
-#   - every pass is fact-checked against its input; a rewrite that changes a number or
-#     drops a negation is REJECTED and the previous, harder text is kept
-# Use that module rather than this bare agent when faithfulness matters.
-readability = LlmAgent(
-    name="Readability",
-    model=MODEL,
-    instruction=(
-        "Rewrite the draft so a patient can read it easily. Target Flesch-Kincaid grade 8 "
-        "or below.\n"
-        "- Shorter sentences. Split anything longer than about 15 words.\n"
-        "- Everyday words where an everyday word exists.\n"
-        "- Every number stays exactly as written: doses, percentages, how many times a day.\n"
-        "- Every 'not', 'do not', 'avoid', 'stop' stays. Never flip a negative.\n"
-        "- Drop no fact. Add no fact.\n"
-        "- If a medical term has no everyday equivalent, keep the term."
-    ),
-    output_key="final",
-)
+# ------------------------------------------------------------------ assembly
 
-# The deterministic DAG: Extractor -> Simplifier -> (Verifier <-> Refiner, bounded) -> Readability.
-faithfulmed = SequentialAgent(
-    name="FaithfulMed",
-    sub_agents=[extractor, simplifier, refine_loop, readability],
-)
+def build_pipeline(model=DEFAULT_MODEL, lookup: Optional[GlossaryLookup] = None,
+                   max_refine_rounds: int = 2) -> SequentialAgent:
+    """Build a fresh pipeline. Fresh every call, because an ADK agent can only have one
+    parent, so the ablation needs a new instance per configuration."""
+    def llm(name, instruction, key):
+        return LlmAgent(name=name, model=model, instruction=instruction,
+                        output_key=key, generate_content_config=_GEN)
+
+    return SequentialAgent(
+        name="FaithfulMed",
+        sub_agents=[
+            llm("Extractor", EXTRACTOR_INSTRUCTION, "atoms"),
+            Retriever(name="Retriever", lookup=lookup),
+            llm("Simplifier", SIMPLIFIER_INSTRUCTION, "draft"),
+            LoopAgent(
+                name="RefineLoop",
+                max_iterations=max_refine_rounds,
+                sub_agents=[
+                    llm("Verifier", _verifier_instruction("draft"), "verdict"),
+                    llm("Refiner", REFINER_INSTRUCTION, "draft"),
+                ],
+            ),
+            llm("Readability", READABILITY_INSTRUCTION, "final"),
+            # Report-only: reads the text the patient will see. Does not edit, so no loop.
+            llm("FinalCheck", _verifier_instruction("final"), "final_verdict"),
+        ],
+    )
+
+
+# Default instance for `adk web`. No glossary attached here; attach one with
+# build_pipeline(lookup=GlossaryLookup(topics_csv, synonyms_csv)).
+faithfulmed = build_pipeline()
+root_agent = faithfulmed
 
 if __name__ == "__main__":
-    print("FaithfulMed ADK pipeline assembled:")
-    print("  Extractor -> Simplifier -> [Verifier <-> Refiner x<=2] -> Readability")
-    print("Run it with an ADK Runner + session (see the ADK quickstart) once GEMINI_API_KEY is set.")
+    print("FaithfulMed v2:")
+    print("  " + " -> ".join(
+        a.name if a.name != "RefineLoop" else "[Verifier <-> Refiner] x<=2"
+        for a in faithfulmed.sub_agents))

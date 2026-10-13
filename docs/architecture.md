@@ -1,113 +1,173 @@
 # FaithfulMed Architecture
 
 Task #3, October milestone. Owner: Edwin (Joao).
-Updated to include the RAG pipeline, as advised by our Challenge Advisor.
+**Version 2, 2026-10-13.** Includes the RAG pipeline, as advised by our Challenge Advisor.
 
 This document exists so that six people building six pieces agree on what passes between
 them. If you are building an agent, the section for your agent tells you what you receive
-and what you must hand on.
+and what you must hand on. The code that matches it is `notebooks/adk_pipeline.py`, and
+`src/test_pipeline_offline.py` runs the whole chain end to end with a fake model, so you
+can check the wiring without an API key.
+
+---
+
+## What changed in version 2
+
+Version 1 had a design that contradicted itself. Five fixes, all in the code and all
+covered by the offline test:
+
+| # | v1 problem | v2 fix |
+|---|---|---|
+| 1 | The Verifier checked the draft against the Extractor's list only. A fact the Extractor missed was invisible. | The Verifier reads the **source** as well. The atoms become a checklist, not the ground truth. |
+| 2 | An unexplained medication counted as an unsupported claim, so the normal case was a failure. | A term copied from the source is **faithful**. It is reported as a readability gap under `unexplained_terms`. |
+| 3 | Readability ran after the last check, and the loop ended on an unchecked Refiner edit. The text a patient reads was never verified. | A **FinalCheck** reads the final text. It reports and does not edit, so it cannot loop. |
+| 4 | The Simplifier referenced `{definitions}` but nothing wrote it. ADK would have raised a KeyError on the first real run. | A **Retriever** step writes `definitions`, and the Verifier can now see what was retrieved. |
+| 5 | No place for allergies, and "no chest pain" could be extracted as "chest pain". | Atoms gain an `allergy` type, a `negated` flag, and a `term` to look up. |
+
+What did **not** change: five agents, fixed order, one loop capped at two rounds,
+temperature 0, and only one step allowed to query the glossary.
 
 ---
 
 ## The pipeline
 
 ```
-                       ┌──────────────────────────┐
-                       │  MedlinePlus glossary    │
-                       │  1,017 topics            │
-                       │  2,868 alternate names   │
-                       └────────────┬─────────────┘
-                                    │  (built once, offline)
-                                    ▼
-                       ┌──────────────────────────┐
-                       │  ChromaDB vector index   │
-                       │  Gemini text-embedding   │
-                       └────────────┬─────────────┘
-                                    │  lookup
-                                    │
- SOURCE              ┌──────────────┴───┐
- clinical  ──────►   │                  │
- text                │   2. SIMPLIFIER  │
-                     │                  │
-        ┌────────────┴──────┐           │
-        │  1. EXTRACTOR     │──atoms───►│
-        └───────────────────┘           │
-                                        │ draft
-                                        ▼
-                        ┌───────────────────────────┐
-                        │  3. VERIFIER ⇄ 4. REFINER │   loop, max 2 passes
-                        └───────────┬───────────────┘
-                                    │ verified draft
-                                    ▼
-                        ┌───────────────────────────┐
-                        │     5. READABILITY        │
-                        └───────────┬───────────────┘
-                                    │
-                                    ▼
-                            patient-friendly
-                               explanation
+ SOURCE (in session state)
+    │
+    ▼
+ 1. EXTRACTOR ─────────► atoms
+    │
+    ▼
+ 2. RETRIEVER ◄───────── glossary: 2,868 names -> 1,017 topics (exact match first,
+    │                    ChromaDB vector search only on a miss)
+    ├────────────────► definitions, unexplained_terms
+    ▼
+ 3. SIMPLIFIER ────────► draft
+    │
+    ▼
+ ┌─ 4. VERIFIER ───────► verdict        reads SOURCE + atoms + definitions + draft
+ │  5. REFINER ────────► draft          fixes only what the verdict flagged
+ └─ loop, at most 2 rounds
+    │
+    ▼
+ 6. READABILITY ───────► final
+    │
+    ▼
+ 7. FINALCHECK ────────► final_verdict  reads SOURCE + final. Report only, no edits.
 ```
 
-**Retrieval happens in exactly one place: the Simplifier.** No other agent queries the
-index. This is deliberate. If three agents could each retrieve, a fact could enter the
-explanation without appearing in the extracted atoms, and the Verifier would have no way
-to tell an invented claim from a retrieved one.
+**Retrieval happens in exactly one place: the Retriever.** It is a plain Python step, not
+an LLM, so an exact match costs no quota. Its output stays in session state, which is what
+lets the Verifier tell a retrieved definition from an invented one. If several agents
+could each look things up, a fact could enter the explanation without leaving a trace.
+
+**Why FinalCheck does not edit.** If it could edit, it would need checking too, and we are
+back to an open loop. It reports, and the report is what the December evaluation reads.
 
 ---
 
 ## What passes between agents
 
-Each agent reads the keys listed under "in" and writes the key listed under "out". These
-names match the `output_key` values in `notebooks/adk_pipeline.py`.
+Each step reads the keys under "in" and writes the keys under "out". The names match
+`notebooks/adk_pipeline.py`, and the offline test fails if they drift.
+
+**Before a run,** put the source text in session state:
+
+```python
+state = new_session_state(source_text)    # {"source": source_text}
+```
+
+Every `{placeholder}` in an instruction must exist in state or ADK raises a KeyError, so
+this is required, not optional.
 
 ### 1. Extractor
 **in:** `source`
 **out:** `atoms`
 
-**What `source` actually is depends on the corpus, and they are not alike.** See
-"The three shapes of source text" below. The Extractor must handle at least MedAESQA
-prose and MTSamples section-structured reports, which are different parsing problems.
-
-A list of clinical facts, each tagged with a type:
-
 ```json
 [
-  {"text": "prescribed metformin 500 mg twice daily", "type": "medication"},
-  {"text": "HbA1c was 8.2%", "type": "lab_value"},
-  {"text": "type 2 diabetes", "type": "diagnosis"}
+  {"text": "metformin 500 mg twice daily", "type": "medication", "term": "metformin", "negated": false},
+  {"text": "HbA1c 8.2%", "type": "lab_value", "term": "HbA1c", "negated": false},
+  {"text": "allergic to penicillin", "type": "allergy", "term": "penicillin", "negated": false},
+  {"text": "chest pain", "type": "diagnosis", "term": "", "negated": true}
 ]
 ```
 
-Types: `diagnosis`, `medication`, `lab_value`, `procedure`, `instruction`.
+Types: `diagnosis`, `medication`, `lab_value`, `procedure`, `instruction`, `allergy`.
 
-The atoms are the contract for everything downstream. The Verifier checks the final
-explanation against these, so a fact missing here cannot be verified later.
+- `term` is the one word or phrase a patient might not know. The Retriever looks up this,
+  not the whole sentence, because "metformin 500 mg twice daily" matches nothing.
+- `negated` keeps "no chest pain" from becoming "chest pain".
+- Redaction placeholders such as `XXXX` are skipped. 1.3% of MTSamples documents have them.
 
-### 2. Simplifier
-**in:** `source`, `atoms`, plus the retrieval index
+**What `source` is depends on the corpus.** MedAESQA is prose, MTSamples is dictated notes
+with comma-separated section headers, Synthea is CSV rows. See "The three shapes of source
+text" below.
+
+### 2. Retriever (no LLM)
+**in:** `atoms`
+**out:** `definitions`, `unexplained_terms`
+
+Looks up each atom's `term` with `src/glossary_lookup.py`. `definitions` is a text block
+listing what was found and, separately, what was not. `unexplained_terms` is a JSON list.
+
+With no glossary attached it still runs and marks every term as having no definition, so
+the pipeline works before the vector index is finished.
+
+### 3. Simplifier
+**in:** `source`, `atoms`, `definitions`
 **out:** `draft`
 
-Rewrites into plain language. This is the only agent allowed to query the glossary index.
+Rewrites into plain language. Uses the definitions where given. Keeps any term without a
+definition exactly as written. Keeps every negation. States lab values as the source does,
+without calling them high or low unless the source does.
 
-### 3. Verifier
-**in:** `atoms`, `draft`
+### 4. Verifier
+**in:** `source`, `atoms`, `definitions`, `draft`
 **out:** `verdict`
 
 ```json
-{"faithful": true, "unsupported_claims": [], "omissions": [], "reading_level_ok": false}
+{
+  "faithful": true,
+  "unsupported_claims": [],
+  "omissions": [],
+  "negation_errors": [],
+  "unexplained_terms": ["metformin"],
+  "reading_level_ok": true
+}
 ```
 
-### 4. Refiner
-**in:** `draft`, `verdict`
-**out:** `draft` (overwrites, so the loop re-checks the corrected version)
+- **Unsupported** means supported by neither the source nor the retrieved definitions.
+- **An unexplained term is not unsupported.** It goes in `unexplained_terms` and does not
+  make `faithful` false.
+- A negation error counts as unsupported.
+- `faithful` is true only when `unsupported_claims` and `omissions` are both empty.
 
-Fixes only what the Verifier flagged. No free rewriting.
+This is the verdict Isha calibrates against MedAESQA's human labels.
 
-### 5. Readability
-**in:** `draft` (verified)
+### 5. Refiner
+**in:** `source`, `draft`, `verdict`
+**out:** `draft` (overwrites, so the next round re-checks the corrected text)
+
+Removes unsupported claims, restores omissions using only the source, fixes negation
+errors. Changes nothing the verdict did not flag. Returns the draft unchanged if it was
+already faithful.
+
+### 6. Readability
+**in:** `draft`
 **out:** `final`
 
-Rewrites to an 8th-grade reading level without changing or dropping any fact.
+Rewrites to grade 8 or below. Every number and every negation stays. Drops nothing, adds
+nothing, keeps a term that has no everyday equivalent.
+
+`src/readability_agent.py` is the stricter standalone version used for evaluation: it
+rejects any rewrite that changes a number or loses a negation, and keeps the harder text.
+
+### 7. FinalCheck
+**in:** `source`, `atoms`, `definitions`, `final`
+**out:** `final_verdict`
+
+Same instruction as the Verifier, pointed at the final text. Report only.
 
 ---
 
@@ -135,8 +195,9 @@ split. Keep the topic title with every chunk so a retrieved fragment is still at
 
 ### The query
 
-The Simplifier does **not** embed the whole source document. It looks up one term at a
-time: for each atom that contains a medical term a patient would not know, query that term.
+The Retriever does **not** embed the whole source document. It looks up one term at a
+time: the `term` field of each atom, which is the one word or phrase a patient might not
+know. Atoms with an empty `term` are skipped.
 
 Two steps, cheap one first:
 
@@ -165,8 +226,8 @@ Gemini tier allows about 20 requests per day per key.
 ```
 
 `match_type` is `exact_synonym`, `vector`, or `none`. `score` is the similarity for a
-vector match and null for an exact one. The Simplifier should treat a low-scoring vector
-match with more caution than an exact synonym hit.
+vector match and null for an exact one. A vector match below the score threshold is
+reported as a miss, not as a weak hit, because a wrong definition is worse than none.
 
 ### When a lookup finds nothing
 
@@ -190,10 +251,16 @@ does not invent a definition. Carrying an unexplained term forward is a readabil
 problem. Inventing a definition for a drug is a patient-safety problem, and it is the exact
 failure this project exists to prevent.
 
-The Verifier should treat an unretrieved definition as an unsupported claim.
+**How the Verifier treats a miss (changed in v2).** A term copied from the source is
+faithful, so it is **not** an unsupported claim. It is listed under `unexplained_terms`,
+which is a readability measure. What the Verifier does flag is an *invented* definition: an
+explanation that appears in neither the source nor the retrieved definitions.
+
+v1 said the opposite, and it made the most common case a failure. Since the glossary
+defines no medications, every drug in every document would have failed verification.
 
 Open question for Ram: do we add a second source for medications, or accept the gap and
-report it as a limitation? Flagged in the 9/15 team update.
+report it as a limitation? MedQuAD cannot fill it: its drug answers are 100% empty.
 
 ---
 
@@ -201,26 +268,30 @@ report it as a limitation? Flagged in the 9/15 team update.
 
 **Summary, for anyone who reads one table in this document:**
 
-| # | Problem | Who decides | Blocks |
+| # | Problem | Status | Who decides |
 |---|---|---|---|
-| 1 | Three rules here contradict each other on an unretrieved term | Isha, Gisele, Edwin | Simplifier and Verifier |
-| 2 | Lab values need interpretation; no agent provides it | team | `lab_value` atoms |
-| 3 | Neither corpus contains patient instructions | team, Ram | the December demo |
-| 4 | Verifier checks atoms, not source | Isha | the faithfulness claim |
-| 5 | Readability runs after the last verification | Edwin, team | final output |
-| 6 | The loop ends on an unverified Refiner write | team | |
-| 7 | No atom type for allergies; negations can invert meaning | Vera | Extractor schema |
-| 8 | On Synthea the Extractor is a flattener, not an agent | team | November ablation |
-| 9 | No dataset here can define a medication | **Ram** | the Simplifier's whole case |
-| 10 | PLABA missing, no owner | team | Simplifier evaluation |
+| 1 | Three rules contradicted each other on an unexplained term | **Fixed in v2** | Isha to confirm |
+| 2 | Lab values need interpretation; no agent provides it | Default set: state the value, no "high/low" unless the source says so. Reference ranges still open. | team |
+| 3 | Neither corpus contains patient instructions | **Open** | team, Ram |
+| 4 | Verifier checked atoms, not source | **Fixed in v2** | Isha to confirm |
+| 5 | Readability ran after the last verification | **Fixed in v2** (FinalCheck) | |
+| 6 | The loop ended on an unverified Refiner write | **Fixed in v2** (FinalCheck) | |
+| 7 | No atom type for allergies; negations could invert | **Fixed in v2** | Vera to confirm |
+| 8 | On Synthea the Extractor is a flattener, not an agent | **Open** | team |
+| 9 | No dataset here can define a medication | **Open** | **Ram** |
+| 10 | PLABA missing, no owner | **Open** | team |
 
-**Items 1, 4 and 9 are the ones worth meeting about.** The rest can be settled in the group chat.
+**Still needs the group:** item 9 for Ram, item 3 for the demo, and Isha confirming items 1
+and 4, since the Verifier is hers. Everything marked fixed is in the code and covered by
+`src/test_pipeline_offline.py`.
 
 These were found by auditing this document against the repo and the advisor's brief on
 2026-10-13. They are listed here rather than quietly fixed because three of them need a
 team or advisor decision, not a unilateral one.
 
 ### 1. Three rules in this document contradict each other
+
+> **Status:** Fixed in v2. The Verifier now lists an unexplained term under `unexplained_terms` and does not count it as unsupported.
 
 This is the most serious problem found, and all three rules are ones I wrote.
 
@@ -245,6 +316,8 @@ appear in the source or the retrieved context. An unexplained term passes faithf
 is reported separately as a readability gap, which is what it actually is.
 ### 2. Lab values need interpretation, which no agent provides
 
+> **Status:** Partly addressed. The Simplifier states lab values as the source does and never calls them high or low on its own. Interpreting them still needs reference ranges, which nothing provides yet.
+
 A patient does not need "glucose is a sugar in your blood". They need "your blood sugar
 was higher than normal". That requires a reference range.
 
@@ -267,6 +340,8 @@ important thing in a patient-facing explanation. If the December demo is meant t
 discharge instructions being made readable, the corpus does not really contain them.
 ### 4. The Verifier checks the draft against the atoms, not against the source
 
+> **Status:** Fixed in v2. The Verifier and FinalCheck both read the source; the atoms are a checklist.
+
 The scaffold's Verifier instruction is "Compare {draft} against {atoms}". But the project
 brief's stated goal is explanations "provably faithful **to the source**".
 
@@ -278,6 +353,8 @@ every extraction error silently.
 tight quota; or add an extraction-completeness check; or accept the limitation and state
 it plainly in the December report. **Needs a decision. Isha owns the Verifier.**
 ### 5. Readability runs after the Verifier, so its output is never verified
+
+> **Status:** Fixed in v2. FinalCheck reads the final text after Readability.
 
 Order is Extractor, Simplifier, Verifier and Refiner loop, then Readability. The
 Readability agent rewrites the text after the last verification, so a fact it breaks
@@ -291,12 +368,16 @@ numeric and negation damage, not a subtly reworded claim.
 order and rely on the agent's internal check. **Needs a decision.**
 ### 6. The loop ends on a Refiner write, so the last edit is unverified
 
+> **Status:** Fixed in v2. FinalCheck reads the text after the last Refiner edit, so that edit is now checked.
+
 `LoopAgent(sub_agents=[verifier, refiner], max_iterations=2)` runs verify, refine, verify,
 refine. The final Refiner edit is never read back by the Verifier.
 
 **Option:** a single verification pass after the loop closes, used as a report-only signal
 rather than another edit.
 ### 7. The atom type set has no slot for allergies or social history
+
+> **Status:** Fixed in v2. Atoms now have an `allergy` type and a `negated` flag.
 
 Five types are defined: diagnosis, medication, lab_value, procedure, instruction.
 
@@ -454,11 +535,24 @@ hard to debug, burns shared rate limits, and produces traces we cannot reproduce
 December report. This came from the SME technical review.
 
 **Temperature 0 everywhere.** The November ablation compares the pipeline with each agent
-switched off. That comparison only means something if the runs are reproducible.
+switched off. That comparison only means something if the runs are reproducible. It is set
+once in `adk_pipeline.py` and applied to every agent.
 
-**Model: `gemini-3.6-flash`.** The `gemini-2.0-flash` in `adk_pipeline.py` is retired and
-returns 404, as is `gemini-2.5-flash`. Record the model string with every result, since
-availability is clearly shifting during this project.
+**The model is a parameter.** `build_pipeline(model=...)`, default `gemini-3.5-flash`.
+`gemini-2.0-flash` and `gemini-2.5-flash` are retired and return 404. `gemini-3.6-flash`
+returned 503 on every long prompt on 2026-10-13 while 3.5-flash answered the same prompts.
+Record the model string with every result.
+
+**Build a fresh pipeline per configuration.** An ADK agent can only have one parent, so
+the ablation calls `build_pipeline()` once per row rather than reusing agents.
+
+**Check the wiring before spending quota.** `python src/test_pipeline_offline.py` runs the
+whole chain with a fake model in seconds. If you rename a state key, it fails.
+
+**ADK version is pinned.** `google-adk` 2.12 marks `SequentialAgent` and `LoopAgent` as
+deprecated in favor of a new `Workflow` class, to be removed in a future version. They
+still work and the brief asks for them by name, so `requirements.txt` pins
+`google-adk==2.12.0` to stop a silent upgrade from breaking the pipeline mid-semester.
 
 **Everything is measured against the single-Gemini baseline.** One well-prompted call with
 no agents, on the frozen MedAESQA set. The ablation table is that row repeated with one

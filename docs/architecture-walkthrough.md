@@ -1,142 +1,117 @@
-# Architecture walkthrough
+# Architecture walkthrough (v2)
 
-A 15-minute walk through the pipeline for the team, ending in three decisions we need to
-make together. The full detail is in `architecture.md`; this is the version you can talk
-from.
+A 15-minute walk through the pipeline for the team. Full detail is in `architecture.md`;
+this is the version you can talk from.
 
 ---
 
-## 1. The shape of the thing (2 min)
+## 1. The shape of it (3 min)
 
 ```
-SOURCE  ->  Extractor  ->  Simplifier  ->  Verifier <-> Refiner  ->  Readability  ->  OUTPUT
-                               ^              (max 2 rounds)
-                               |
-                        glossary index
+SOURCE
+  -> 1. Extractor     pulls out the facts            -> atoms
+  -> 2. Retriever     looks up plain definitions     -> definitions
+  -> 3. Simplifier    rewrites in plain language     -> draft
+  -> 4. Verifier  <-> 5. Refiner   check and fix, max 2 rounds
+  -> 6. Readability   gets it to 8th grade           -> final
+  -> 7. FinalCheck    checks what the patient reads  -> final_verdict
 ```
 
-Five agents, fixed order, one loop. Say three things:
+Say three things:
 
-- **Each agent hands the next one a named thing.** Extractor produces `atoms`, Simplifier
-  produces `draft`, Verifier produces `verdict`, Refiner overwrites `draft`, Readability
-  produces `final`. These names match the scaffold exactly, so if you are building an
-  agent, that is your input and output.
-- **Only the Simplifier touches the glossary.** If three agents could each look things up,
-  a fact could reach the explanation without ever being in the atoms, and the Verifier
-  checks the draft against the atoms. It would have no way to tell a retrieved fact from
-  an invented one.
-- **One loop, capped at two rounds.** Open-ended agent recursion is undebuggable and burns
-  the shared quota. This came from the technical review, not from us.
+- **Each step hands the next one a named thing.** If you are building an agent, your
+  section in `architecture.md` tells you exactly what you read and what you write.
+- **Only the Retriever looks things up.** It is plain Python, not an AI call, so an exact
+  match costs no quota. Because its output is saved, the Verifier can tell a looked-up
+  definition from a made-up one.
+- **One loop, capped at two rounds.** The technical review asked for this. It keeps runs
+  cheap and repeatable.
 
 ## 2. How lookup works (2 min)
 
-Two steps, cheap one first.
+1. **Exact match** against 2,868 alternate names. "HbA1c" gives A1C. "Pimples" gives Acne.
+   No AI call.
+2. **Vector search** only if that misses.
 
-1. **Exact match** against 2,868 alternate names. A plain dictionary, no API call.
-   "HbA1c" gives A1C. "Pimples" gives Acne. "Bellyache" gives Abdominal Pain.
-2. **Vector search** only if step 1 misses.
+The Extractor now tags each fact with the one word to look up, like "metformin", because
+looking up the whole sentence "metformin 500 mg twice daily" matches nothing.
 
-Doing the dictionary first matters because the free tier is about 20 requests a day per
-key, so every embedding call we skip is one we can spend elsewhere.
+`src/glossary_lookup.py` works today without the vector index, so Gisele can build the
+Simplifier before Renita's embeddings are done.
 
-`src/glossary_lookup.py` implements this and works right now without the vector index. So
-Gisele can build and test the Simplifier before Renita's embeddings are finished.
+## 3. What changed from v1, and why (4 min)
 
-## 3. What I got wrong (3 min)
+I checked v1 against everyone's notebooks and the brief, and it had real problems. Worth
+being upfront about, because the fixes are the interesting part.
 
-Worth saying plainly, because it is the most useful part.
+**The big one: v1 contradicted itself.** The glossary defines zero medications. v1 said the
+Simplifier keeps an unknown drug name as written, which is right. But it also said the
+Verifier counts an unknown term as unsupported. So every drug in every document would have
+failed verification. The normal case was a failure.
 
-I wrote the first version from my own notes. Then I checked it against everyone's EDA
-notebooks and the advisor's brief, and found ten problems. Three of them are mine.
+**The fix:** a term copied from the source is faithful. It gets listed as "unexplained",
+which is a readability issue, not a faithfulness one. The Verifier only flags things that
+are *made up*.
 
-**The big one: three rules I wrote contradict each other.**
+Four more fixes:
 
-- The Simplifier keeps a term it cannot look up, as written.
-- The Verifier treats an unlooked-up definition as an unsupported claim.
-- The Readability agent must reach 8th grade without changing any fact.
+| Problem in v1 | Fix in v2 |
+|---|---|
+| The Verifier only checked the Extractor's list, so anything the Extractor missed was invisible | The Verifier reads the original source too |
+| Nobody checked the final text the patient reads | New FinalCheck step at the end. It reports, it does not edit, so no endless loop |
+| The Simplifier asked for definitions nothing ever produced. It would have crashed on the first real run. | New Retriever step produces them |
+| No place for allergies, and "no chest pain" could come out as "chest pain" | Allergy type added, and every fact carries a negated yes/no |
 
-Walk a medication through that. The glossary defines zero drugs, so the Simplifier
-correctly leaves "Hydrochlorothiazide 25 MG Oral Tablet" alone. The Verifier then flags it
-as unsupported, which makes the **normal case a failure**. Then Readability is told both
-to simplify that string and not to touch it.
+**How we know it works:** `python src/test_pipeline_offline.py` runs the whole thing with a
+fake model. 26 checks pass: right order, every input reaches the right agent, the Verifier
+really sees the source, FinalCheck really reads the final text. No API key needed.
 
-My read: the Verifier rule is the wrong one. "I could not find a definition" is not the
-same as "this claim is not supported." A term copied straight from the source is as
-faithful as text gets.
+What it does not prove yet is that Gemini follows the instructions. That needs one real
+run, which today's quota did not allow.
 
-## 4. The three numbers that change what we build (4 min)
+## 4. The numbers behind the design (3 min)
 
 All measured, all from our own notebooks.
 
-**Zero medications.** Tested 30 terms of the kind that show up in discharge papers against
-the glossary. Conditions 13 of 13. Symptoms 3 of 3. Labs 2 of 4. Procedures 2 of 5.
-**Medications 0 of 5.** No metformin, no warfarin, no statin.
+**Medications: 0 of 5.** The glossary covers conditions 13 of 13 and medications 0 of 5.
+MedQuAD cannot fill the gap either: its drug answers are 100% empty, removed for copyright.
 
-And MedQuAD cannot fill that gap. Gisele measured it: 65% of its answers are empty, and
-the drug sources are 100% empty because the answers were redacted for copyright. So **no
-dataset in this project can define a medication in plain language**. That one is for Ram.
+**Our source text is three different shapes.**
 
-**Our source text is three different shapes, not one.**
+| Corpus | Shape | Reading level |
+|---|---|---|
+| MedAESQA | prose, ~93 words | grade 11.8 |
+| MTSamples | dictated notes with ALL-CAPS headers, ~465 words | grade 10.3 |
+| Synthea | 16 CSV files, no text at all | n/a |
 
-| Corpus | Shape | Size | Reading level |
-|---|---|---|---|
-| MedAESQA | prose | ~93 words | grade 11.8 |
-| MTSamples | dictated notes with ALL-CAPS headers | ~465 words | grade 10.3 |
-| Synthea | 16 linked CSVs, no narrative at all | 1,171 patients | not applicable |
+**Only 47% of MTSamples rows are unique.** Isabella flagged this. Deduplicate before
+sampling or we average over copies.
 
-Two consequences. The baseline simplifies MedAESQA prose while the brief talks about
-simplifying clinical documents, so if we later run the pipeline on MTSamples the
-comparison is not like for like. And on Synthea the Extractor is a flattener rather than
-an agent, which means "Extractor removed" is not a meaningful ablation condition there.
+## 5. What we still need to decide (3 min)
 
-**Only 47% of MTSamples rows are unique.** Isabella flagged this. Duplication is uneven:
-Radiology is 91% unique, Cardiovascular/Pulmonary is 7%. Any sample has to deduplicate
-first or we are averaging over copies of the same document.
+**Isha: does the new Verifier work for you?** It now reads the source and treats an
+unexplained term as faithful. The verdict also has two new fields, `negation_errors` and
+`unexplained_terms`. You own this agent, so it is your call.
 
-## 5. What we have to decide (4 min)
+**Vera: the Extractor schema.** Each fact now has `term`, `negated`, and an `allergy`
+type. Does that work for your prompt?
 
-Ten open problems are in `architecture.md` with a table showing who decides each. Three
-need the group.
+**Ram: medications.** No dataset in this project can explain a drug in plain language.
+Either we add a source outside the brief's list, or we report it as a limitation.
 
-**Decision 1: what does the Verifier compare against?**
-Right now it compares the draft to the atoms. The brief's goal is faithfulness *to the
-source*. If the Extractor misses a fact, the atoms are already wrong and the Verifier
-passes a draft missing it. Options: give the Verifier the source too, which costs tokens;
-check extraction completeness separately; or accept it and say so in December. **Isha.**
-
-**Decision 2: what counts as unfaithful?**
-The contradiction above. My proposal is that the Verifier flags an *invented* definition,
-not an *absent* one, and an unexplained term gets reported as a readability gap instead.
-**Isha, Gisele, me.**
-
-**Decision 3: do we get a medication source?**
-No dataset we have can define a drug. Either we add a source outside the brief's list, or
-we accept the gap and report it as a limitation. **Ram.**
-
-## 6. Two smaller things (if there is time)
-
-- Nobody owns PLABA. The brief calls it the simplification core and gold pairs for the
-  Simplifier, and it is not in the repo. It is the natural evaluation set for both the
-  Simplifier and the Readability agent.
-- The model in the starter code is retired. Use `gemini-3.6-flash`, and note it returned
-  503 on long prompts on 10/13 while 3.5-flash handled the same prompts. Treat the model
-  as a parameter, not a constant.
+**Team: patient instructions.** Neither MTSamples nor Synthea really contains discharge
+instructions, which is what patients need most. Worth deciding what the December demo
+shows.
 
 ---
 
 ## If someone asks
 
-**"Why did you change my agent's instructions?"**
-I updated the Simplifier and Readability prompts in `adk_pipeline.py` to spell out the
-retrieval-miss behavior and the no-changing-numbers rule. Nothing about who owns what. Say
-the word if you want it reverted.
+**"Did you change my agent?"** The starter scaffold, yes, since that is the architecture
+task. The prompts in `adk_pipeline.py` are a starting point. Your own agent code is yours.
 
-**"Is the architecture wrong then?"**
-The structure is right and matches the scaffold exactly. What was wrong was my assuming
-source text was one thing, and three rules that cannot all hold at once. Both are
-documented rather than quietly patched, because they change what other people build.
+**"Why is the default model 3.5-flash?"** 2.0 and 2.5 are retired. 3.6 failed on every long
+prompt on 10/13 while 3.5 handled them. It is one parameter to change.
 
-**"How sure are you about these numbers?"**
-Every number here comes from a committed notebook's saved output and I checked each one
-against the source file. Two numbers in the Synthea notebook look wrong to me and I
-flagged them for Renita rather than changing them.
+**"Why pin the ADK version?"** The latest ADK marks the two classes we use as deprecated.
+They still work, but an unpinned upgrade could break everyone's notebook mid-semester.
