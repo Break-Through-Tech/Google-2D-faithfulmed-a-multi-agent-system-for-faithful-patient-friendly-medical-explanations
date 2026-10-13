@@ -89,12 +89,25 @@ refine_loop = LoopAgent(
 )
 
 # 5) Readability — final pass to hit the target grade level and tone.
+#
+# This agent runs AFTER the Verifier, so nothing downstream catches a fact it breaks.
+# src/readability_agent.py therefore wraps it with two guards:
+#   - bounded at 2 passes (each pass is a chance to lose a fact)
+#   - every pass is fact-checked against its input; a rewrite that changes a number or
+#     drops a negation is REJECTED and the previous, harder text is kept
+# Use that module rather than this bare agent when faithfulness matters.
 readability = LlmAgent(
     name="Readability",
     model=MODEL,
     instruction=(
-        "Polish the final draft to a Flesch-Kincaid grade level of 8 or below while preserving every "
-        "fact. Do not introduce new clinical content."
+        "Rewrite the draft so a patient can read it easily. Target Flesch-Kincaid grade 8 "
+        "or below.\n"
+        "- Shorter sentences. Split anything longer than about 15 words.\n"
+        "- Everyday words where an everyday word exists.\n"
+        "- Every number stays exactly as written: doses, percentages, how many times a day.\n"
+        "- Every 'not', 'do not', 'avoid', 'stop' stays. Never flip a negative.\n"
+        "- Drop no fact. Add no fact.\n"
+        "- If a medical term has no everyday equivalent, keep the term."
     ),
     output_key="final",
 )
