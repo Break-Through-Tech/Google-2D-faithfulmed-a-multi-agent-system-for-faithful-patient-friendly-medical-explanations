@@ -20,7 +20,7 @@ code and covered by the offline test.
 |---|---|---|---|
 | 1 | What the Verifier reads | The draft and the extracted facts | Also the original **source**. The facts become a checklist. |
 | 2 | Unexplained terms | Counted against faithfulness | **Faithful**, reported as a readability gap under `unexplained_terms` |
-| 3 | The final text | Readability was the last step | A **FinalCheck** reads the final text. Report only, so it cannot loop. |
+| 3 | The final text | Readability was the last step | A **FinalCheck** reads the final text. If it fails, a Refiner fixes it and it is checked again, at most twice. Still failing: flagged `needs_review`. |
 | 4 | Retrieval | Part of the Simplifier step | Its own **Retriever** step. Output stays in state, so the Verifier can see it. |
 | 5 | Fact schema | Five types | Adds an `allergy` type, a `negated` flag, and a `term` to look up |
 
@@ -53,7 +53,13 @@ temperature 0, and only one step allowed to query the glossary.
  6. READABILITY ───────► final
     │
     ▼
- 7. FINALCHECK ────────► final_verdict  reads SOURCE + final. Report only, no edits.
+ 7. FINALCHECK ────────► final_verdict  reads SOURCE + final
+    │
+    ├─ pass ─────────────► done
+    │
+    └─ fail ─► REFINER fixes final ─► FINALCHECK again     at most 2 rounds
+                                       │
+                                       └─ still failing ─► needs_review = true
 ```
 
 **Retrieval happens in exactly one place: the Retriever.** It is a plain Python step, not
@@ -61,8 +67,20 @@ an LLM, so an exact match costs no quota. Its output stays in session state, whi
 lets the Verifier tell a retrieved definition from an invented one. If several agents
 could each look things up, a fact could enter the explanation without leaving a trace.
 
-**Why FinalCheck does not edit.** If it could edit, it would need checking too, and we are
-back to an open loop. It reports, and the report is what the December evaluation reads.
+**Why a failed final check goes to the Refiner, not back to the Verifier.** FinalCheck has
+already found the problem, so going back to the Verifier would only repeat the same check
+and spend a call. It goes straight to a Refiner, which fixes only what was flagged, and then
+the text is checked again. The same check, fix, check pattern as the main loop.
+
+**Why it is capped and ends on a check.** At most two fix rounds, as the brief requires no
+open-ended loops. Each round starts by stopping if the last check passed, so the run always
+ends on a check, never on an unchecked fix. If the text still fails after two rounds, it
+ships with `needs_review = true` instead of looping again, and the December evaluation can
+count how often that happens.
+
+**Why Readability is not re-run inside this loop.** The Refiner changes only the flagged
+sentences, so the reading level mostly holds, and every final verdict reports
+`reading_level_ok`. Re-running Readability would create a fresh rewrite that nothing checked.
 
 ---
 
@@ -163,11 +181,17 @@ nothing, keeps a term that has no everyday equivalent.
 `src/readability_agent.py` is the stricter standalone version used for evaluation: it
 rejects any rewrite that changes a number or loses a negation, and keeps the harder text.
 
-### 7. FinalCheck
+### 7. FinalCheck, with its fix loop
 **in:** `source`, `atoms`, `definitions`, `final`
-**out:** `final_verdict`
+**out:** `final_verdict`, then `final` (if fixed) and `needs_review`
 
-Same instruction as the Verifier, pointed at the final text. Report only.
+Same instruction as the Verifier, pointed at the final text. If `faithful` is false, a
+second Refiner instance fixes `final` using `final_verdict`, and a recheck writes a new
+`final_verdict`. At most two rounds. Two small non-LLM steps manage it: `StopIfFaithful`
+ends the loop as soon as a check passes, and `NeedsReviewFlag` writes `needs_review`.
+
+An unreadable verdict counts as a fail, never a pass. If we cannot tell whether the text
+is faithful, the safe answer is to fix it or flag it.
 
 ---
 
@@ -294,12 +318,13 @@ unsupported claim. It is listed under `unexplained_terms`, which is a readabilit
 What the Verifier flags is an *invented* definition: an explanation found in neither the
 source nor the retrieved definitions.
 
-### FinalCheck verifies the text the patient reads
+### FinalCheck verifies the text the patient reads, and fixes it if needed
 
 Readability rewrites the text after the refine loop, and the loop's last step is a Refiner
 edit. So the final text needs its own check. FinalCheck runs the Verifier's instruction on
-the final text and reports. It does not edit, because anything that edits would need
-checking too.
+the final text. As advised by our Challenge Advisor, a failed final check gets a small fix
+loop: straight to a Refiner, then checked again, at most twice, ending on a check. Text that
+still fails is flagged `needs_review` rather than looping further.
 
 `src/readability_agent.py` adds a second guard for evaluation runs: it rejects any rewrite
 that changes a number or drops a negation, and keeps the harder but correct text.
