@@ -15,6 +15,8 @@ SOURCE
   -> 4. Verifier  <-> 5. Refiner   check and fix, max 2 rounds
   -> 6. Readability   gets it to 8th grade           -> final
   -> 7. FinalCheck    checks what the patient reads  -> final_verdict
+         if it fails: Refiner fixes it, check again, max 2 rounds
+         still failing: sent out flagged "needs review"
 ```
 
 Say three things:
@@ -55,13 +57,14 @@ Four more changes:
 | v1 | v2 |
 |---|---|
 | The Verifier checked the draft against the extracted facts | It also reads the original source, so it catches anything extraction missed |
-| Readability was the last step | New FinalCheck step reads the final text. It reports and does not edit, so no endless loop |
+| Readability was the last step | New FinalCheck step reads the final text. If it fails, it goes to the Refiner and gets checked again, at most twice |
 | Retrieval was part of the Simplifier | New Retriever step, so the definitions are saved and the Verifier can see them |
 | Five fact types | Allergy type added, and every fact carries a negated yes/no so "no chest pain" stays negative |
 
 **How we know it works:** `python src/test_pipeline_offline.py` runs the whole thing with a
-fake model. 26 checks pass: right order, every input reaches the right agent, the Verifier
-really sees the source, FinalCheck really reads the final text. No API key needed.
+fake model. 45 checks pass: right order, every input reaches the right agent, the Verifier
+really sees the source, and the final check passes, fixes once, or flags for review exactly
+as designed. No API key needed.
 
 What it does not prove yet is that Gemini follows the instructions. That needs one real
 run, which today's quota did not allow.
