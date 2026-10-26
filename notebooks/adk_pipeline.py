@@ -6,6 +6,9 @@ See docs/architecture.md for the reasoning behind every rule below.
     Extractor -> Retriever -> Simplifier -> [Verifier <-> Refiner] x<=2 -> Readability
               -> FinalCheck -> [fix with Refiner, check again] x<=2 -> NeedsReview flag
 
+FinalCheck = an LLM check plus deterministic guards (numbers, negations) from
+src/final_check_agent.py, merged by FinalGuard after every check.
+
 What changed from v1, and why
 -----------------------------
 1. The Verifier checks the draft against the SOURCE, not only the atoms.
@@ -59,6 +62,7 @@ from google.genai import types
 
 sys.path.insert(0, str(Path(__file__).resolve().parent.parent / "src"))
 from glossary_lookup import GlossaryLookup, format_for_prompt  # noqa: E402
+import final_check_agent as fc  # noqa: E402
 
 DEFAULT_MODEL = "gemini-3.5-flash"
 ATOM_TYPES = ("diagnosis", "medication", "lab_value", "procedure", "instruction", "allergy")
@@ -211,6 +215,30 @@ def _is_faithful(raw) -> bool:
     return parse_verdict(raw).get("faithful") is True
 
 
+class FinalGuard(BaseAgent):
+    """Runs right after every final check. No LLM, no quota.
+
+    Adds the FinalCheck agent's deterministic guards (src/final_check_agent.py) to the
+    model's verdict: a changed or dropped number, an invented number, a flipped negation.
+    Then recomputes `faithful` from the merged lists, so the model cannot pass a text
+    while listing a problem, and cannot pass a changed dose it did not notice.
+    An unreadable verdict stays a fail.
+    """
+
+    async def _run_async_impl(self, ctx: InvocationContext) -> AsyncGenerator[Event, None]:
+        state = ctx.session.state
+        llm = fc.parse_verdict(state.get("final_verdict"))
+        if llm is None:
+            merged = {"faithful": False, "parse_error": True}
+        else:
+            guards = fc.deterministic_check(state.get("source", ""),
+                                            parse_atoms(state.get("atoms")),
+                                            state.get("final", ""))
+            merged = fc.merge(llm, guards)
+        yield Event(author=self.name, invocation_id=ctx.invocation_id,
+                    actions=EventActions(state_delta={"final_verdict": json.dumps(merged)}))
+
+
 class StopIfFaithful(BaseAgent):
     """Ends the final fix loop as soon as the latest final_verdict passes. No LLM."""
 
@@ -221,12 +249,20 @@ class StopIfFaithful(BaseAgent):
 
 
 class NeedsReviewFlag(BaseAgent):
-    """Last step. Records whether the final text still failed after the fix loop. No LLM."""
+    """Last step. Records whether the final text still failed after the fix loop, and
+    writes the faithfulness report that goes to the user with the explanation. No LLM."""
 
     async def _run_async_impl(self, ctx: InvocationContext) -> AsyncGenerator[Event, None]:
-        passed = _is_faithful(ctx.session.state.get("final_verdict"))
+        state = ctx.session.state
+        passed = _is_faithful(state.get("final_verdict"))
+        verdict = fc.parse_verdict(state.get("final_verdict"))
+        if verdict is not None:
+            verdict["faithful"] = passed
+        report = fc.faithfulness_report(verdict, text=state.get("final", ""))
         yield Event(author=self.name, invocation_id=ctx.invocation_id,
-                    actions=EventActions(state_delta={"needs_review": not passed}))
+                    actions=EventActions(state_delta={
+                        "needs_review": not passed,
+                        "faithfulness_report": json.dumps(report)}))
 
 
 # ------------------------------------------------------------------ 5. Refiner
@@ -256,6 +292,7 @@ FINAL_REFINER_INSTRUCTION = (
     "- Add back every omission, worded plainly, using only the SOURCE.\n"
     "- Fix every negation error.\n"
     "- Keep it easy to read: short sentences, everyday words.\n"
+    "- Do not add explanations, definitions or background that are not in the SOURCE.\n"
     "- Do not rewrite sentences the verdict did not flag.\n"
     "- Return only the explanation text."
 )
@@ -304,6 +341,7 @@ def build_pipeline(model=DEFAULT_MODEL, lookup: Optional[GlossaryLookup] = None,
             llm("Readability", READABILITY_INSTRUCTION, "final"),
             # Check the text the patient will actually read.
             llm("FinalCheck", _verifier_instruction("final"), "final_verdict"),
+            FinalGuard(name="FinalGuard"),
             # If it failed: fix with a Refiner and check again, at most twice. Each round
             # starts with StopIfFaithful, so a passing check ends the loop, and every round
             # ends on a check, never on an unchecked fix.
@@ -314,6 +352,7 @@ def build_pipeline(model=DEFAULT_MODEL, lookup: Optional[GlossaryLookup] = None,
                     StopIfFaithful(name="StopIfFaithful"),
                     llm("FinalRefiner", FINAL_REFINER_INSTRUCTION, "final"),
                     llm("FinalRecheck", _verifier_instruction("final"), "final_verdict"),
+                    FinalGuard(name="FinalRecheckGuard"),
                 ],
             ),
             # Still failing after the cap: ship it flagged, never loop further.
@@ -330,5 +369,5 @@ root_agent = faithfulmed
 if __name__ == "__main__":
     print("FaithfulMed v2:")
     labels = {"RefineLoop": "[Verifier <-> Refiner] x<=2",
-              "FinalFixLoop": "[fix + recheck] x<=2"}
+              "FinalFixLoop": "[fix + recheck + guard] x<=2"}
     print("  " + " -> ".join(labels.get(a.name, a.name) for a in faithfulmed.sub_agents))

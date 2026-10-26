@@ -53,8 +53,8 @@ temperature 0, and only one step allowed to query the glossary.
  6. READABILITY ───────► final
     │
     ▼
- 7. FINALCHECK ────────► final_verdict  reads SOURCE + final
-    │
+ 7. FINALCHECK ────────► final_verdict  reads SOURCE + final, plus number and
+    │                                   negation guards (no API call)
     ├─ pass ─────────────► done
     │
     └─ fail ─► REFINER fixes final ─► FINALCHECK again     at most 2 rounds
@@ -183,15 +183,37 @@ rejects any rewrite that changes a number or loses a negation, and keeps the har
 
 ### 7. FinalCheck, with its fix loop
 **in:** `source`, `atoms`, `definitions`, `final`
-**out:** `final_verdict`, then `final` (if fixed) and `needs_review`
+**out:** `final_verdict`, then `final` (if fixed), `needs_review` and `faithfulness_report`
 
 Same instruction as the Verifier, pointed at the final text. If `faithful` is false, a
 second Refiner instance fixes `final` using `final_verdict`, and a recheck writes a new
-`final_verdict`. At most two rounds. Two small non-LLM steps manage it: `StopIfFaithful`
-ends the loop as soon as a check passes, and `NeedsReviewFlag` writes `needs_review`.
+`final_verdict`. At most two rounds. Three small non-LLM steps manage it: `FinalGuard`
+runs after every check, `StopIfFaithful` ends the loop as soon as a check passes, and
+`NeedsReviewFlag` writes `needs_review`.
+
+**FinalGuard** adds checks that need no model, from `src/final_check_agent.py`:
+
+- a number from the extracted facts that is missing from the final text (an omission)
+- a number in the final text that is not in the SOURCE (an unsupported claim)
+- a negated finding stated without its negation (a negation error)
+
+It merges these into the model's verdict and recomputes `faithful` from the merged
+problem lists. So the model cannot pass a changed dose it did not notice. A "not faithful"
+that names no problem is not treated as a fail: there is nothing to fix, and on real data
+sending it to the Refiner made the Refiner invent definitions. The final Refiner is also
+told not to add definitions or background that are not in the SOURCE.
 
 An unreadable verdict counts as a fail, never a pass. If we cannot tell whether the text
 is faithful, the safe answer is to fix it or flag it.
+
+The last step also writes `faithfulness_report`, the report that goes to the user with the
+explanation: a status (`passed`, `fixed` or `needs_review`), a one-line plain summary, what
+was fixed, what is still wrong, terms left without a plain explanation, and the reading grade.
+
+`src/final_check_agent.py` is the standalone version used for evaluation, with the same
+contract as the Readability and Verifier modules. It adds one rule the ADK loop does not
+have yet: if a fix makes the text worse, the version with the fewest problems is shipped.
+Results are in `notebooks/final_check_agent.ipynb`.
 
 ---
 
