@@ -83,28 +83,36 @@ Rules:
 reassurance, or number that is not in an atom. Do not say things like "don't worry" or "this is common".
 2. Cover EVERY atom in at least one sentence. Never drop an atom, especially medications, test \
 results, and instructions.
-3. Keep these exactly as written: drug names, doses, units, numbers, test names, and time periods. \
-Never round, convert, or change a number. You may explain a medical term in everyday words next to it, \
-for example "hypertension (high blood pressure)".
+3. Keep these exactly as written: drug names, doses, units, numbers, and time periods. Never round, \
+convert, or change a number. Keep the original medical term in the sentence and put its everyday \
+meaning next to it.
 4. Keep the meaning. If an atom is negated, say it is NOT present ("You do not have...", "There was no..."). \
-If an atom is uncertain, hedge ("may", "might", "doctors think it is possible"). If an atom's subject is \
-family, say it is about a family member, not you ("Your mother had...").
-5. Glossary entries are only for saying what a term means in everyday words. Do NOT copy causes, \
-symptoms, treatments, statistics, or numbers from a glossary entry into the explanation. Use an entry \
-only if it matches how the atom uses the term. If a term has no entry, explain it only if you can do so in \
-a few everyday words without adding clinical facts; otherwise keep the term as written.
+If an atom is uncertain, hedge ONCE ("may" or "might", never both "might" and "possible"). If an atom's \
+subject is family, say it is about a family member, not you ("Your mother had...").
+5. Explain hard terms. Assume the reader has no medical training. Every diagnosis, test name, lab name, \
+or abbreviation that an 8th grader would not know must be explained in the same sentence, in a few \
+everyday words, for example "type 2 diabetes (a condition where blood sugar stays too high)". An \
+explanation may say ONLY what the term means in general. It must not add a cause, symptom, treatment, \
+statistic, number, or any claim about this patient that is not in the atom. If a glossary entry matches \
+the term, use its wording, shortened. If there is no entry, give a general meaning only if you are sure \
+it is correct; if you are not sure, keep the term as written. Never say what a drug is for, because that \
+is not in the atoms. Spell out abbreviations ("ED" becomes "emergency department").
 6. Write to the patient as "you", at about a {grade}th-grade reading level: short sentences (under 20 \
-words), common words, active voice, one idea per sentence. No bullet points.
-7. Turn instruction atoms into clear "you should" sentences and keep their conditions ("until cleared").
+words), common words ("hard exercise" instead of "strenuous exercise"), active voice, one idea per \
+sentence. No bullet points.
+7. Turn instruction atoms into clear "you should" sentences and keep their conditions ("until cleared"). \
+Say "you take" for medications the patient is on, and use "you should" only when the atom is an instruction.
 8. Never mention atoms, ids, or the glossary inside a sentence's text.
+
 
 Example
 ATOMS: a1 (symptom, negated) "No fever"; a2 (diagnosis, uncertain) "Possible pneumonia"; a3 (medication) \
-"Start amoxicillin 500 mg three times daily".
+"Start amoxicillin 500 mg three times daily"; a4 (lab_value) "Troponin I 0.02 ng/mL (normal < 0.04)".
 Sentences:
   "You do not have a fever."                                        atom_ids [a1]
   "Your doctor thinks you may have pneumonia, an infection in the lungs."   atom_ids [a2]
   "You should start taking amoxicillin, 500 mg, three times a day."  atom_ids [a3]
+  "Your troponin I, a blood test that checks for heart muscle damage, was 0.02 ng/mL. A normal result is below 0.04."   atom_ids [a4]
 """
 
 try:
