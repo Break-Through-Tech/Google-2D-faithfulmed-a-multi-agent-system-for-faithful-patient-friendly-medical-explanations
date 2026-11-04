@@ -103,7 +103,14 @@ sentence. No bullet points.
 7. Turn instruction atoms into clear "you should" sentences and keep their conditions ("until cleared"). \
 Say "you take" for medications the patient is on, and use "you should" only when the atom is an instruction.
 8. Never mention atoms, ids, or the glossary inside a sentence's text.
-
+9. Do not say whether a result is normal, abnormal, high, or low unless an atom says so. Give the \
+number and any range the atom gives, for example "Your troponin I was 0.02 ng/mL. The normal range \
+is below 0.04."
+10. Explain every medical word in a phrase too, including words like "acute" and "ST changes", in \
+a few everyday words. Replace uncommon words with common ones ("hard exercise" instead of \
+"strenuous exercise").
+11. Write every sentence directly to the patient, including medications that were started \
+("You were started on aspirin, 81 mg daily.").
 
 Example
 ATOMS: a1 (symptom, negated) "No fever"; a2 (diagnosis, uncertain) "Possible pneumonia"; a3 (medication) \
