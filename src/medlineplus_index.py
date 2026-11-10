@@ -282,20 +282,45 @@ class Retriever:
 
     def search(self, query: str, k: int = 3, min_score: float = 0.0,
                use_synonyms: bool = True) -> list[dict]:
-        if use_synonyms and norm(query) in self.surface_to_id:
-            tid = self.surface_to_id[norm(query)]
-            got = self.col.get(ids=[tid], include=["documents", "metadatas"])
-            return [self._format(got["documents"][0], got["metadatas"][0], 1.0, "synonym")]
+        return self.search_many([query], k, min_score, use_synonyms)[0]
 
-        qvec = [float(x) for x in self.embed_fn([query], QUERY_TASK)[0]]
-        res = self.col.query(query_embeddings=[qvec], n_results=k,
-                             include=["documents", "metadatas", "distances"])
-        out = []
-        for doc, meta, dist in zip(res["documents"][0], res["metadatas"][0], res["distances"][0]):
-            score = 1.0 - dist  # Chroma cosine distance = 1 - cosine similarity
-            if score >= min_score:
-                out.append(self._format(doc, meta, score, "vector"))
-        return out
+    def search_many(self, queries: list[str], k: int = 3, min_score: float = 0.0,
+                    use_synonyms: bool = True) -> list[list[dict]]:
+        """search() over many queries, with ONE embedding request for all the misses.
+
+        The free Gemini tier allows about 20 embedding requests/day/key, so calling
+        search() inside a loop is what exhausts a key mid-run. Exact (synonym) hits still
+        cost nothing, and only the leftovers are embedded, together, in one request.
+
+        Returns one result list per query, in the order the queries were given.
+        """
+        results: list[list[dict] | None] = [None] * len(queries)
+        todo = []
+        for i, q in enumerate(queries):
+            if use_synonyms and norm(q) in self.surface_to_id:
+                tid = self.surface_to_id[norm(q)]
+                got = self.col.get(ids=[tid], include=["documents", "metadatas"])
+                results[i] = [self._format(got["documents"][0], got["metadatas"][0],
+                                           1.0, "synonym")]
+            else:
+                todo.append(i)
+
+        if todo:
+            vecs = self.embed_fn([queries[i] for i in todo], QUERY_TASK)
+            if len(vecs) != len(todo):
+                raise ValueError("Embedding count does not match the number of queries")
+            res = self.col.query(
+                query_embeddings=[[float(x) for x in v] for v in vecs],
+                n_results=k, include=["documents", "metadatas", "distances"])
+            for slot, i in enumerate(todo):
+                hits = []
+                for doc, meta, dist in zip(res["documents"][slot], res["metadatas"][slot],
+                                           res["distances"][slot]):
+                    score = 1.0 - dist  # Chroma cosine distance = 1 - cosine similarity
+                    if score >= min_score:
+                        hits.append(self._format(doc, meta, score, "vector"))
+                results[i] = hits
+        return results
 
 
 # ----------------------------------------------------------------------------- validate
