@@ -4,7 +4,8 @@ Run: python src/test_pipeline_offline.py
 
 What it proves: every {placeholder} in every agent's instruction resolves from session
 state, state flows from agent to agent in the documented order, the Retriever writes what
-the Simplifier and Verifier read, and the final text is checked by FinalCheck.
+the Simplifier and Verifier read, and the final text is checked, fixed at most twice when
+it fails, and flagged for review if it still fails.
 
 What it does NOT prove: that a real model follows the instructions. That needs a real run.
 """
@@ -50,8 +51,9 @@ def _which(instruction: str) -> str:
     if instruction.startswith("Rewrite the SOURCE"):
         return "simplifier"
     if instruction.startswith("You are checking"):
-        return "finalcheck" if "Take metformin 500 mg two times a day" in instruction \
-            else "verifier"
+        return "finalcheck" if "FINALTEXT" in instruction else "verifier"
+    if instruction.startswith("Fix the final patient explanation"):
+        return "finalrefiner"
     if instruction.startswith("Fix the explanation"):
         return "refiner"
     if instruction.startswith("Rewrite the explanation"):
@@ -61,11 +63,22 @@ def _which(instruction: str) -> str:
 
 DRAFT = ("You have high blood pressure. You started metformin 500 mg twice daily. "
          "Your HbA1c was 8.2%. You are allergic to penicillin. You have no chest pain.")
-FINAL = ("You have high blood pressure. Take metformin 500 mg two times a day. "
+FINAL = ("FINALTEXT You have high blood pressure. Take metformin 500 mg two times a day. "
          "Your HbA1c was 8.2%. You are allergic to penicillin. You have no chest pain.")
-VERDICT = json.dumps({"faithful": True, "unsupported_claims": [], "omissions": [],
-                      "negation_errors": [], "unexplained_terms": ["metformin"],
-                      "reading_level_ok": True})
+FIXED = FINAL + " FIXED"
+
+
+def _verdict(ok: bool) -> str:
+    return json.dumps({"faithful": ok, "unsupported_claims": [] if ok else ["invented"],
+                       "omissions": [], "negation_errors": [],
+                       "unexplained_terms": ["metformin"], "reading_level_ok": True})
+
+
+VERDICT = _verdict(True)
+FINAL_VERDICTS: list = []   # scripted outcomes for each final check, in order
+CALLS: list = []            # every model call, in order
+READABILITY_OUT = {"text": FINAL}   # what the fake Readability step returns
+LAST: dict[str, str] = {}   # agent marker -> most recent rendered instruction
 
 
 class FakeLlm(BaseLlm):
@@ -75,9 +88,16 @@ class FakeLlm(BaseLlm):
         si = llm_request.config.system_instruction if llm_request.config else ""
         si = si if isinstance(si, str) else str(si)
         who = _which(si)
-        SEEN[who] = si
-        reply = {"extractor": json.dumps(ATOMS), "simplifier": DRAFT, "verifier": VERDICT,
-                 "refiner": DRAFT, "readability": FINAL, "finalcheck": VERDICT}.get(who, "?")
+        SEEN.setdefault(who, si)
+        LAST[who] = si
+        CALLS.append(who)
+        if who == "finalcheck":
+            nxt = FINAL_VERDICTS.pop(0) if FINAL_VERDICTS else True
+            reply = nxt if isinstance(nxt, str) else _verdict(nxt)
+        else:
+            reply = {"extractor": json.dumps(ATOMS), "simplifier": DRAFT, "verifier": VERDICT,
+                     "refiner": DRAFT, "readability": READABILITY_OUT["text"],
+                     "finalrefiner": FIXED}.get(who, "?")
         yield LlmResponse(content=types.Content(role="model",
                                                 parts=[types.Part(text=reply)]))
 
@@ -96,7 +116,10 @@ def _glossary():
     return GlossaryLookup(d / "t.csv", d / "s.csv")
 
 
-async def _run():
+async def _run(final_outcomes, readability_text=FINAL):
+    FINAL_VERDICTS[:] = list(final_outcomes)
+    READABILITY_OUT["text"] = readability_text
+    CALLS.clear()
     agent = P.build_pipeline(model=FakeLlm(), lookup=_glossary())
     runner = InMemoryRunner(agent=agent, app_name="faithfulmed")
     session = await runner.session_service.create_session(
@@ -109,7 +132,7 @@ async def _run():
             order.append(ev.author)
     final = await runner.session_service.get_session(
         app_name="faithfulmed", user_id="u", session_id=session.id)
-    return order, final.state
+    return order, final.state, list(CALLS)
 
 
 passed = failed = 0
@@ -119,19 +142,28 @@ def check(name, cond):
     else:    failed += 1; print(f"  FAIL  {name}")
 
 
-order, state = asyncio.run(_run())
+HEAD = ["Extractor", "Retriever", "Simplifier", "Verifier", "Refiner",
+        "Verifier", "Refiner", "Readability", "FinalCheck", "FinalGuard"]
 
-print("order of execution")
-expected = ["Extractor", "Retriever", "Simplifier", "Verifier", "Refiner",
-            "Verifier", "Refiner", "Readability", "FinalCheck"]
-check("agents run in the documented order", order == expected)
-if order != expected:
+# Scenario A: the final check passes first time. The fix loop stops at once.
+order, state, calls = asyncio.run(_run([True]))
+print("scenario A: final check passes first time")
+check("agents run in the documented order",
+      order == HEAD + ["StopIfFaithful", "NeedsReviewFlag"])
+if order != HEAD + ["StopIfFaithful", "NeedsReviewFlag"]:
     print("     got:", order)
+check("no extra fix when it already passed", calls.count("finalrefiner") == 0)
+check("not flagged for review", state.get("needs_review") is False)
 
 print("\nstate written by each step")
 for key in ("atoms", "definitions", "unexplained_terms", "draft", "verdict", "final",
-            "final_verdict"):
+            "final_verdict", "needs_review"):
     check(f"`{key}` is in state", key in state)
+
+print("\nfaithfulness report")
+rep = json.loads(state.get("faithfulness_report", "{}"))
+check("the pipeline writes a faithfulness report", rep.get("status") == "passed")
+check("the report has a plain summary", "original text" in rep.get("summary", ""))
 
 print("\nretriever")
 check("found hypertension via the synonym table", "High Blood Pressure" in state["definitions"])
@@ -157,6 +189,59 @@ check("FinalCheck also sees the SOURCE", SOURCE in SEEN.get("finalcheck", ""))
 check("Simplifier sees the definitions", "High Blood Pressure" in SEEN.get("simplifier", ""))
 check("Extractor asks for allergies and negation", "allergy" in SEEN.get("extractor", "")
       and "negated" in SEEN.get("extractor", ""))
+
+print("\nscenario B: final check fails once, then passes")
+order, state, calls = asyncio.run(_run([False, True]))
+check("goes straight to the Refiner, not back to the Verifier",
+      order[len(HEAD):len(HEAD) + 2] == ["StopIfFaithful", "FinalRefiner"])
+check("the recheck is guarded too",
+      order[len(HEAD) + 2:len(HEAD) + 4] == ["FinalRecheck", "FinalRecheckGuard"])
+check("exactly one fix", calls.count("finalrefiner") == 1)
+check("the fix is checked again", calls[-1] == "finalcheck")
+check("the fixed text is what ships", state["final"] == FIXED)
+check("not flagged for review", state.get("needs_review") is False)
+check("main Verifier not re-run after Readability",
+      "verifier" not in calls[calls.index("readability"):])
+fr = SEEN.get("finalrefiner", "")
+check("the final Refiner sees the final verdict", '"faithful"' in fr)
+check("the final Refiner sees the SOURCE", SOURCE in fr)
+check("final Refiner: no unresolved placeholders",
+      not any(k in fr for k in ("{source}", "{final}", "{final_verdict}")))
+
+print("\nscenario C: final check keeps failing")
+order, state, calls = asyncio.run(_run([False, False, False, False]))
+check("capped at 2 fixes", calls.count("finalrefiner") == 2)
+check("3 final checks in total: 1 + 1 per fix", calls.count("finalcheck") == 3)
+check("ends on a check, never on an unchecked fix", calls[-1] == "finalcheck")
+check("flagged for review", state.get("needs_review") is True)
+check("still finishes and returns text", bool(state.get("final")))
+check("the report says it needs review",
+      json.loads(state["faithfulness_report"])["status"] == "needs_review")
+
+print("\nscenario D: unreadable final verdict counts as a fail, never a pass")
+check("unparseable verdict is not faithful", P._is_faithful("not json at all") is False)
+check("fenced JSON verdict is read", P._is_faithful('```json\n{"faithful": true}\n```'))
+
+print("\nscenario E: the model misses a changed dose, the guard does not")
+BAD = FINAL.replace("500 mg", "800 mg")
+order, state, calls = asyncio.run(_run([True, True], readability_text=BAD))
+check("the model said faithful, but the check still failed and a fix ran",
+      calls.count("finalrefiner") == 1)
+check("the fix prompt names the invented dose", "number 800 is not in the source"
+      in LAST.get("finalrefiner", ""))
+check("the fix prompt names the dropped dose", "500" in LAST.get("finalrefiner", "")
+      and "missing" in LAST.get("finalrefiner", ""))
+check("the fixed text ships and is not flagged",
+      state["final"] == FIXED and state.get("needs_review") is False)
+
+print("\nscenario F: an unreadable final verdict goes through the guard as a fail")
+order, state, calls = asyncio.run(_run(["looks fine to me", True]))
+check("unreadable verdict triggers a fix, not a pass", calls.count("finalrefiner") == 1)
+order, state, calls = asyncio.run(_run(['{"faithful": false}', True]))
+check("'faithful: false' that names no problem does not trigger a fix",
+      calls.count("finalrefiner") == 0 and state.get("needs_review") is False)
+check("the final Refiner is told not to add definitions",
+      "Do not add explanations, definitions" in LAST.get("finalrefiner", ""))
 
 print(f"\n{passed} passed, {failed} failed")
 sys.exit(1 if failed else 0)
