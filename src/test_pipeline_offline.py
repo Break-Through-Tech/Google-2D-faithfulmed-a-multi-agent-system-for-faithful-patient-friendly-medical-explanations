@@ -190,6 +190,13 @@ check("Simplifier sees the definitions", "High Blood Pressure" in SEEN.get("simp
 check("Extractor asks for allergies and negation", "allergy" in SEEN.get("extractor", "")
       and "negated" in SEEN.get("extractor", ""))
 
+print("\nextractor guards ran inside the pipeline")
+_atoms = json.loads(state["atoms"])
+check("atoms carry the merged schema (id, assertion, subject)",
+      all({"id", "assertion", "subject", "negated", "term"} <= set(a) for a in _atoms))
+check("negated atom kept its negation", any(a["text"] == "chest pain" and a["negated"]
+                                            and a["assertion"] == "negated" for a in _atoms))
+check("extractor report written to state", "extractor_report" in state)
 print("\nscenario B: final check fails once, then passes")
 order, state, calls = asyncio.run(_run([False, True]))
 check("goes straight to the Refiner, not back to the Verifier",

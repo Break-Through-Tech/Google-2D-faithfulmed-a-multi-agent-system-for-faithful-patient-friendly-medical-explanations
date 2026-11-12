@@ -65,7 +65,6 @@ from glossary_lookup import GlossaryLookup, format_for_prompt  # noqa: E402
 import final_check_agent as fc  # noqa: E402
 
 DEFAULT_MODEL = "gemini-3.5-flash"
-ATOM_TYPES = ("diagnosis", "medication", "lab_value", "procedure", "instruction", "allergy")
 _GEN = types.GenerateContentConfig(temperature=0.0)
 
 
@@ -76,23 +75,14 @@ def new_session_state(source: str) -> dict:
 
 # ------------------------------------------------------------------ 1. Extractor
 
-EXTRACTOR_INSTRUCTION = (
-    "Extract every clinically meaningful fact from the SOURCE below as a JSON list.\n"
-    "Each item has exactly these keys:\n"
-    "  text: the fact, worded as close to the SOURCE as possible\n"
-    "  type: one of " + ", ".join(ATOM_TYPES) + "\n"
-    "  term: the single medical word or phrase a patient might not know "
-    "(for example 'metformin' or 'HbA1c'), or an empty string\n"
-    "  negated: true if the SOURCE says the finding is absent ('no fracture', "
-    "'denies chest pain'), otherwise false\n\n"
-    "Rules:\n"
-    "- Include allergies as type allergy. Never drop them.\n"
-    "- Keep every number exactly as written: doses, lab values, dates, frequencies.\n"
-    "- Skip redaction placeholders such as XXXX. They are not values.\n"
-    "- Do not add any fact that is not in the SOURCE.\n"
-    "- Return only the JSON list, no other text.\n\n"
-    "SOURCE:\n{source}"
-)
+# The Extractor lives in src/extractor_agent.py (owner: Vera). The prompt is built from
+# state["source"] by an InstructionProvider (citations stripped, MTSamples sections
+# tagged), and an after_agent_callback runs the deterministic guards on the reply, so
+# state["atoms"] always holds checked atoms in the schema both readers expect.
+import extractor_agent as _X  # noqa: E402
+
+EXTRACTOR_INSTRUCTION = _X.PROMPT          # kept for anyone importing the old name
+ATOM_TYPES = _X.ATOM_TYPES
 
 
 # ------------------------------------------------------------------ 2. Retriever
@@ -327,7 +317,9 @@ def build_pipeline(model=DEFAULT_MODEL, lookup: Optional[GlossaryLookup] = None,
     return SequentialAgent(
         name="FaithfulMed",
         sub_agents=[
-            llm("Extractor", EXTRACTOR_INSTRUCTION, "atoms"),
+            LlmAgent(name="Extractor", model=model, instruction=_X.adk_instruction,
+                     output_key="atoms", generate_content_config=_GEN,
+                     after_agent_callback=_X.adk_after_extractor),
             Retriever(name="Retriever", lookup=lookup),
             llm("Simplifier", SIMPLIFIER_INSTRUCTION, "draft"),
             LoopAgent(

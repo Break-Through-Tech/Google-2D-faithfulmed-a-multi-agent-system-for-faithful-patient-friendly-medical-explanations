@@ -25,3 +25,6 @@ data/*
 *.pt
 *.faiss
 chroma/
+
+# Evaluation outputs and cached model replies
+results/
