@@ -84,9 +84,13 @@ _TYPE_ALIASES = {
 }
 _ASSERTION_ALIASES = {
     "positive": "present", "affirmed": "present", "true": "present",
+    "confirmed": "present", "known": "present", "yes": "present",
     "absent": "negated", "negative": "negated", "denied": "negated",
+    "ruled_out": "negated", "no": "negated",
     "possible": "uncertain", "hedged": "uncertain", "hypothetical": "uncertain",
-    "probable": "uncertain",
+    "probable": "uncertain", "maybe": "uncertain", "likely": "uncertain",
+    "suspected": "uncertain", "potentially": "uncertain", "doubtful": "uncertain",
+    "unclear": "uncertain",
 }
 
 # Which section headers imply which type. A hint for the model, not a hard rule:
@@ -257,9 +261,10 @@ def _anchor(atom: dict) -> str:
     term = (atom.get("term") or "").strip()
     if term:
         return term
-    content = [w for w in _words(atom.get("text", "")) if w not in _STOP and w not in
-               {"no", "not", "denies", "denied", "negative", "without"}]
-    return " ".join(content[:2])
+    # Keep stop words so multi-word phrases like "shortness of breath" match the source
+    _neg_words = {"no", "not", "denies", "denied", "negative", "without"}
+    content = [w for w in _words(atom.get("text", "")) if w not in _neg_words]
+    return " ".join(content[:4])
 
 
 def source_negates(anchor: str, source: str, window: int = 6) -> bool | None:
@@ -322,7 +327,10 @@ def normalize_atoms(raw_atoms: list[dict], source: str,
 
         # assertion wins if given; otherwise fall back to the v2 `negated` flag
         if a.get("assertion") not in (None, ""):
+            raw_assertion = str(a.get("assertion") or "").strip().lower().replace(" ", "_")
             assertion = _coerce_choice(a.get("assertion"), ASSERTIONS, _ASSERTION_ALIASES, "present")
+            if raw_assertion and raw_assertion not in ASSERTIONS and raw_assertion not in _ASSERTION_ALIASES:
+                warnings.append(f"unknown assertion '{raw_assertion}' for '{text}', set to present")
         else:
             assertion = "negated" if a.get("negated") is True else "present"
         subject = _coerce_choice(a.get("subject"), SUBJECTS, {"relative": "family"}, "patient")
