@@ -67,6 +67,7 @@ from typing import Any, AsyncGenerator, Callable, Optional
 from google.adk.agents import BaseAgent, LlmAgent, LoopAgent, SequentialAgent
 from google.adk.agents.invocation_context import InvocationContext
 from google.adk.events import Event, EventActions
+from google.adk.models.google_llm import Gemini
 from google.genai import types
 
 sys.path.insert(0, str(Path(__file__).resolve().parent.parent / "src"))
@@ -77,6 +78,13 @@ import simplifier as _S  # noqa: E402
 
 DEFAULT_MODEL = "gemini-3.5-flash"
 _GEN = types.GenerateContentConfig(temperature=0.0)
+
+# Retries for the agents ADK calls Gemini for (Extractor, Verifier, Refiner, FinalCheck,
+# FinalRefiner, FinalRecheck). Without this, one 503 "model is busy" stopped the whole
+# run. Backoff 2s, 4s, 8s (capped at 30s): a busy model gets about 15s to recover before
+# the run gives up. The Simplifier and Readability retry inside their own modules.
+_RETRY = types.HttpRetryOptions(attempts=4, initial_delay=2.0, max_delay=30.0,
+                                http_status_codes=[429, 500, 503, 504])
 
 
 def new_session_state(source: str) -> dict:
@@ -232,10 +240,14 @@ class FinalGuard(BaseAgent):
 
 
 class StopIfFaithful(BaseAgent):
-    """Ends the final fix loop as soon as the latest final_verdict passes. No LLM."""
+    """Ends a fix loop as soon as the latest verdict passes, so no Refiner call is spent
+    on text that is already faithful. No LLM. `verdict_key` is "final_verdict" in the
+    final fix loop and "verdict" in the main Verifier <-> Refiner loop."""
+
+    verdict_key: str = "final_verdict"
 
     async def _run_async_impl(self, ctx: InvocationContext) -> AsyncGenerator[Event, None]:
-        passed = _is_faithful(ctx.session.state.get("final_verdict"))
+        passed = _is_faithful(ctx.session.state.get(self.verdict_key))
         yield Event(author=self.name, invocation_id=ctx.invocation_id,
                     actions=EventActions(escalate=passed))
 
@@ -354,15 +366,16 @@ def build_pipeline(model=DEFAULT_MODEL, max_refine_rounds: int = 2, max_final_ro
             "The Simplifier and Readability agents only call Gemini by name. With a "
             "non-string model, pass simplifier_llm_fn and readability_generate_fn too.")
     models = (model,) if isinstance(model, str) else None
+    adk_model = Gemini(model=model, retry_options=_RETRY) if isinstance(model, str) else model
 
     def llm(name, instruction, key):
-        return LlmAgent(name=name, model=model, instruction=instruction,
+        return LlmAgent(name=name, model=adk_model, instruction=instruction,
                         output_key=key, generate_content_config=_GEN)
 
     return SequentialAgent(
         name="FaithfulMed",
         sub_agents=[
-            LlmAgent(name="Extractor", model=model, instruction=_X.adk_instruction,
+            LlmAgent(name="Extractor", model=adk_model, instruction=_X.adk_instruction,
                      output_key="atoms", generate_content_config=_GEN,
                      after_agent_callback=_X.adk_after_extractor),
             Simplifier(name="Simplifier", models=models, rag_mode=rag_mode,
@@ -372,6 +385,8 @@ def build_pipeline(model=DEFAULT_MODEL, max_refine_rounds: int = 2, max_final_ro
                 max_iterations=max_refine_rounds,
                 sub_agents=[
                     llm("Verifier", _verifier_instruction("draft"), "verdict"),
+                    # A faithful draft ends the loop here: no Refiner call, no re-check.
+                    StopIfFaithful(name="StopIfDraftFaithful", verdict_key="verdict"),
                     llm("Refiner", REFINER_INSTRUCTION, "draft"),
                 ],
             ),

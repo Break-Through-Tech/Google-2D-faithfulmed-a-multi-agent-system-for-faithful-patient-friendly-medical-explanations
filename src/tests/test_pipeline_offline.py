@@ -72,6 +72,7 @@ def _verdict(ok: bool) -> str:
 
 VERDICT = _verdict(True)
 FINAL_VERDICTS: list = []   # scripted outcomes for each final check, in order
+MAIN_VERDICTS: list = []    # scripted outcomes for each main-loop Verifier call, in order
 CALLS: list = []            # every model call, in order
 READABILITY_OUT = {"text": FINAL}   # what the fake Readability model returns
 SIMPLIFIER_OUT = {"text": DRAFT}    # what the fake Simplifier model writes
@@ -92,8 +93,10 @@ class FakeLlm(BaseLlm):
         if who == "finalcheck":
             nxt = FINAL_VERDICTS.pop(0) if FINAL_VERDICTS else True
             reply = nxt if isinstance(nxt, str) else _verdict(nxt)
+        elif who == "verifier":
+            reply = _verdict(MAIN_VERDICTS.pop(0) if MAIN_VERDICTS else True)
         else:
-            reply = {"extractor": json.dumps(ATOMS), "verifier": VERDICT,
+            reply = {"extractor": json.dumps(ATOMS),
                      "refiner": REFINER_OUT["text"], "finalrefiner": FIXED}.get(who, "?")
         yield LlmResponse(content=types.Content(role="model",
                                                 parts=[types.Part(text=reply)]))
@@ -136,8 +139,9 @@ def fake_readability_gen(prompt):
 
 
 async def _run(final_outcomes, readability_text=FINAL, simplifier_text=DRAFT,
-               refiner_text=DRAFT):
+               refiner_text=DRAFT, main_outcomes=()):
     FINAL_VERDICTS[:] = list(final_outcomes)
+    MAIN_VERDICTS[:] = list(main_outcomes)
     READABILITY_OUT["text"] = readability_text
     SIMPLIFIER_OUT["text"] = simplifier_text
     REFINER_OUT["text"] = refiner_text
@@ -167,8 +171,9 @@ def check(name, cond):
     else:    failed += 1; print(f"  FAIL  {name}")
 
 
-HEAD = ["Extractor", "Simplifier", "Verifier", "Refiner",
-        "Verifier", "Refiner", "Readability", "FinalCheck", "FinalGuard"]
+# The draft passes the Verifier first time, so the main loop stops before the Refiner.
+HEAD = ["Extractor", "Simplifier", "Verifier", "StopIfDraftFaithful",
+        "Readability", "FinalCheck", "FinalGuard"]
 
 # Scenario A: the final check passes first time. The fix loop stops at once.
 order, state, calls = asyncio.run(_run([True]))
@@ -293,6 +298,19 @@ check("'faithful: false' that names no problem does not trigger a fix",
 check("the final Refiner is told not to add definitions",
       "Do not add explanations, definitions" in LAST.get("finalrefiner", ""))
 
+print("\nmain loop: Verifier <-> Refiner stops as soon as the draft passes")
+order, state, calls = asyncio.run(_run([True]))
+check("faithful first time: no Refiner call at all", calls.count("refiner") == 0)
+check("faithful first time: one Verifier call", calls.count("verifier") == 1)
+order, state, calls = asyncio.run(_run([True], main_outcomes=[False, True]))
+check("fails once: one fix, then the re-check passes and the loop stops",
+      calls.count("refiner") == 1 and calls.count("verifier") == 2)
+check("fails once: the Refiner's fix is what goes on", calls.index("refiner")
+      < len(calls) - 1 - calls[::-1].index("verifier"))
+order, state, calls = asyncio.run(_run([True], main_outcomes=[False, False, False]))
+check("keeps failing: capped at 2 rounds", calls.count("refiner") == 2
+      and calls.count("verifier") == 2)
+
 print("\nmodel wiring")
 try:
     P.build_pipeline(model=FakeLlm())
@@ -302,6 +320,53 @@ except ValueError:
 p = P.build_pipeline(model="gemini-x")
 check("a model name reaches the Simplifier and Readability",
       p.sub_agents[1].models == ("gemini-x",) and p.sub_agents[3].models == ("gemini-x",))
+check("ADK-run agents get Gemini with 503 retries",
+      p.sub_agents[0].model.model == "gemini-x"
+      and 503 in p.sub_agents[0].model.retry_options.http_status_codes)
+
+print("\nretries: a fake Gemini server answers 503 twice, then succeeds")
+import http.server, threading  # noqa: E401,E402
+HITS = []
+class _Busy(http.server.BaseHTTPRequestHandler):
+    def do_POST(self):
+        self.rfile.read(int(self.headers.get("Content-Length", 0)))
+        HITS.append(self.path)
+        if len(HITS) <= 2:
+            body, code = b'{"error": {"code": 503, "message": "busy", "status": "UNAVAILABLE"}}', 503
+        else:
+            body, code = json.dumps({"candidates": [{"content": {"role": "model", "parts": [
+                {"text": "ok"}]}, "finishReason": "STOP"}]}).encode(), 200
+        self.send_response(code); self.send_header("Content-Type", "application/json")
+        self.end_headers(); self.wfile.write(body)
+    def log_message(self, *a):
+        pass
+srv = http.server.HTTPServer(("127.0.0.1", 0), _Busy)
+threading.Thread(target=srv.serve_forever, daemon=True).start()
+from google.adk.agents import LlmAgent  # noqa: E402
+from google.adk.models.google_llm import Gemini  # noqa: E402
+import os  # noqa: E402
+os.environ.setdefault("GOOGLE_API_KEY", "offline-test-key")
+fast = P._RETRY.model_copy(update={"initial_delay": 0.05, "max_delay": 0.1})
+probe = LlmAgent(name="Probe", instruction="say ok", model=Gemini(
+    model="gemini-x", retry_options=fast, base_url=f"http://127.0.0.1:{srv.server_port}"))
+async def _probe():
+    r = InMemoryRunner(agent=probe, app_name="p")
+    sess = await r.session_service.create_session(app_name="p", user_id="u")
+    out = []
+    async for ev in r.run_async(user_id="u", session_id=sess.id, new_message=types.Content(
+            role="user", parts=[types.Part(text="hi")])):
+        if ev.content and ev.content.parts:
+            out.append(ev.content.parts[0].text)
+    return out
+try:
+    got = asyncio.run(_probe())
+except Exception as e:  # noqa: BLE001
+    got = [f"error: {e}"]
+srv.shutdown()
+check("two 503s are retried and the third attempt's answer comes through",
+      len(HITS) == 3 and got == ["ok"])
+if not (len(HITS) == 3 and got == ["ok"]):
+    print("     hits:", len(HITS), "got:", got)
 
 print(f"\n{passed} passed, {failed} failed")
 sys.exit(1 if failed else 0)
