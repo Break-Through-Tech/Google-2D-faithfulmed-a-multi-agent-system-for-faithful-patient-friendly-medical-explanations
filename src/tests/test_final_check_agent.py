@@ -1,4 +1,4 @@
-"""Tests for the FinalCheck agent. Run: python src/test_final_check_agent.py
+"""Tests for the FinalCheck agent. Run: python src/tests/test_final_check_agent.py
 
 No API key, no quota. The model is a scripted fake.
 
@@ -10,7 +10,7 @@ import json
 import sys
 from pathlib import Path
 
-sys.path.insert(0, str(Path(__file__).parent))
+sys.path.insert(0, str(Path(__file__).parent.parent / "agents"))
 from final_check_agent import (  # noqa: E402
     CHECK_PROMPT, FIX_PROMPT, check_negations, check_numbers, deterministic_check,
     make_generate_fn, merge, parse_verdict, problem_count, run,

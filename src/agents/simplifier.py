@@ -43,10 +43,10 @@ Setup:   pip install google-genai pandas numpy chromadb
          optional: $env:FAITHFULMED_MODEL="m1,m2"   $env:FAITHFULMED_TIMEOUT="60"
 
 Usage (repo root):
-    python src/simplifier.py --demo --dry-run      # test the glossary lookup only; NO Gemini call
-    python src/simplifier.py --demo                # full run on built-in sample atoms
-    python src/simplifier.py atoms.json --out result.json     # atoms from the Extractor
-    python src/simplifier.py --demo --rag off      # ablation: no glossary
+    python src/agents/simplifier.py --demo --dry-run      # test the glossary lookup only; NO Gemini call
+    python src/agents/simplifier.py --demo                # full run on built-in sample atoms
+    python src/agents/simplifier.py atoms.json --out result.json     # atoms from the Extractor
+    python src/agents/simplifier.py --demo --rag off      # ablation: no glossary
 
 From another agent / notebook:
     from simplifier import simplify
@@ -63,6 +63,8 @@ import os
 import re
 import sys
 import time
+
+sys.path.insert(0, os.path.join(os.path.dirname(os.path.abspath(__file__)), ".."))
 
 # ----------------------------------------------------------------------------- config
 # Model availability keeps moving: 2.0-flash and 2.5-flash are retired (404), 3.6-flash
@@ -304,7 +306,7 @@ def _default_retriever():
     except ImportError as e:
         raise RuntimeError(
             "Could not import medlineplus_index. Run from the repo root as "
-            "'python src/simplifier.py', or add src/ to your Python path.") from e
+            "'python src/agents/simplifier.py', or add src/ to your Python path.") from e
     try:
         return Retriever()
     except Exception as e:  # noqa: BLE001

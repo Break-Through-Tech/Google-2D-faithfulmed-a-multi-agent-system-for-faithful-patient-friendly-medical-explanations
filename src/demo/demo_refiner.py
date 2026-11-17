@@ -2,7 +2,7 @@
 
 Usage
 -----
-    python src/demo_refiner.py
+    python src/demo/demo_refiner.py
 
 If `GEMINI_API_KEY` is set (via `export` or a `.env` file at the repo root),
 the demo runs live against Gemini. Otherwise it runs with a stubbed
@@ -14,7 +14,7 @@ import os
 import sys
 from pathlib import Path
 
-sys.path.insert(0, str(Path(__file__).parent))
+sys.path.insert(0, str(Path(__file__).parent.parent / "agents"))
 import refiner_agent as r
 
 
@@ -44,7 +44,7 @@ def _load_dotenv(path: Path) -> None:
 
 def _build_generate_fn():
     """Return (generate_fn, mode_label). Live if the key is set, stub otherwise."""
-    _load_dotenv(Path(__file__).resolve().parents[1] / ".env")
+    _load_dotenv(Path(__file__).resolve().parents[2] / ".env")
     key = os.environ.get("GEMINI_API_KEY")
     if not key:
         def stub(prompt: str) -> dict:

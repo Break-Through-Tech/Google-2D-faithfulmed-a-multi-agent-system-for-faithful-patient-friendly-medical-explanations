@@ -6,7 +6,7 @@ Task #3, October milestone. Owner: Edwin (Joao).
 This document exists so that six people building six pieces agree on what passes between
 them. If you are building an agent, the section for your agent tells you what you receive
 and what you must hand on. The code that matches it is `notebooks/adk_pipeline.py`, and
-`src/test_pipeline_offline.py` runs the whole chain end to end with a fake model, so you
+`src/tests/test_pipeline_offline.py` runs the whole chain end to end with a fake model, so you
 can check the wiring without an API key.
 
 ---
@@ -178,7 +178,7 @@ already faithful.
 Rewrites to grade 8 or below. Every number and every negation stays. Drops nothing, adds
 nothing, keeps a term that has no everyday equivalent.
 
-`src/readability_agent.py` is the stricter standalone version used for evaluation: it
+`src/agents/readability_agent.py` is the stricter standalone version used for evaluation: it
 rejects any rewrite that changes a number or loses a negation, and keeps the harder text.
 
 ### 7. FinalCheck, with its fix loop
@@ -191,7 +191,7 @@ second Refiner instance fixes `final` using `final_verdict`, and a recheck write
 runs after every check, `StopIfFaithful` ends the loop as soon as a check passes, and
 `NeedsReviewFlag` writes `needs_review`.
 
-**FinalGuard** adds checks that need no model, from `src/final_check_agent.py`:
+**FinalGuard** adds checks that need no model, from `src/agents/final_check_agent.py`:
 
 - a number from the extracted facts that is missing from the final text (an omission)
 - a number in the final text that is not in the SOURCE (an unsupported claim)
@@ -210,7 +210,7 @@ The last step also writes `faithfulness_report`, the report that goes to the use
 explanation: a status (`passed`, `fixed` or `needs_review`), a one-line plain summary, what
 was fixed, what is still wrong, terms left without a plain explanation, and the reading grade.
 
-`src/final_check_agent.py` is the standalone version used for evaluation, with the same
+`src/agents/final_check_agent.py` is the standalone version used for evaluation, with the same
 contract as the Readability and Verifier modules. It adds one rule the ADK loop does not
 have yet: if a fix makes the text worse, the version with the fewest problems is shipped.
 Results are in `notebooks/final_check_agent.ipynb`.
@@ -348,7 +348,7 @@ the final text. As advised by our Challenge Advisor, a failed final check gets a
 loop: straight to a Refiner, then checked again, at most twice, ending on a check. Text that
 still fails is flagged `needs_review` rather than looping further.
 
-`src/readability_agent.py` adds a second guard for evaluation runs: it rejects any rewrite
+`src/agents/readability_agent.py` adds a second guard for evaluation runs: it rejects any rewrite
 that changes a number or drops a negation, and keeps the harder but correct text.
 
 ### Retrieval is its own step
@@ -565,7 +565,7 @@ Record the model string with every result.
 **Build a fresh pipeline per configuration.** An ADK agent can only have one parent, so
 the ablation calls `build_pipeline()` once per row rather than reusing agents.
 
-**Check the wiring before spending quota.** `python src/test_pipeline_offline.py` runs the
+**Check the wiring before spending quota.** `python src/tests/test_pipeline_offline.py` runs the
 whole chain with a fake model in seconds. If you rename a state key, it fails.
 
 **ADK version is pinned.** `google-adk` 2.12 marks `SequentialAgent` and `LoopAgent` as

@@ -10,7 +10,7 @@ stays faithful to the source.
 
 Why this is a standalone module and not just the LlmAgent in adk_pipeline.py
 --------------------------------------------------------------------------
-Same two reasons as src/verifier_agent.py and src/readability_agent.py.
+Same two reasons as src/agents/verifier_agent.py and src/agents/readability_agent.py.
 
 1. The LLM rewrite is not trusted on its own. A "fix" that invents a dose or
    drops a "do not" is worse than the flagged draft. After every rewrite, a
@@ -23,7 +23,7 @@ Same two reasons as src/verifier_agent.py and src/readability_agent.py.
 
 What the verdict looks like
 ---------------------------
-Shape is pinned in docs/architecture.md, produced by src/verifier_agent.py:
+Shape is pinned in docs/architecture.md, produced by src/agents/verifier_agent.py:
 
     {
       "faithful": bool,
@@ -276,7 +276,7 @@ def run_loop(source: str, draft: str, generate_fn, verify_fn,
 # gemini-2.5-flash are retired (404), and gemini-3.6-flash returned 503 on long
 # prompts on 2026-10-13 while 3.5-flash handled the same prompts. So the model
 # is a parameter with a fallback chain, not a constant. Same chain as
-# src/verifier_agent.py so the whole pipeline reports under the same models.
+# src/agents/verifier_agent.py so the whole pipeline reports under the same models.
 DEFAULT_MODELS = ("gemini-3.5-flash", "gemini-3.6-flash", "gemini-3.1-flash-lite")
 
 

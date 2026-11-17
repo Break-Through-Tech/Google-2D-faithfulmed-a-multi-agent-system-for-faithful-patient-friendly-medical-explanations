@@ -1,6 +1,6 @@
 """End-to-end wiring test for the ADK pipeline, with a fake model. No API key, no quota.
 
-Run: python src/test_pipeline_offline.py
+Run: python src/tests/test_pipeline_offline.py
 
 What it proves: every {placeholder} in every agent's instruction resolves from session
 state, state flows from agent to agent in the documented order, the Retriever writes what
@@ -18,8 +18,9 @@ import warnings
 from pathlib import Path
 
 warnings.filterwarnings("ignore", category=DeprecationWarning)
-ROOT = Path(__file__).resolve().parent.parent
+ROOT = Path(__file__).resolve().parents[2]
 sys.path.insert(0, str(ROOT / "src"))
+sys.path.insert(0, str(ROOT / "src" / "agents"))
 sys.path.insert(0, str(ROOT / "notebooks"))
 
 from google.adk.models import BaseLlm, LlmResponse  # noqa: E402

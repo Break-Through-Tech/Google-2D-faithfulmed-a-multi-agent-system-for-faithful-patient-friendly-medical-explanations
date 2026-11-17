@@ -1,4 +1,4 @@
-"""Tests for the Refiner agent. Run: python src/test_refiner_agent.py
+"""Tests for the Refiner agent. Run: python src/tests/test_refiner_agent.py
 
 The important ones are the short-circuit, the unsafe-rewrite rejection, and the
 bounded loop. This agent is allowed to edit the draft, so a bad "fix" is worse
@@ -7,7 +7,7 @@ than leaving the flagged text alone.
 import json
 import sys
 from pathlib import Path
-sys.path.insert(0, str(Path(__file__).parent))
+sys.path.insert(0, str(Path(__file__).parent.parent / "agents"))
 
 from refiner_agent import (
     parse_verdict, is_faithful, fact_guard, run, run_loop, MAX_ROUNDS,

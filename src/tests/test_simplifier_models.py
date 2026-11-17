@@ -1,5 +1,5 @@
 """Tests for the Simplifier's model chain and request deadline.
-Run: python src/test_simplifier_models.py
+Run: python src/tests/test_simplifier_models.py
 
 No API key: the Gemini client is replaced with a fake that fails on demand.
 
@@ -14,7 +14,8 @@ from pathlib import Path
 
 import httpx
 
-sys.path.insert(0, str(Path(__file__).parent))
+sys.path.insert(0, str(Path(__file__).parent.parent))
+sys.path.insert(0, str(Path(__file__).parent.parent / "agents"))
 import simplifier as S
 
 passed = failed = 0

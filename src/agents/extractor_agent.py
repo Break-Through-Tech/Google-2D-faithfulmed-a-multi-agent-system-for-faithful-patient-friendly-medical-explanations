@@ -12,7 +12,7 @@ it invents is worse.
 
 Why this is a standalone module and not just the LlmAgent in adk_pipeline.py
 --------------------------------------------------------------------------
-Same shape as src/verifier_agent.py and src/readability_agent.py: the LLM does the
+Same shape as src/agents/verifier_agent.py and src/agents/readability_agent.py: the LLM does the
 extraction, plain Python checks it. The model is not trusted on the things a cheap
 deterministic check can catch:
 
@@ -27,7 +27,7 @@ deterministic check can catch:
 The atom schema (a superset, so both downstream readers work)
 -------------------------------------------------------------
 docs/architecture.md (read by the Verifier and the pipeline Retriever) uses
-`text, type, term, negated`. src/simplifier.py (Gisele / Renita branch) reads
+`text, type, term, negated`. src/agents/simplifier.py (Gisele / Renita branch) reads
 `id, type, text, assertion, subject`. The Extractor emits both:
 
     {
@@ -107,7 +107,7 @@ SECTION_TYPE_HINTS = {
     "LABS": "lab_value", "VITAL SIGNS": "lab_value", "FAMILY HISTORY": "diagnosis",
 }
 
-# The instruction text must start with "Extract every": src/test_pipeline_offline.py
+# The instruction text must start with "Extract every": src/tests/test_pipeline_offline.py
 # identifies the Extractor's prompt by that prefix.
 PROMPT = """Extract every clinically meaningful fact from the SOURCE below as a JSON list.
 

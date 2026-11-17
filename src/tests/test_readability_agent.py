@@ -1,11 +1,11 @@
-"""Tests for the Readability agent. Run: python src/test_readability_agent.py
+"""Tests for the Readability agent. Run: python src/tests/test_readability_agent.py
 
 The important ones are the rejection tests. This agent runs after the Verifier, so if it
 silently breaks a fact nothing downstream catches it.
 """
 import sys
 from pathlib import Path
-sys.path.insert(0, str(Path(__file__).parent))
+sys.path.insert(0, str(Path(__file__).parent.parent / "agents"))
 from readability_agent import measure, fact_check, run, meets_target
 
 passed = failed = 0

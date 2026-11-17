@@ -1,4 +1,4 @@
-"""Tests for the retrieval contract. Run: python src/test_glossary_lookup.py
+"""Tests for the retrieval contract. Run: python src/tests/test_glossary_lookup.py
 
 These guard the two behaviours the architecture depends on:
   1. a hit returns the canonical topic, not the surface form the source used
@@ -7,7 +7,7 @@ These guard the two behaviours the architecture depends on:
 import sys, csv, tempfile, os
 from pathlib import Path
 
-sys.path.insert(0, str(Path(__file__).parent))
+sys.path.insert(0, str(Path(__file__).parent.parent))
 from glossary_lookup import GlossaryLookup, format_for_prompt, _normalize
 
 def _fixtures():
