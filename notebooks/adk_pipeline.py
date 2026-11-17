@@ -3,9 +3,14 @@ FaithfulMed: Google ADK pipeline, architecture v2.
 
 See docs/architecture.md for the reasoning behind every rule below.
 
-    Extractor -> Retriever -> Simplifier -> [Verifier <-> Refiner] x<=2 -> Readability
+    Extractor -> Simplifier (+RAG) -> [Verifier <-> Refiner] x<=2 -> Readability
               -> FinalCheck -> [fix with Refiner, check again] x<=2 -> NeedsReview flag
 
+Simplifier = src/agents/simplifier.py: looks up MedlinePlus definitions in the ChromaDB
+index itself (the RAG step that used to be a separate Retriever), rewrites the atoms, and
+runs its own coverage / number / negation checks.
+Readability = src/agents/readability_agent.py: bounded rewrite passes toward the target
+grade, rejecting any pass that changes a number or drops a negation.
 FinalCheck = an LLM check plus deterministic guards (numbers, negations) from
 src/agents/final_check_agent.py, merged by FinalGuard after every check.
 
@@ -27,13 +32,13 @@ What changed from v1, and why
    twice. Every run ends on a check, never on an unchecked fix. If it still fails after
    two rounds, the output is flagged `needs_review` instead of looping further.
 
-4. Retrieval is its own deterministic step, and its output stays in state.
-   v1 referenced {definitions} in the Simplifier but nothing ever wrote it, which would
-   have raised a KeyError at runtime. The Retriever writes it, and the Verifier can now
-   see what was retrieved, so it can tell a retrieved definition from an invented one.
+4. What was retrieved stays in state.
+   Retrieval now happens inside the Simplifier, which writes the definitions it used to
+   state["definitions"]. The Verifier and FinalCheck read them, so they can tell a
+   retrieved definition from an invented one.
 
 5. Atoms gain a `term`, a `negated` flag, and an `allergy` type.
-   `term` is what the Retriever looks up ("metformin", not the whole sentence).
+   `term` is what the Simplifier looks up ("metformin", not the whole sentence).
    `negated` stops "no acute change" from becoming "acute change".
 
 Running it
@@ -43,30 +48,43 @@ The source text must be in session state under `source` before the run:
     session = await session_service.create_session(
         app_name="faithfulmed", user_id="u1", state=new_session_state(text))
 
+A real run needs GEMINI_API_KEY in the environment and, unless rag_mode="off", the
+ChromaDB index built (python src/medlineplus_index.py build).
+
 Model: gemini-2.0-flash and gemini-2.5-flash are RETIRED (404). gemini-3.6-flash
 returned 503 on long prompts on 2026-10-13 while gemini-3.5-flash did not, so the model
 is a parameter. Temperature 0 everywhere, so the ablation compares like with like.
 """
 from __future__ import annotations
 
+import asyncio
 import json
 import re
 import sys
 from pathlib import Path
-from typing import AsyncGenerator, Optional
+from typing import Any, AsyncGenerator, Callable, Optional
 
 from google.adk.agents import BaseAgent, LlmAgent, LoopAgent, SequentialAgent
 from google.adk.agents.invocation_context import InvocationContext
 from google.adk.events import Event, EventActions
+from google.adk.models.google_llm import Gemini
 from google.genai import types
 
 sys.path.insert(0, str(Path(__file__).resolve().parent.parent / "src"))
 sys.path.insert(0, str(Path(__file__).resolve().parent.parent / "src" / "agents"))
-from glossary_lookup import GlossaryLookup, format_for_prompt  # noqa: E402
 import final_check_agent as fc  # noqa: E402
+import readability_agent as _R  # noqa: E402
+import simplifier as _S  # noqa: E402
 
 DEFAULT_MODEL = "gemini-3.5-flash"
 _GEN = types.GenerateContentConfig(temperature=0.0)
+
+# Retries for the agents ADK calls Gemini for (Extractor, Verifier, Refiner, FinalCheck,
+# FinalRefiner, FinalRecheck). Without this, one 503 "model is busy" stopped the whole
+# run. Backoff 2s, 4s, 8s (capped at 30s): a busy model gets about 15s to recover before
+# the run gives up. The Simplifier and Readability retry inside their own modules.
+_RETRY = types.HttpRetryOptions(attempts=4, initial_delay=2.0, max_delay=30.0,
+                                http_status_codes=[429, 500, 503, 504])
 
 
 def new_session_state(source: str) -> dict:
@@ -86,7 +104,7 @@ EXTRACTOR_INSTRUCTION = _X.PROMPT          # kept for anyone importing the old n
 ATOM_TYPES = _X.ATOM_TYPES
 
 
-# ------------------------------------------------------------------ 2. Retriever
+# ------------------------------------------------------------------ 2. Atom parsing
 
 def parse_atoms(raw) -> list[dict]:
     """Parse the Extractor's output. Tolerates ```json fences and stray prose."""
@@ -104,58 +122,49 @@ def parse_atoms(raw) -> list[dict]:
     return [a for a in data if isinstance(a, dict)]
 
 
-class Retriever(BaseAgent):
-    """Deterministic lookup step. No LLM, no quota cost for exact matches.
+# ------------------------------------------------------------------ 3. Simplifier (+RAG)
 
-    The ONLY place in the pipeline that queries the glossary. Writes:
-      definitions        text block for the Simplifier and Verifier prompts
-      unexplained_terms  terms with no definition, as a JSON list
+class Simplifier(BaseAgent):
+    """Runs src/agents/simplifier.py on the Extractor's atoms. Owner: Gisele.
+
+    The glossary lookup (RAG) happens inside simplify(): exact matches against the
+    MedlinePlus ChromaDB index, no API call. Writes:
+      draft              the explanation, for the Verifier
+      definitions        the glossary entries it used, for the Verifier and FinalCheck
+      unexplained_terms  atom terms with no glossary entry, as a JSON list
+      simplifier_report  its own checks (uncovered atoms, dropped numbers...) and stats
+
+    simplify() is synchronous and calls Gemini itself, so it runs in a worker thread.
     """
 
-    lookup: Optional[GlossaryLookup] = None
+    models: Optional[tuple] = None        # None -> simplifier.DEFAULT_MODELS fallback chain
+    rag_mode: str = "exact"
+    retriever: Any = None                 # None -> the default ChromaDB index
+    llm_fn: Optional[Callable] = None     # (system, user) -> JSON text; for tests/other models
     model_config = {"arbitrary_types_allowed": True}
 
     async def _run_async_impl(self, ctx: InvocationContext) -> AsyncGenerator[Event, None]:
-        atoms = parse_atoms(ctx.session.state.get("atoms"))
-        queries = [{"text": (a.get("term") or "").strip()} for a in atoms]
-        queries = [q for q in queries if q["text"]]
+        atoms = _S.load_atoms(parse_atoms(ctx.session.state.get("atoms")))
+        result = await asyncio.to_thread(
+            _S.simplify, atoms, retriever=self.retriever, rag_mode=self.rag_mode,
+            model=self.models, temperature=0.0, llm_fn=self.llm_fn)
 
-        if self.lookup is None:
-            definitions = ("NO GLOSSARY CONFIGURED. Treat every medical term as having no "
-                           "definition: keep it exactly as written in the SOURCE.")
-            missing = [q["text"] for q in queries]
-        else:
-            results = self.lookup.lookup_atoms(queries)
-            definitions = format_for_prompt(results) or "No medical terms to look up."
-            missing = [r.term for r in results.values() if not r.found]
-
+        glossary = result["glossary_used"]
+        defined = {i for g in glossary for i in g["atom_ids"]}
+        missing = [a["term"] for a in atoms if a["term"] and a["id"] not in defined]
+        definitions = (_S.format_glossary(glossary) if glossary else
+                       "No glossary definitions were used.")
+        report = {k: result[k] for k in ("sentences", "checks", "warnings", "stats")}
         yield Event(
             author=self.name,
             invocation_id=ctx.invocation_id,
             actions=EventActions(state_delta={
+                "draft": result["explanation"],
                 "definitions": definitions,
                 "unexplained_terms": json.dumps(missing),
+                "simplifier_report": json.dumps(report),
             }),
         )
-
-
-# ------------------------------------------------------------------ 3. Simplifier
-
-SIMPLIFIER_INSTRUCTION = (
-    "Rewrite the SOURCE for a patient at an 8th-grade reading level.\n\n"
-    "SOURCE:\n{source}\n\n"
-    "EXTRACTED FACTS (every one must appear in your rewrite):\n{atoms}\n\n"
-    "{definitions}\n\n"
-    "Rules:\n"
-    "- Use the plain-language definitions above where they are given.\n"
-    "- For a term with no definition, keep it exactly as written. Do not guess what it "
-    "means.\n"
-    "- Keep every negation. 'No fracture' must not become 'fracture'.\n"
-    "- State lab values exactly as the SOURCE does. Do not say whether a value is high, "
-    "low or normal unless the SOURCE says so.\n"
-    "- Add no fact that is not in the SOURCE. Drop no fact that is.\n"
-    "- Plain prose only."
-)
 
 
 # ------------------------------------------------------------------ 4. Verifier / FinalCheck
@@ -231,10 +240,14 @@ class FinalGuard(BaseAgent):
 
 
 class StopIfFaithful(BaseAgent):
-    """Ends the final fix loop as soon as the latest final_verdict passes. No LLM."""
+    """Ends a fix loop as soon as the latest verdict passes, so no Refiner call is spent
+    on text that is already faithful. No LLM. `verdict_key` is "final_verdict" in the
+    final fix loop and "verdict" in the main Verifier <-> Refiner loop."""
+
+    verdict_key: str = "final_verdict"
 
     async def _run_async_impl(self, ctx: InvocationContext) -> AsyncGenerator[Event, None]:
-        passed = _is_faithful(ctx.session.state.get("final_verdict"))
+        passed = _is_faithful(ctx.session.state.get(self.verdict_key))
         yield Event(author=self.name, invocation_id=ctx.invocation_id,
                     actions=EventActions(escalate=passed))
 
@@ -291,47 +304,94 @@ FINAL_REFINER_INSTRUCTION = (
 
 # ------------------------------------------------------------------ 6. Readability
 
-READABILITY_INSTRUCTION = (
-    "Rewrite the explanation so a patient can read it easily. Target Flesch-Kincaid "
-    "grade 8 or below.\n\n"
-    "EXPLANATION:\n{draft}\n\n"
-    "- Shorter sentences. Split anything longer than about 15 words.\n"
-    "- Everyday words where an everyday word exists.\n"
-    "- Every number stays exactly as written: doses, values, how many times a day.\n"
-    "- Every 'not', 'no', 'do not', 'avoid', 'stop' stays. Never flip a negative.\n"
-    "- Drop no fact. Add no fact.\n"
-    "- If a medical term has no everyday equivalent, keep the term.\n"
-    "- Return only the rewritten text."
-)
+class Readability(BaseAgent):
+    """Runs src/agents/readability_agent.py on the verified draft. Owner: Edwin (Joao).
+
+    At most `max_passes` rewrites toward `target_grade`. A pass that changes a number or
+    loses a negation is rejected and the previous text kept, so this step cannot undo the
+    Verifier's work. If the draft already meets the target, no model call is made. Writes:
+      final               the text the FinalCheck reads
+      readability_report  grades before/after, passes used, rejected passes, any error
+    """
+
+    models: Optional[tuple] = None          # None -> readability_agent.DEFAULT_MODELS
+    generate_fn: Optional[Callable] = None  # prompt -> {"text", "error"}; for tests/other models
+    target_grade: float = _R.TARGET_GRADE
+    max_passes: int = 2
+    model_config = {"arbitrary_types_allowed": True}
+
+    async def _run_async_impl(self, ctx: InvocationContext) -> AsyncGenerator[Event, None]:
+        generate_fn = self.generate_fn
+        if generate_fn is None:
+            from google import genai
+            generate_fn = _R.make_generate_fn(genai.Client(),
+                                              models=self.models or _R.DEFAULT_MODELS)
+        res = await asyncio.to_thread(_R.run, ctx.session.state.get("draft", ""),
+                                      generate_fn, target=self.target_grade,
+                                      max_passes=self.max_passes)
+        report = res.as_dict()
+        report.pop("original")
+        report.pop("final")
+        yield Event(
+            author=self.name,
+            invocation_id=ctx.invocation_id,
+            actions=EventActions(state_delta={
+                "final": res.final,
+                "readability_report": json.dumps(report),
+            }),
+        )
 
 
 # ------------------------------------------------------------------ assembly
 
-def build_pipeline(model=DEFAULT_MODEL, lookup: Optional[GlossaryLookup] = None,
-                   max_refine_rounds: int = 2, max_final_rounds: int = 2) -> SequentialAgent:
+def build_pipeline(model=DEFAULT_MODEL, max_refine_rounds: int = 2, max_final_rounds: int = 2,
+                   rag_mode: str = "exact", retriever: Any = None,
+                   target_grade: float = _R.TARGET_GRADE,
+                   simplifier_llm_fn: Optional[Callable] = None,
+                   readability_generate_fn: Optional[Callable] = None) -> SequentialAgent:
     """Build a fresh pipeline. Fresh every call, because an ADK agent can only have one
-    parent, so the ablation needs a new instance per configuration."""
+    parent, so the ablation needs a new instance per configuration.
+
+    model: a Gemini model name, used by every agent so the ablation compares like with
+        like. The Simplifier and Readability call Gemini through their own modules; a
+        non-Gemini model (an ADK BaseLlm such as LiteLlm) is not passed through to them
+        yet, so for one of those simplifier_llm_fn and readability_generate_fn are
+        required.
+    rag_mode: "exact" (default), "exact+related" or "off" (the no-glossary ablation).
+    retriever: None opens the default MedlinePlus ChromaDB index.
+    """
+    if not isinstance(model, str) and (simplifier_llm_fn is None
+                                       or readability_generate_fn is None):
+        raise ValueError(
+            "The Simplifier and Readability agents only call Gemini by name. With a "
+            "non-string model, pass simplifier_llm_fn and readability_generate_fn too.")
+    models = (model,) if isinstance(model, str) else None
+    adk_model = Gemini(model=model, retry_options=_RETRY) if isinstance(model, str) else model
+
     def llm(name, instruction, key):
-        return LlmAgent(name=name, model=model, instruction=instruction,
+        return LlmAgent(name=name, model=adk_model, instruction=instruction,
                         output_key=key, generate_content_config=_GEN)
 
     return SequentialAgent(
         name="FaithfulMed",
         sub_agents=[
-            LlmAgent(name="Extractor", model=model, instruction=_X.adk_instruction,
+            LlmAgent(name="Extractor", model=adk_model, instruction=_X.adk_instruction,
                      output_key="atoms", generate_content_config=_GEN,
                      after_agent_callback=_X.adk_after_extractor),
-            Retriever(name="Retriever", lookup=lookup),
-            llm("Simplifier", SIMPLIFIER_INSTRUCTION, "draft"),
+            Simplifier(name="Simplifier", models=models, rag_mode=rag_mode,
+                       retriever=retriever, llm_fn=simplifier_llm_fn),
             LoopAgent(
                 name="RefineLoop",
                 max_iterations=max_refine_rounds,
                 sub_agents=[
                     llm("Verifier", _verifier_instruction("draft"), "verdict"),
+                    # A faithful draft ends the loop here: no Refiner call, no re-check.
+                    StopIfFaithful(name="StopIfDraftFaithful", verdict_key="verdict"),
                     llm("Refiner", REFINER_INSTRUCTION, "draft"),
                 ],
             ),
-            llm("Readability", READABILITY_INSTRUCTION, "final"),
+            Readability(name="Readability", models=models, target_grade=target_grade,
+                        generate_fn=readability_generate_fn),
             # Check the text the patient will actually read.
             llm("FinalCheck", _verifier_instruction("final"), "final_verdict"),
             FinalGuard(name="FinalGuard"),
@@ -354,8 +414,8 @@ def build_pipeline(model=DEFAULT_MODEL, lookup: Optional[GlossaryLookup] = None,
     )
 
 
-# Default instance for `adk web`. No glossary attached here; attach one with
-# build_pipeline(lookup=GlossaryLookup(topics_csv, synonyms_csv)).
+# Default instance for `adk web`. The Simplifier opens the ChromaDB index on first use;
+# build_pipeline(rag_mode="off") runs without it.
 faithfulmed = build_pipeline()
 root_agent = faithfulmed
 
