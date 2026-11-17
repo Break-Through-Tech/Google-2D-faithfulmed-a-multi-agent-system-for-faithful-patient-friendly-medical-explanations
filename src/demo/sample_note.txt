@@ -1,0 +1,18 @@
+DISCHARGE SUMMARY
+
+HISTORY OF PRESENT ILLNESS: The patient is a 62-year-old female who presented to the ED with shortness of breath and productive cough for 4 days. No fever. Denies chest pain.
+
+PAST MEDICAL HISTORY: Hypertension. Type 2 diabetes mellitus. Family history of coronary artery disease in her father.
+
+ALLERGIES: Penicillin (rash).
+
+FINDINGS: Chest x-ray showed a right lower lobe infiltrate, consistent with community-acquired pneumonia. No pleural effusion. WBC 13.2 x10^9/L. HbA1c 7.9%. Blood pressure 148/92.
+
+DIAGNOSIS: Community-acquired pneumonia. Possible early COPD, to be evaluated with pulmonary function tests.
+
+DISCHARGE MEDICATIONS:
+1. Azithromycin 500 mg on day 1, then 250 mg once daily for 4 days.
+2. Continue lisinopril 10 mg once daily.
+3. Continue metformin 1000 mg twice daily.
+
+INSTRUCTIONS: Do not smoke. Return to the ED if shortness of breath worsens or fever develops. Follow up with primary care in 1 week. Pulmonary function tests in 6 weeks.
