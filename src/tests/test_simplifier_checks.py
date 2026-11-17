@@ -1,4 +1,4 @@
-"""Tests for the Simplifier's faithfulness checks. Run: python src/test_simplifier_checks.py
+"""Tests for the Simplifier's faithfulness checks. Run: python src/tests/test_simplifier_checks.py
 
 No API key: the LLM is a stub returning a fixed draft, so these assert on what
 check_explanation() catches.
@@ -13,7 +13,8 @@ import json
 import sys
 from pathlib import Path
 
-sys.path.insert(0, str(Path(__file__).parent))
+sys.path.insert(0, str(Path(__file__).parent.parent))
+sys.path.insert(0, str(Path(__file__).parent.parent / "agents"))
 from simplifier import load_atoms, simplify, _is_true
 
 passed = failed = 0

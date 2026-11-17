@@ -7,7 +7,7 @@ See docs/architecture.md for the reasoning behind every rule below.
               -> FinalCheck -> [fix with Refiner, check again] x<=2 -> NeedsReview flag
 
 FinalCheck = an LLM check plus deterministic guards (numbers, negations) from
-src/final_check_agent.py, merged by FinalGuard after every check.
+src/agents/final_check_agent.py, merged by FinalGuard after every check.
 
 What changed from v1, and why
 -----------------------------
@@ -61,6 +61,7 @@ from google.adk.events import Event, EventActions
 from google.genai import types
 
 sys.path.insert(0, str(Path(__file__).resolve().parent.parent / "src"))
+sys.path.insert(0, str(Path(__file__).resolve().parent.parent / "src" / "agents"))
 from glossary_lookup import GlossaryLookup, format_for_prompt  # noqa: E402
 import final_check_agent as fc  # noqa: E402
 
@@ -75,7 +76,7 @@ def new_session_state(source: str) -> dict:
 
 # ------------------------------------------------------------------ 1. Extractor
 
-# The Extractor lives in src/extractor_agent.py (owner: Vera). The prompt is built from
+# The Extractor lives in src/agents/extractor_agent.py (owner: Vera). The prompt is built from
 # state["source"] by an InstructionProvider (citations stripped, MTSamples sections
 # tagged), and an after_agent_callback runs the deterministic guards on the reply, so
 # state["atoms"] always holds checked atoms in the schema both readers expect.
@@ -208,7 +209,7 @@ def _is_faithful(raw) -> bool:
 class FinalGuard(BaseAgent):
     """Runs right after every final check. No LLM, no quota.
 
-    Adds the FinalCheck agent's deterministic guards (src/final_check_agent.py) to the
+    Adds the FinalCheck agent's deterministic guards (src/agents/final_check_agent.py) to the
     model's verdict: a changed or dropped number, an invented number, a flipped negation.
     Then recomputes `faithful` from the merged lists, so the model cannot pass a text
     while listing a problem, and cannot pass a changed dose it did not notice.

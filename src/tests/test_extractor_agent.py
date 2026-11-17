@@ -1,6 +1,6 @@
-"""Offline tests for src/extractor_agent.py. No API key, no quota.
+"""Offline tests for src/agents/extractor_agent.py. No API key, no quota.
 
-Run: python src/test_extractor_agent.py
+Run: python src/tests/test_extractor_agent.py
 
 Each test hands run() a fake model reply and checks what the guards do with it. What
 this does NOT prove: that Gemini extracts well. That is what eval_extractor.py measures.
@@ -9,7 +9,7 @@ import json
 import sys
 from pathlib import Path
 
-sys.path.insert(0, str(Path(__file__).resolve().parent))
+sys.path.insert(0, str(Path(__file__).resolve().parent.parent / "agents"))
 import extractor_agent as X  # noqa: E402
 
 passed = failed = 0

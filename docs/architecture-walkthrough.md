@@ -61,7 +61,7 @@ Four more changes:
 | Retrieval was part of the Simplifier | New Retriever step, so the definitions are saved and the Verifier can see them |
 | Five fact types | Allergy type added, and every fact carries a negated yes/no so "no chest pain" stays negative |
 
-**How we know it works:** `python src/test_pipeline_offline.py` runs the whole thing with a
+**How we know it works:** `python src/tests/test_pipeline_offline.py` runs the whole thing with a
 fake model. 45 checks pass: right order, every input reaches the right agent, the Verifier
 really sees the source, and the final check passes, fixes once, or flags for review exactly
 as designed. No API key needed.

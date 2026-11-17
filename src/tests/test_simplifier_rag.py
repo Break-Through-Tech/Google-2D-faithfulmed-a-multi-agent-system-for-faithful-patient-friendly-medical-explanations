@@ -1,4 +1,4 @@
-"""Tests for the Simplifier's RAG step. Run: python src/test_simplifier_rag.py
+"""Tests for the Simplifier's RAG step. Run: python src/tests/test_simplifier_rag.py
 
 No API key, no quota: the retriever is a stub, so these assert on what WOULD be sent.
 
@@ -9,7 +9,8 @@ They guard the two properties the retrieval step depends on:
 import sys
 from pathlib import Path
 
-sys.path.insert(0, str(Path(__file__).parent))
+sys.path.insert(0, str(Path(__file__).parent.parent))
+sys.path.insert(0, str(Path(__file__).parent.parent / "agents"))
 from simplifier import (derive_term, atom_term, load_atoms, gather_definitions,
                         _search_batch)
 

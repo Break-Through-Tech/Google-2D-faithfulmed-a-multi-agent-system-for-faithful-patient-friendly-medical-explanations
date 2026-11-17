@@ -1,4 +1,4 @@
-"""Tests for the Verifier agent. Run: python src/test_verifier_agent.py
+"""Tests for the Verifier agent. Run: python src/tests/test_verifier_agent.py
 
 The important ones are the guard tests and the merge/polarity tests. The LLM half
 is covered by stubbed-model cases that exercise each failure mode: good JSON,
@@ -9,7 +9,7 @@ must not override a guard that found a dropped dose.
 import json
 import sys
 from pathlib import Path
-sys.path.insert(0, str(Path(__file__).parent))
+sys.path.insert(0, str(Path(__file__).parent.parent / "agents"))
 
 from verifier_agent import (
     check_negations, check_numbers, measure_reading_level,

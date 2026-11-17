@@ -11,7 +11,7 @@ output calibrated against MedAESQA's human labels.
 
 Why this is a standalone module and not just the LlmAgent in adk_pipeline.py
 --------------------------------------------------------------------------
-Two reasons, both the same shape as src/readability_agent.py.
+Two reasons, both the same shape as src/agents/readability_agent.py.
 
 1. The LLM verdict is not trusted on its own for the parts a deterministic check
    can catch. A changed dose and a dropped negation are patient-safety failures,
@@ -333,7 +333,7 @@ def run(source: str, atoms: list[dict], draft: str, generate_fn,
 # Model availability has moved twice during this project: gemini-2.0-flash and
 # gemini-2.5-flash are retired (404), and gemini-3.6-flash returned 503 on long prompts
 # on 2026-10-13 while 3.5-flash handled the same prompts. So the model is a parameter
-# with a fallback chain, not a constant. Same chain as src/readability_agent.py so the
+# with a fallback chain, not a constant. Same chain as src/agents/readability_agent.py so the
 # whole pipeline reports under the same models and the ablation stays like-for-like.
 DEFAULT_MODELS = ("gemini-3.5-flash", "gemini-3.6-flash", "gemini-3.1-flash-lite")
 

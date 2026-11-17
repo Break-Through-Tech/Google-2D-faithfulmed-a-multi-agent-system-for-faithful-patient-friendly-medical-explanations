@@ -1,9 +1,9 @@
 """Score the Extractor against MedAESQA's expert nuggets (the Extractor gold set).
 
 Run:
-    python src/eval_extractor.py --mode sentences            # no-LLM reference, free
-    python src/eval_extractor.py --mode gemini --limit 10    # 10 API calls
-    python src/eval_extractor.py --mode gemini               # all 40 (two days of free quota)
+    python src/tests/eval_extractor.py --mode sentences            # no-LLM reference, free
+    python src/tests/eval_extractor.py --mode gemini --limit 10    # 10 API calls
+    python src/tests/eval_extractor.py --mode gemini               # all 40 (two days of free quota)
 
 Source text is each question's expert answer, the same frozen set the single-Gemini
 baseline uses (data/processed/medaesqa_questions.csv), so the numbers line up.
@@ -44,8 +44,8 @@ from pathlib import Path
 
 import pandas as pd
 
-ROOT = Path(__file__).resolve().parent.parent
-sys.path.insert(0, str(ROOT / "src"))
+ROOT = Path(__file__).resolve().parents[2]
+sys.path.insert(0, str(ROOT / "src" / "agents"))
 import extractor_agent as X  # noqa: E402
 
 DATA = ROOT / "data" / "processed"

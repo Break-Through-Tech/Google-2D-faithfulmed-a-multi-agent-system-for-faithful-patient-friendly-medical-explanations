@@ -1,13 +1,13 @@
 # Extractor agent
 
-Owner: Vera. Code: `src/extractor_agent.py`. Tests: `src/test_extractor_agent.py`.
-Evaluation: `src/eval_extractor.py`.
+Owner: Vera. Code: `src/agents/extractor_agent.py`. Tests: `src/tests/test_extractor_agent.py`.
+Evaluation: `src/tests/eval_extractor.py`.
 
 ## What it hands on
 
 One list of atoms in `state["atoms"]`. Each atom carries both the fields in
 `architecture.md` (read by the Verifier and the pipeline Retriever) and the fields
-`src/simplifier.py` reads, so neither side has to change:
+`src/agents/simplifier.py` reads, so neither side has to change:
 
 ```json
 {"id": "a2", "text": "metformin 500 mg twice daily", "type": "medication",
@@ -66,17 +66,17 @@ can count them.
 ## Running it
 
 ```bash
-python src/test_extractor_agent.py       # 34 offline checks, no key
-python src/test_pipeline_offline.py      # full pipeline with a fake model, 29 checks
-python src/extractor_agent.py note.txt --show-prompt   # see the exact prompt, no API call
-GOOGLE_API_KEY=... python src/extractor_agent.py note.txt
+python src/tests/test_extractor_agent.py       # 34 offline checks, no key
+python src/tests/test_pipeline_offline.py      # full pipeline with a fake model, 29 checks
+python src/agents/extractor_agent.py note.txt --show-prompt   # see the exact prompt, no API call
+GOOGLE_API_KEY=... python src/agents/extractor_agent.py note.txt
 ```
 
 ## Evaluation against the MedAESQA nuggets
 
 ```bash
-python src/eval_extractor.py --mode sentences            # free reference run
-python src/eval_extractor.py --mode gemini --limit 10    # 10 API calls
+python src/tests/eval_extractor.py --mode sentences            # free reference run
+python src/tests/eval_extractor.py --mode gemini --limit 10    # 10 API calls
 ```
 
 Source text is the 40 expert answers, the same frozen set the baseline uses. Gold is
