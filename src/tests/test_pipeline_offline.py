@@ -3,17 +3,17 @@
 Run: python src/tests/test_pipeline_offline.py
 
 What it proves: every {placeholder} in every agent's instruction resolves from session
-state, state flows from agent to agent in the documented order, the Retriever writes what
-the Simplifier and Verifier read, and the final text is checked, fixed at most twice when
+state, state flows from agent to agent in the documented order, the Simplifier (with its RAG
+lookup) writes the definitions the Verifier reads, Readability's own fact check runs inside
+the pipeline, and the final text is checked, fixed at most twice when
 it fails, and flagged for review if it still fails.
 
 What it does NOT prove: that a real model follows the instructions. That needs a real run.
 """
 import asyncio
-import csv
 import json
+import re
 import sys
-import tempfile
 import warnings
 from pathlib import Path
 
@@ -28,7 +28,6 @@ from google.adk.runners import InMemoryRunner  # noqa: E402
 from google.genai import types  # noqa: E402
 
 import adk_pipeline as P  # noqa: E402
-from glossary_lookup import GlossaryLookup  # noqa: E402
 
 SOURCE = ("Patient with hypertension. Started metformin 500 mg twice daily. HbA1c 8.2%. "
           "Allergic to penicillin. No chest pain.")
@@ -49,16 +48,12 @@ SEEN: dict[str, str] = {}   # agent marker -> rendered system instruction
 def _which(instruction: str) -> str:
     if instruction.startswith("Extract every"):
         return "extractor"
-    if instruction.startswith("Rewrite the SOURCE"):
-        return "simplifier"
     if instruction.startswith("You are checking"):
         return "finalcheck" if "FINALTEXT" in instruction else "verifier"
     if instruction.startswith("Fix the final patient explanation"):
         return "finalrefiner"
     if instruction.startswith("Fix the explanation"):
         return "refiner"
-    if instruction.startswith("Rewrite the explanation"):
-        return "readability"
     return "unknown"
 
 
@@ -78,7 +73,9 @@ def _verdict(ok: bool) -> str:
 VERDICT = _verdict(True)
 FINAL_VERDICTS: list = []   # scripted outcomes for each final check, in order
 CALLS: list = []            # every model call, in order
-READABILITY_OUT = {"text": FINAL}   # what the fake Readability step returns
+READABILITY_OUT = {"text": FINAL}   # what the fake Readability model returns
+SIMPLIFIER_OUT = {"text": DRAFT}    # what the fake Simplifier model writes
+REFINER_OUT = {"text": DRAFT}       # what the fake (main loop) Refiner returns
 LAST: dict[str, str] = {}   # agent marker -> most recent rendered instruction
 
 
@@ -96,32 +93,59 @@ class FakeLlm(BaseLlm):
             nxt = FINAL_VERDICTS.pop(0) if FINAL_VERDICTS else True
             reply = nxt if isinstance(nxt, str) else _verdict(nxt)
         else:
-            reply = {"extractor": json.dumps(ATOMS), "simplifier": DRAFT, "verifier": VERDICT,
-                     "refiner": DRAFT, "readability": READABILITY_OUT["text"],
-                     "finalrefiner": FIXED}.get(who, "?")
+            reply = {"extractor": json.dumps(ATOMS), "verifier": VERDICT,
+                     "refiner": REFINER_OUT["text"], "finalrefiner": FIXED}.get(who, "?")
         yield LlmResponse(content=types.Content(role="model",
                                                 parts=[types.Part(text=reply)]))
 
 
-def _glossary():
-    d = Path(tempfile.mkdtemp())
-    with open(d / "t.csv", "w", newline="") as f:
-        w = csv.writer(f); w.writerow(["title", "summary", "url"])
-        w.writerow(["High Blood Pressure", "Blood pressure that stays too high.", "u1"])
-        w.writerow(["A1C", "A blood test for average blood sugar.", "u2"])
-    with open(d / "s.csv", "w", newline="") as f:
-        w = csv.writer(f); w.writerow(["surface", "canonical", "kind", "canonical_url"])
-        for r in [("High Blood Pressure", "High Blood Pressure"),
-                  ("hypertension", "High Blood Pressure"), ("A1C", "A1C"), ("HbA1c", "A1C")]:
-            w.writerow([r[0], r[1], "x", ""])
-    return GlossaryLookup(d / "t.csv", d / "s.csv")
+class StubRetriever:
+    """Stands in for medlineplus_index.Retriever: exact (synonym) matches only, no API."""
+    TOPICS = {"high blood pressure": (1, "High Blood Pressure", "Blood pressure that stays too high."),
+              "a1c": (2, "A1C", "A blood test for average blood sugar.")}
+    ALIASES = {"hypertension": "high blood pressure", "hba1c": "a1c"}
+
+    def __init__(self):
+        self.surface_to_id = {k: str(v[0]) for k, v in self.TOPICS.items()}
+        self.surface_to_id.update({a: self.surface_to_id[t] for a, t in self.ALIASES.items()})
+
+    def search(self, query, k=3, min_score=0.0, use_synonyms=True):
+        key = self.ALIASES.get(query.lower(), query.lower())
+        if key not in self.TOPICS:
+            return []
+        tid, title, definition = self.TOPICS[key]
+        return [{"topic_id": tid, "title": title, "url": "u", "definition": definition,
+                 "score": 1.0, "match_type": "synonym", "also_known_as": []}]
 
 
-async def _run(final_outcomes, readability_text=FINAL):
+def fake_simplifier_llm(system, user):
+    """The Simplifier's model: one sentence per DRAFT sentence, citing every atom."""
+    CALLS.append("simplifier")
+    SEEN.setdefault("simplifier", system + user)
+    ids = re.findall(r'"id": "([^"]+)"', user)
+    sentences = [t.strip() + "." for t in SIMPLIFIER_OUT["text"].split(". ") if t.strip(". ")]
+    return json.dumps({"sentences": [{"text": t.rstrip(".") + ".", "atom_ids": ids,
+                                      "glossary_topic_ids": []} for t in sentences]})
+
+
+def fake_readability_gen(prompt):
+    """The Readability model: always returns READABILITY_OUT."""
+    CALLS.append("readability")
+    SEEN.setdefault("readability", prompt)
+    return {"text": READABILITY_OUT["text"], "error": None}
+
+
+async def _run(final_outcomes, readability_text=FINAL, simplifier_text=DRAFT,
+               refiner_text=DRAFT):
     FINAL_VERDICTS[:] = list(final_outcomes)
     READABILITY_OUT["text"] = readability_text
+    SIMPLIFIER_OUT["text"] = simplifier_text
+    REFINER_OUT["text"] = refiner_text
     CALLS.clear()
-    agent = P.build_pipeline(model=FakeLlm(), lookup=_glossary())
+    # target_grade=0 so Readability always makes a pass: the test drafts are already easy.
+    agent = P.build_pipeline(model=FakeLlm(), retriever=StubRetriever(), target_grade=0,
+                             simplifier_llm_fn=fake_simplifier_llm,
+                             readability_generate_fn=fake_readability_gen)
     runner = InMemoryRunner(agent=agent, app_name="faithfulmed")
     session = await runner.session_service.create_session(
         app_name="faithfulmed", user_id="u", state=P.new_session_state(SOURCE))
@@ -143,7 +167,7 @@ def check(name, cond):
     else:    failed += 1; print(f"  FAIL  {name}")
 
 
-HEAD = ["Extractor", "Retriever", "Simplifier", "Verifier", "Refiner",
+HEAD = ["Extractor", "Simplifier", "Verifier", "Refiner",
         "Verifier", "Refiner", "Readability", "FinalCheck", "FinalGuard"]
 
 # Scenario A: the final check passes first time. The fix loop stops at once.
@@ -158,7 +182,7 @@ check("not flagged for review", state.get("needs_review") is False)
 
 print("\nstate written by each step")
 for key in ("atoms", "definitions", "unexplained_terms", "draft", "verdict", "final",
-            "final_verdict", "needs_review"):
+            "final_verdict", "needs_review", "simplifier_report", "readability_report"):
     check(f"`{key}` is in state", key in state)
 
 print("\nfaithfulness report")
@@ -166,7 +190,7 @@ rep = json.loads(state.get("faithfulness_report", "{}"))
 check("the pipeline writes a faithfulness report", rep.get("status") == "passed")
 check("the report has a plain summary", "original text" in rep.get("summary", ""))
 
-print("\nretriever")
+print("\nretrieval (inside the Simplifier)")
 check("found hypertension via the synonym table", "High Blood Pressure" in state["definitions"])
 check("found HbA1c via the synonym table", "A1C" in state["definitions"])
 check("metformin listed as having no definition", "metformin" in state["unexplained_terms"])
@@ -188,6 +212,8 @@ check("FinalCheck reads the FINAL text, after Readability",
       FINAL in SEEN.get("finalcheck", ""))
 check("FinalCheck also sees the SOURCE", SOURCE in SEEN.get("finalcheck", ""))
 check("Simplifier sees the definitions", "High Blood Pressure" in SEEN.get("simplifier", ""))
+check("Simplifier sees the atoms", "metformin 500 mg twice daily" in SEEN.get("simplifier", ""))
+check("Readability rewrites the Simplifier's draft", DRAFT in SEEN.get("readability", ""))
 check("Extractor asks for allergies and negation", "allergy" in SEEN.get("extractor", "")
       and "negated" in SEEN.get("extractor", ""))
 
@@ -230,9 +256,25 @@ print("\nscenario D: unreadable final verdict counts as a fail, never a pass")
 check("unparseable verdict is not faithful", P._is_faithful("not json at all") is False)
 check("fenced JSON verdict is read", P._is_faithful('```json\n{"faithful": true}\n```'))
 
-print("\nscenario E: the model misses a changed dose, the guard does not")
+print("\nsimplifier and readability reports")
+srep = json.loads(state["simplifier_report"])
+check("simplifier report carries its checks and stats",
+      "checks" in srep and srep["stats"]["n_glossary_exact"] == 2)
+rrep = json.loads(state["readability_report"])
+check("readability report carries before/after grades",
+      "fk_grade" in rrep["before"] and "fk_grade" in rrep["after"])
+
+print("\nscenario E1: Readability rejects a rewrite that changes a dose")
 BAD = FINAL.replace("500 mg", "800 mg")
-order, state, calls = asyncio.run(_run([True, True], readability_text=BAD))
+order, state, calls = asyncio.run(_run([True], readability_text=BAD))
+check("the changed dose never reaches the final text", "800" not in state["final"])
+check("the rejected pass is recorded",
+      json.loads(state["readability_report"])["rejected_passes"] != [])
+
+print("\nscenario E: the Simplifier invents a dose and every model misses it; the guard does not")
+BAD_DRAFT = DRAFT.replace("500 mg", "800 mg")
+order, state, calls = asyncio.run(_run([True, True], readability_text=BAD,
+                                       simplifier_text=BAD_DRAFT, refiner_text=BAD_DRAFT))
 check("the model said faithful, but the check still failed and a fix ran",
       calls.count("finalrefiner") == 1)
 check("the fix prompt names the invented dose", "number 800 is not in the source"
@@ -250,6 +292,16 @@ check("'faithful: false' that names no problem does not trigger a fix",
       calls.count("finalrefiner") == 0 and state.get("needs_review") is False)
 check("the final Refiner is told not to add definitions",
       "Do not add explanations, definitions" in LAST.get("finalrefiner", ""))
+
+print("\nmodel wiring")
+try:
+    P.build_pipeline(model=FakeLlm())
+    check("a non-Gemini model without Simplifier/Readability functions is refused", False)
+except ValueError:
+    check("a non-Gemini model without Simplifier/Readability functions is refused", True)
+p = P.build_pipeline(model="gemini-x")
+check("a model name reaches the Simplifier and Readability",
+      p.sub_agents[1].models == ("gemini-x",) and p.sub_agents[3].models == ("gemini-x",))
 
 print(f"\n{passed} passed, {failed} failed")
 sys.exit(1 if failed else 0)
