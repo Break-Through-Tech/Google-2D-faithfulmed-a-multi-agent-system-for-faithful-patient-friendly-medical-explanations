@@ -68,7 +68,7 @@ EXPLANATION TO CHECK:
 {text}
 
 Return a JSON object with these keys:
-  faithful: true only if unsupported_claims and omissions are both empty
+  faithful: true only if unsupported_claims, omissions and negation_errors are all empty
   unsupported_claims: statements in the explanation that are supported by NEITHER \
 the SOURCE NOR the retrieved definitions
   omissions: facts in the SOURCE that the explanation leaves out
@@ -264,6 +264,19 @@ def problem_count(verdict: dict) -> int:
     return sum(len(verdict.get(k, [])) for k in _FAIL_KEYS)
 
 
+def problems_for_fix(verdict: dict) -> dict:
+    """Subset of a verdict the fixer is allowed to act on.
+
+    Unexplained terms are a readability gap, not a faithfulness failure. Sending them
+    to a fixer made it invent definitions, so they are stripped here.
+    """
+    out = {k: list(verdict.get(k, [])) for k in _FAIL_KEYS if verdict.get(k)}
+    out["faithful"] = bool(verdict.get("faithful"))
+    if verdict.get("parse_error"):
+        out["parse_error"] = True
+    return out
+
+
 # ------------------------------------------------------------------ faithfulness report
 
 def faithfulness_report(verdict: dict | None, fixes: int = 0, fixed: list | None = None,
@@ -404,7 +417,7 @@ def run(source: str, text: str, generate_fn, atoms: list[dict] | None = None,
 
         # Only the problems go to the fix step. Unexplained terms are a readability gap,
         # and showing them to the fixer made it invent definitions.
-        problems = {k: c["verdict"][k] for k in _FAIL_KEYS if c["verdict"][k]}
+        problems = problems_for_fix(c["verdict"])
         fix = generate_fn(FIX_PROMPT.format(
             source=source, text=current,
             verdict=json.dumps(problems, ensure_ascii=False, indent=1)))

@@ -210,10 +210,14 @@ check("not flagged for review", state.get("needs_review") is False)
 check("main Verifier not re-run after Readability",
       "verifier" not in calls[calls.index("readability"):])
 fr = SEEN.get("finalrefiner", "")
-check("the final Refiner sees the final verdict", '"faithful"' in fr)
+check("the final Refiner sees the fix verdict", '"faithful"' in fr)
 check("the final Refiner sees the SOURCE", SOURCE in fr)
 check("final Refiner: no unresolved placeholders",
-      not any(k in fr for k in ("{source}", "{final}", "{final_verdict}")))
+      not any(k in fr for k in ("{source}", "{final}", "{final_fix_verdict}")))
+check("report status is fixed after a successful repair",
+      json.loads(state["faithfulness_report"])["status"] == "fixed")
+check("unexplained terms are not sent to the final Refiner",
+      "metformin" not in fr or '"unexplained_terms"' not in fr)
 
 print("\nscenario C: final check keeps failing")
 order, state, calls = asyncio.run(_run([False, False, False, False]))
@@ -244,11 +248,31 @@ check("the fixed text ships and is not flagged",
 print("\nscenario F: an unreadable final verdict goes through the guard as a fail")
 order, state, calls = asyncio.run(_run(["looks fine to me", True]))
 check("unreadable verdict triggers a fix, not a pass", calls.count("finalrefiner") == 1)
+# Guards still run on garbage LLM output: a changed dose must reach the fixer.
+BAD = FINAL.replace("500 mg", "800 mg")
+order, state, calls = asyncio.run(_run(["looks fine to me", True], readability_text=BAD))
+check("unreadable verdict still runs number guards",
+      "number 800 is not in the source" in LAST.get("finalrefiner", ""))
 order, state, calls = asyncio.run(_run(['{"faithful": false}', True]))
 check("'faithful: false' that names no problem does not trigger a fix",
       calls.count("finalrefiner") == 0 and state.get("needs_review") is False)
 check("the final Refiner is told not to add definitions",
       "Do not add explanations, definitions" in LAST.get("finalrefiner", ""))
+
+print("\nscenario G: a worse fix is not shipped when nothing passes")
+# Round 0 on FINAL: 1 problem. After FinalRefiner -> FIXED: 3, then 2. Cap hit.
+# Best should be the original FINAL (fewest problems), not FIXED.
+order, state, calls = asyncio.run(_run([
+    json.dumps({"faithful": False, "unsupported_claims": [], "omissions": ["a"],
+                "negation_errors": [], "unexplained_terms": [], "reading_level_ok": True}),
+    json.dumps({"faithful": False, "unsupported_claims": ["x", "y", "z"], "omissions": [],
+                "negation_errors": [], "unexplained_terms": [], "reading_level_ok": True}),
+    json.dumps({"faithful": False, "unsupported_claims": ["x", "y"], "omissions": [],
+                "negation_errors": [], "unexplained_terms": [], "reading_level_ok": True}),
+]))
+check("still flagged for review after worse fixes", state.get("needs_review") is True)
+check("ships the version with the fewest problems (pre-fix text)",
+      state["final"] == FINAL)
 
 print(f"\n{passed} passed, {failed} failed")
 sys.exit(1 if failed else 0)

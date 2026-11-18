@@ -1,6 +1,9 @@
-# AI Studio Challenge Project Title
+# FaithfulMed: A Multi-Agent System for Faithful, Patient-Friendly Medical Explanations
 
-> 💡 **Note for the team:** This is just a template. Update the above title with your AI Studio Challenge Project name. Remove all guidance notes and example text in this template and populate this README with your own content. You can work on this README throughout AI Studio, and get feedback from your AI Studio Coach and Challenge Advisor before finalizing it.  
+**Company / Org:** Google  
+**Challenge Advisor:** Ram Seshadri  
+**Program:** Break Through Tech AI Studio — Fall 2026  
+**AI Studio Coach:** Rohil Saraf ([rohil.saraf@breakthroughtech.org](mailto:rohil.saraf@breakthroughtech.org))
 
 ---
 
@@ -20,102 +23,146 @@
 
 ## 🎯 **Project Highlights**
 
-**Example:**
-
-- Developed a machine learning model using `[model type/technique]` to address `[challenge project task]`.
-- Achieved `[key metric or result]`, demonstrating `[value or impact]` for `[host company]`.
-- Generated actionable insights to inform business decisions at `[host company or stakeholders]`.
-- Implemented `[specific methodology]` to address industry constraints or expectations.
+- Multi-agent pipeline on **Google ADK** that turns clinical source text into patient-friendly explanations that stay faithful to the source.
+- Agents: **Extractor → Retriever → Simplifier → [Verifier ↔ Refiner] ×≤2 → Readability → FinalCheck** (with a short fix loop; still failing → `needs_review`).
+- RAG over a **MedlinePlus** lay-language glossary (exact synonym match first, ChromaDB vector search only on miss).
+- Deterministic **number / negation guards** on Extractor, Simplifier, Verifier, Refiner, Readability, and FinalCheck so patient-safety failures do not rely on the LLM alone.
+- Evaluation targets: ≤8th-grade Flesch-Kincaid readability, high faithfulness vs. human labels (MedAESQA), and ablations vs. a single-LLM baseline.
 
 ---
 
 ## 👩🏽‍💻 **Setup and Installation**
 
-**Provide step-by-step instructions so someone else can run your code and reproduce your results. Depending on your setup, include:**
+```bash
+git clone <repo-url>
+cd Google-2D-faithfulmed-a-multi-agent-system-for-faithful-patient-friendly-medical-explanations
 
-* How to clone the repository
-* How to install dependencies
-* How to set up the environment
-* How to access the dataset(s)
-* How to run the notebook or scripts
+pip install -r requirements.txt
+export GEMINI_API_KEY=...   # https://aistudio.google.com — or a root `.env`
+```
+
+**Datasets:** see `data/README.md`. Large corpora are git-ignored; download locally. Start with MedAESQA for evaluation and MedlinePlus cleaned CSVs under `data/cleaned-medlineplus/` for RAG.
+
+**ADK pipeline (notebook):**
+
+```bash
+# from repo root, with GEMINI_API_KEY set
+python -c "from notebooks.adk_pipeline import build_pipeline; print(build_pipeline())"
+```
+
+Or open `notebooks/adk_pipeline.py` / use `adk web` with `root_agent` exported there.
+
+**Standalone agents & retrieval (`src/`):** see [`src/README.md`](src/README.md).
+
+```bash
+python src/demo_verifier.py
+python src/demo_refiner.py
+python src/test_pipeline_offline.py   # full chain, no API key
+```
+
+**Useful notebooks:** `notebooks/baseline_single_gemini.ipynb` (single-LLM baseline),
+`notebooks/final_check_agent.ipynb`, EDA under `notebooks/exploratory-data-analysis/`,
+eval helpers in `notebooks/eval_harness.py` and `src/eval_extractor.py`.
+
+**MedlinePlus index:**
+
+```bash
+python src/medlineplus_index.py build
+python src/medlineplus_index.py validate
+python src/medlineplus_index.py query "high blood pressure"
+```
 
 ---
 
 ## 🏗️ **Project Overview**
 
-**Describe:**
+This is a Break Through Tech AI Studio challenge project hosted with **Google**. Clinical notes, labs, and discharge instructions are written for clinicians; patients often misunderstand them. Generative models can rewrite that text, but unfaithful or hallucinated clinical details are unsafe.
 
-- How this project is connected to the Break Through Tech AI Program
-- Your AI Studio host company and the project objective and scope
-- The real-world significance of the problem and the potential impact of your work
+FaithfulMed asks whether a **pipeline of specialized agents** produces explanations that are both more **readable** and more **faithful** than a single well-prompted LLM — and which agents actually matter for each goal.
+
+Built on Google's stack: **Gemini**, optional **Gemma** / open models via LiteLLM for the leaderboard, and the **Agent Development Kit (ADK)**.
+
+Architecture contracts live in [`docs/architecture.md`](docs/architecture.md).
 
 ---
 
 ## 📊 **Data Exploration**
 
-**You might consider describing the following (as applicable):**
+Primary datasets (all public; no PHI/PII):
 
-* The dataset(s) used: origin, format, size, type of data
-* Data exploration and preprocessing approaches
-* Insights from your Exploratory Data Analysis (EDA)
-* Challenges and assumptions when working with the dataset(s)
+| Dataset | Role |
+|---------|------|
+| **MedAESQA** | Faithfulness eval + Verifier calibration (human labels) |
+| **MTSamples** | Source clinical reports to simplify |
+| **PLABA** | Professional ↔ plain-language gold pairs |
+| **MedQuAD** | Consumer-health Q&A / tone |
+| **Synthea** | Synthetic FHIR stress tests (flatten before LLM use) |
+| **MedlinePlus glossary** | RAG knowledge base for plain definitions |
 
-**Potential visualizations to include:**
-
-* Plots, charts, heatmaps, feature visualizations, sample dataset images
+EDA and cleaning notes live under `notebooks/exploratory-data-analysis/` and `data/README.md`.
 
 ---
 
 ## 🧠 **Model Development**
 
-**You might consider describing the following (as applicable):**
+**Orchestration:** Google ADK `SequentialAgent` + bounded `LoopAgent` (Verifier ↔ Refiner, max 2 rounds), then FinalCheck with its own ≤2 fix rounds and a `needs_review` flag.
 
-* Model(s) used (e.g., CNN with transfer learning, regression models)
-* Feature selection and Hyperparameter tuning strategies
-* Training setup (e.g., % of data for training/validation, evaluation metric, baseline performance)
+**Default model:** `gemini-3.5-flash` at temperature 0 (see `notebooks/adk_pipeline.py`). Model is parameterized for ablations and the multi-model leaderboard.
 
+**Retrieval:** `glossary_lookup.py` — exact match on MedlinePlus synonyms, then optional ChromaDB (`medlineplus_index.py`, embeddings via `gemini-embedding-001`).
+
+**Guarded agents in `src/`:**
+- `extractor_agent.py` — SOURCE → typed atoms; rejects invented numbers/facts
+- `simplifier.py` — atoms → draft with MedlinePlus RAG + coverage/number/negation checks
+- `verifier_agent.py` — LLM verdict + deterministic number/negation guards
+- `refiner_agent.py` — targeted fixes; rejects unsafe rewrites
+- `readability_agent.py` — ≤8th-grade rewrite with post-pass self-checks
+- `final_check_agent.py` — last gate on patient-facing text; fix loop or `needs_review`
 
 ---
 
 ## 📈 **Results & Key Findings**
 
-**You might consider describing the following (as applicable):**
+*(Fill in as evaluation and ablations land.)*
 
-* Performance metrics (e.g., Accuracy, F1 score, RMSE)
-* How your model performed
-* Insights from evaluating model fairness
+Target success criteria from the challenge brief:
+- ≥80% of outputs at ≤8th-grade FK
+- ≥85% factual fidelity on the annotated test set
+- <10% clinically meaningful unsupported claims
+- ≥15% absolute faithfulness gain vs. single-agent baseline
+- Verifier–human agreement ≥80% (κ ≥ 0.6)
 
-**Potential visualizations to include:**
-
-* Confusion matrix, precision-recall curve, feature importance plot, prediction distribution, outputs from fairness or explainability tools
+Offline wiring (no API key): `python src/test_pipeline_offline.py`.
 
 ---
 
 ## 🚀 **Next Steps**
 
-**You might consider addressing the following (as applicable):**
-
-* What are some of the limitations of your model?
-* What would you do differently with more time/resources?
-* What additional datasets or techniques would you explore?
+- Complete ablation table (drop one agent at a time).
+- Calibrate Verifier against MedAESQA human labels.
+- Multi-model leaderboard (Gemini + Gemma + one external open model).
+- Hosted demo with per-agent traces (HF Spaces or Cloud Run).
+- Technical report and final presentation.
 
 ---
 
 ## 📝 **License**
 
-Specify how your project can be used by others. Choose an appropriate license and link it here (e.g., MIT, Apache 2.0). Make sure your Challenge Advisor approves of the selected license type. 
-
-**Example:**
-This project is licensed under the MIT License.
+License TBD — confirm with the Challenge Advisor before publishing.
 
 ---
 
-## 📄 **References** (Optional but encouraged)
+## 📄 **References**
 
-Cite relevant papers, articles, or resources that supported your project.
+- Challenge brief: `Challenge-Project-Overview.md`
+- Architecture: `docs/architecture.md` · walkthrough: `docs/architecture-walkthrough.md`
+- Extractor notes: `docs/extractor.md`
+- MedAESQA: https://osf.io/ydbzq · https://github.com/deepaknlp/MedAESQA
+- MedlinePlus: https://medlineplus.gov/
+- Google ADK: https://google.github.io/adk-docs/
 
 ---
 
-## 🙏 **Acknowledgements** (Optional but encouraged)
+## 🙏 **Acknowledgements**
 
-Thank your Challenge Advisor, host company representatives, TA, and others who supported your project.
+Thanks to Challenge Advisor Ram Seshadri, AI Studio Coach Rohil Saraf, Google hosts, and Break Through Tech AI for support on this project.

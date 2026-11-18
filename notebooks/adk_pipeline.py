@@ -167,7 +167,8 @@ def _verifier_instruction(text_key: str) -> str:
         "RETRIEVED DEFINITIONS (allowed background, not from the SOURCE):\n{definitions}\n\n"
         "EXPLANATION TO CHECK:\n{" + text_key + "}\n\n"
         "Return a JSON object with these keys:\n"
-        "  faithful: true only if unsupported_claims and omissions are both empty\n"
+        "  faithful: true only if unsupported_claims, omissions and negation_errors "
+        "are all empty\n"
         "  unsupported_claims: statements in the explanation that are supported by NEITHER "
         "the SOURCE NOR the retrieved definitions\n"
         "  omissions: facts in the SOURCE that the explanation leaves out\n"
@@ -205,6 +206,18 @@ def _is_faithful(raw) -> bool:
     return parse_verdict(raw).get("faithful") is True
 
 
+def _load_json_list(raw) -> list:
+    if isinstance(raw, list):
+        return list(raw)
+    if not raw:
+        return []
+    try:
+        data = json.loads(raw)
+    except (TypeError, json.JSONDecodeError):
+        return []
+    return data if isinstance(data, list) else []
+
+
 class FinalGuard(BaseAgent):
     """Runs right after every final check. No LLM, no quota.
 
@@ -212,21 +225,52 @@ class FinalGuard(BaseAgent):
     model's verdict: a changed or dropped number, an invented number, a flipped negation.
     Then recomputes `faithful` from the merged lists, so the model cannot pass a text
     while listing a problem, and cannot pass a changed dose it did not notice.
-    An unreadable verdict stays a fail.
+
+    Always runs the guards — including when the LLM reply is unreadable — so a changed
+    dose is still caught when the model returns garbage. Writes `final_fix_verdict`
+    with only actionable problems (no unexplained_terms), tracks check history, and
+    remembers the version with the fewest problems for NeedsReviewFlag.
     """
 
     async def _run_async_impl(self, ctx: InvocationContext) -> AsyncGenerator[Event, None]:
         state = ctx.session.state
+        source = state.get("source", "")
+        atoms = parse_atoms(state.get("atoms"))
+        final = state.get("final", "")
+        guards = fc.deterministic_check(source, atoms, final)
         llm = fc.parse_verdict(state.get("final_verdict"))
         if llm is None:
-            merged = {"faithful": False, "parse_error": True}
+            # Unreadable is never a pass, even when the guards are clean. Scenario F
+            # in the offline test locks this in: flag/fix, do not ship unchecked.
+            merged = fc.merge({}, guards)
+            merged["parse_error"] = True
+            merged["faithful"] = False
         else:
-            guards = fc.deterministic_check(state.get("source", ""),
-                                            parse_atoms(state.get("atoms")),
-                                            state.get("final", ""))
             merged = fc.merge(llm, guards)
+
+        history = _load_json_list(state.get("final_check_history"))
+        history.append({"text": final, "verdict": merged})
+
+        score = [int(not merged["faithful"]), fc.problem_count(merged)]
+        best_score = state.get("final_best_score")
+        try:
+            best_score = json.loads(best_score) if best_score is not None else None
+        except (TypeError, json.JSONDecodeError):
+            best_score = None
+
+        delta = {
+            "final_verdict": json.dumps(merged),
+            # Refiner only sees actionable problems — never unexplained_terms.
+            "final_fix_verdict": json.dumps(fc.problems_for_fix(merged)),
+            "final_check_history": json.dumps(history),
+        }
+        if best_score is None or score < best_score:
+            delta["final_best"] = final
+            delta["final_best_verdict"] = json.dumps(merged)
+            delta["final_best_score"] = json.dumps(score)
+
         yield Event(author=self.name, invocation_id=ctx.invocation_id,
-                    actions=EventActions(state_delta={"final_verdict": json.dumps(merged)}))
+                    actions=EventActions(state_delta=delta))
 
 
 class StopIfFaithful(BaseAgent):
@@ -240,19 +284,47 @@ class StopIfFaithful(BaseAgent):
 
 class NeedsReviewFlag(BaseAgent):
     """Last step. Records whether the final text still failed after the fix loop, and
-    writes the faithfulness report that goes to the user with the explanation. No LLM."""
+    writes the faithfulness report that goes to the user with the explanation. No LLM.
+
+    If every checked version still failed, ships the version with the fewest problems
+    (tracked by FinalGuard), not necessarily the last Refiner rewrite.
+    """
 
     async def _run_async_impl(self, ctx: InvocationContext) -> AsyncGenerator[Event, None]:
         state = ctx.session.state
+        history = _load_json_list(state.get("final_check_history"))
         passed = _is_faithful(state.get("final_verdict"))
         verdict = fc.parse_verdict(state.get("final_verdict"))
+        final = state.get("final", "")
+
+        # Prefer the least-bad checked version when nothing passed.
+        if not passed and state.get("final_best") is not None:
+            final = state["final_best"]
+            best_v = fc.parse_verdict(state.get("final_best_verdict"))
+            if best_v is not None:
+                verdict = best_v
+                passed = best_v.get("faithful") is True
+
         if verdict is not None:
             verdict["faithful"] = passed
-        report = fc.faithfulness_report(verdict, text=state.get("final", ""))
+        fix_rounds = max(0, len(history) - 1)
+        first = (history[0].get("verdict") if history else {}) or {}
+        now = {x.strip().lower() for k in fc._FAIL_KEYS for x in (verdict or {}).get(k, [])}
+        fixed = [x for k in fc._FAIL_KEYS for x in first.get(k, [])
+                 if fix_rounds and x.strip().lower() not in now]
+        report = fc.faithfulness_report(
+            verdict if verdict is not None else None,
+            fixes=fix_rounds, fixed=fixed, text=final)
+
+        delta = {
+            "needs_review": not passed,
+            "faithfulness_report": json.dumps(report),
+            "final": final,
+        }
+        if verdict is not None:
+            delta["final_verdict"] = json.dumps(verdict)
         yield Event(author=self.name, invocation_id=ctx.invocation_id,
-                    actions=EventActions(state_delta={
-                        "needs_review": not passed,
-                        "faithfulness_report": json.dumps(report)}))
+                    actions=EventActions(state_delta=delta))
 
 
 # ------------------------------------------------------------------ 5. Refiner
@@ -276,7 +348,7 @@ FINAL_REFINER_INSTRUCTION = (
     "Fix the final patient explanation using the verdict. Change nothing else.\n\n"
     "SOURCE:\n{source}\n\n"
     "EXPLANATION:\n{final}\n\n"
-    "VERDICT:\n{final_verdict}\n\n"
+    "VERDICT:\n{final_fix_verdict}\n\n"
     "Rules:\n"
     "- Remove every unsupported claim.\n"
     "- Add back every omission, worded plainly, using only the SOURCE.\n"

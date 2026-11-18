@@ -13,7 +13,7 @@ from pathlib import Path
 sys.path.insert(0, str(Path(__file__).parent))
 from final_check_agent import (  # noqa: E402
     CHECK_PROMPT, FIX_PROMPT, check_negations, check_numbers, deterministic_check,
-    make_generate_fn, merge, parse_verdict, problem_count, run,
+    make_generate_fn, merge, parse_verdict, problem_count, problems_for_fix, run,
 )
 
 passed = failed = 0
@@ -274,11 +274,22 @@ check("check could not run: needs_review, never passed",
 check("the report is included in as_dict()", r.as_dict()["report"]["status"] ==
       "needs_review")
 
+print("\nproblems_for_fix")
+pf = problems_for_fix({"faithful": False, "unsupported_claims": ["800 mg"],
+                         "omissions": [], "negation_errors": [],
+                         "unexplained_terms": ["metformin"], "parse_error": True})
+check("keeps actionable problems", pf["unsupported_claims"] == ["800 mg"])
+check("strips unexplained terms", "unexplained_terms" not in pf)
+check("keeps parse_error for the fixer", pf.get("parse_error") is True)
+check("faithful flag is preserved", pf["faithful"] is False)
+
 print("\nprompts")
 check("check prompt has every placeholder the code fills",
       all(k in CHECK_PROMPT for k in ("{source}", "{atoms}", "{definitions}", "{text}")))
 check("fix prompt has every placeholder the code fills",
       all(k in FIX_PROMPT for k in ("{source}", "{text}", "{verdict}")))
+check("faithful definition includes negation_errors",
+      "negation_errors are all empty" in CHECK_PROMPT)
 
 print("\nmake_generate_fn")
 

@@ -197,11 +197,13 @@ runs after every check, `StopIfFaithful` ends the loop as soon as a check passes
 - a number in the final text that is not in the SOURCE (an unsupported claim)
 - a negated finding stated without its negation (a negation error)
 
-It merges these into the model's verdict and recomputes `faithful` from the merged
-problem lists. So the model cannot pass a changed dose it did not notice. A "not faithful"
-that names no problem is not treated as a fail: there is nothing to fix, and on real data
-sending it to the Refiner made the Refiner invent definitions. The final Refiner is also
-told not to add definitions or background that are not in the SOURCE.
+It always runs these guards — including when the LLM reply is unreadable — then merges
+them into the model's verdict and recomputes `faithful` from the merged problem lists.
+So the model cannot pass a changed dose it did not notice. A "not faithful" that names
+no problem is not treated as a fail: there is nothing to fix, and on real data sending
+it to the Refiner made the Refiner invent definitions. The final Refiner only receives
+actionable problems (`final_fix_verdict`); unexplained terms are stripped so it does
+not invent definitions. It is also told not to add background that is not in the SOURCE.
 
 An unreadable verdict counts as a fail, never a pass. If we cannot tell whether the text
 is faithful, the safe answer is to fix it or flag it.
@@ -211,9 +213,9 @@ explanation: a status (`passed`, `fixed` or `needs_review`), a one-line plain su
 was fixed, what is still wrong, terms left without a plain explanation, and the reading grade.
 
 `src/final_check_agent.py` is the standalone version used for evaluation, with the same
-contract as the Readability and Verifier modules. It adds one rule the ADK loop does not
-have yet: if a fix makes the text worse, the version with the fewest problems is shipped.
-Results are in `notebooks/final_check_agent.ipynb`.
+contract as the Readability and Verifier modules. The ADK loop matches it: if a fix makes
+the text worse, NeedsReviewFlag ships the version with the fewest problems. Results are
+in `notebooks/final_check_agent.ipynb`.
 
 ---
 
